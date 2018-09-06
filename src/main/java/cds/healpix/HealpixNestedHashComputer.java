@@ -110,12 +110,28 @@ final class HealpixNestedHashComputer implements HashComputer {
     iInBaseCell = h.moduloNside(xInt);    assert 0 <= iInBaseCell && iInBaseCell < h.nside;
     jInBaseCell = h.moduloNside(yInt);    assert 0 <= jInBaseCell && jInBaseCell < h.nside;
   }
-  
-  private void computeBaseCellHashBits() {
+  /**
+   Depending on the hardware, and the soft cache occupation, better or not than the other version
+  */
+  /*private void computeBaseCellHashBits() {
     baseCellBits = h.d0cBitsLUPT[iBaseCell][jBaseCell];    assert baseCellBits >= 0;
     assert Math.abs((4 - jBaseCell) - iBaseCell) < 2
       || (iInBaseCell == 0 && jInBaseCell == 0 && ((baseCellBits & h.xyMask) == h.xyMask))
       || (jInBaseCell == 0 && ((baseCellBits & h.yMask) == h.xyMask));
+  }*/
+  
+  private void computeBaseCellHashBits() {
+    jBaseCell = 5 - (iBaseCell + jBaseCell);
+    if (jBaseCell >= 0) {        
+      assert jBaseCell <= 2;
+      baseCellBits = ((long) ((jBaseCell << 2) + ((iBaseCell - ((--jBaseCell) >>> 63)) & 3))) << h.twiceDepth;
+    } else if (jBaseCell == -1) { // rare, so few risks of branch miss-prediction
+      baseCellBits = ((((long) ((iBaseCell - 1) & 3))) << h.twiceDepth) | h.yMask;
+    } else if (jBaseCell == -2) { // rare, so few risks of branch miss-prediction
+      baseCellBits = (((long) (iBaseCell - 2)) << h.twiceDepth) | h.xyMask;
+    } else {                      // should never enter this branch
+      assert false;
+    }
   }
-
+  
 }

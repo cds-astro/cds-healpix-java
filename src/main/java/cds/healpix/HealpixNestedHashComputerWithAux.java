@@ -75,7 +75,7 @@ class HealpixNestedHashComputerWithAux implements HashComputerWithAux {
     discretize();
     computeBaseCellCoos();
     computeCoosInBaseCell();
-    computeBaseCellHash();
+    computeBaseCellBits();
     int aux = computeAuxValue(auxValue);
     return baseCellBits | ZOrderCurve3D.INSTANCE.ijk2hash(iInBaseCell, jInBaseCell, aux);
   }
@@ -133,8 +133,22 @@ class HealpixNestedHashComputerWithAux implements HashComputerWithAux {
     
   }
   
-  private void computeBaseCellHash() {
+  /*private void computeBaseCellBits() {
     baseCellBits = h.d0cBitsLUPT[iBaseCell][jBaseCell] << h.depth;
+  }*/
+  
+  private void computeBaseCellBits() {
+    jBaseCell = 5 - (iBaseCell + jBaseCell);
+    if (jBaseCell >= 0) {        
+      assert jBaseCell <= 2;
+      baseCellBits = ((long) ((jBaseCell << 2) + ((iBaseCell - ((--jBaseCell) >>> 63)) & 3))) << (h.twiceDepth + h.depth);
+    } else if (jBaseCell == -1) { // rare, so few risks of branch miss-prediction
+      baseCellBits = ((((long) ((iBaseCell - 1) & 3))) << (h.twiceDepth + h.depth)) | h.yMask;
+    } else if (jBaseCell == -2) { // rare, so few risks of branch miss-prediction
+      baseCellBits = (((long) (iBaseCell - 2)) << (h.twiceDepth + h.depth)) | h.xyMask;
+    } else {
+      assert false;
+    }
   }
   
 }

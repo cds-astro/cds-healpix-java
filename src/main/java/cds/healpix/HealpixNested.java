@@ -62,22 +62,22 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
    *   i = ((i - (j >>> 63)) & 3) + (++j << 2)
    * But it may depends on the hardware and on the cache occupation.
    */
-  static final byte[][] D0C_LOOKUP = new byte[][] {
+  /*static final byte[][] D0C_LOOKUP = new byte[][] {
     {-1, -1, -1,  8,  4}, //   ----> y-axis 
     {-1, -1,  9,  5,  0}, //  |
     {-1, 10,  6,  1},     //  |
     {11,  7,  2},         //  v
     { 4,  3,},            // x-axis
-  };
+  };*/
   
   /** Lookup tables to retrieve the bits of the base (depth=0) cell at all possible depth. */
-  private static final long[][][] D0C_BITS_LUPTS = new long[30][][];
+  // private static final long[][][] D0C_BITS_LUPTS = new long[30][][];
   
   /** Lookup table to retrieve the bits of the base (depth=0) cell at the object depth .
    *  We modified {@link #D0C_LOOKUP} to take into account cases of lat = +-90 deg 
    *  and equatorial/polar caps limit.
    * */
-  final long[][] d0cBitsLUPT;
+  // final long[][] d0cBitsLUPT;
   
   final int depth;
 
@@ -121,7 +121,7 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
   protected HealpixNested(final int depth, final FillingCurve2DType fillingCurveType) {
     this.depth = depth;
     this.nside = nside(this.depth);
-    this.d0cBitsLUPT = getD0cBitsLookupTable(this.depth);
+    // this.d0cBitsLUPT = getD0cBitsLookupTable(this.depth);
     this.halfNside4IEEEdouble = Healpix.halfNside4IEEEdouble(this.depth);
     this.oneOverNside = 1 / (double) this.nside;
     this.nHash = Healpix.nHash(this.depth);
@@ -149,7 +149,7 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
     this.neigSelector = new HealpixNestedNeighbourSelector(this);
   }
 
-  private static long[][] getD0cBitsLookupTable(final int depth) {
+  /*private static long[][] getD0cBitsLookupTable(final int depth) {
     long[][] ref = D0C_BITS_LUPTS[depth];
     if (ref == null) {
       synchronized(D0C_BITS_LUPTS) {
@@ -161,9 +161,9 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
       }
     }
     return ref;
-  }
+  }*/
   
-  private static long[][] buildLookUpTable(int depth) {
+  /*private static long[][] buildLookUpTable(int depth) {
     final int twiceDepth = depth << 1;
     long xMask = 0;
     long yMask = 0;
@@ -202,7 +202,7 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
       {bc04, bc03, mg3y, m2xy},             // x-axis
       {nill, mg0y, m3xy}
     };
-  }
+  }*/
   
   
   
@@ -771,11 +771,19 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
       jInBaseCell += nside << 2;
       int iBaseCell = dividedByNsideQuotient(iInBaseCell);
       int jBaseCell = dividedByNsideQuotient(jInBaseCell);
-      baseCellHash = D0C_LOOKUP[iBaseCell][jBaseCell];
+      baseCellHash = getBaseCellHash(iBaseCell, jBaseCell);
       iInBaseCell = moduloNside(iInBaseCell);
       jInBaseCell = moduloNside(jInBaseCell);
     }
     return new HashPartsImpl(baseCellHash, (int) iInBaseCell, (int) jInBaseCell);
+  }
+  
+  private static int getBaseCellHash(int i, int j) {
+    // retrun D0C_LOOKUP[iBaseCell][jBaseCell]; 
+    // Tests on new computer show that NOBRANCH performs netter than LOOKUP_MATRIX
+    // (and uses less CPU cache!).
+    j = 4 - (j + i);
+    return ((i - (j >>> 63)) & 3) + (++j << 2);
   }
   
   private long minusNsideTimeFourNside(long l) {

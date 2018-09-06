@@ -165,7 +165,7 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
     //   - it allows to perform the computations in the 2 canonical base cells (NPC: 0; EQR: 4),
     //     with the y-origin of the Collignon projection set to 0 (instead of 1), and only then 
     //     we consider the base cell number
-    // - thus we also removef the base cell lookup table:
+    // - thus we also removed the base cell lookup table:
     //   - it saves CPU cache utilisation and lookup
     //   - but it introduces 'if' conditions that we tried to avoid: effect should be limited since 
     //     few risks of branche miss-predictions, except in South/North polar caps (effect should be

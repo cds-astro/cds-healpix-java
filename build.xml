@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ Simple ANT build.xml file for compiling and generating healpix.jar
+ * Author : F.-X. Pineau [CDS]
+-->
+<project name="Healpix" default="print_properties" basedir=".">
+    
+  <description>${title} build.xml</description>
+
+  <property file="build.properties"/>
+
+  <!--property name="author" value="F.-X. Pineau"/-->
+  <property name="ant.project.name.low" value="healpix"/>
+
+  <property name="src"       location="src/main/java"/>
+  <property name="tsrc"      location="src/test/java"/>
+  <property name="lib"       location="libs/main"/>
+  <property name="tlib"      location="libs/test"/>
+  <property name="target"    location="target"/>
+  <property name="classes"   location="${target}/classes"/>
+  <property name="tclasses"  location="${target}/test-classes"/>
+  <property name="tresults"  location="${target}/test-results"/>
+  <property name="doc"       location="${target}/docs/apidocs"/>
+  <property name="extras"    location="extras"/>
+  <property name="tools"     location="../Tools"/>
+  <property name="latexlet"  location="${tools}/LateXlet/LaTeXlet-bin-1.2f7" />
+  <property name="ydoc"      location="${tools}/yworks-uml-doclet-3.0_02-jdk1.5" />
+
+  <path id="libs">
+    <fileset dir="${lib}/">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+
+  <path id="tlibs">
+    <fileset dir="${lib}/">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${tlib}/">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+
+  <!--path id="rtlibs">
+    <pathelement location="${classes}/" />    
+    <pathelement location="${tclasses}/" />
+    <fileset dir="${lib}/">
+      <include name="**/*.jar" />
+    </fileset>
+    <fileset dir="${tlib}/">
+      <include name="**/*.jar" />
+    </fileset>
+  </path-->
+
+
+  <tstamp prefix="time">
+    <format property="current_date" pattern="d-MMMM-yyyy" locale="en" />
+    <format property="current_time" pattern="hh:mm:ss a z" locale="en" />
+    <format property="year_month_day" pattern="yyyy-MM-dd" locale="en" />
+    <format property="year" pattern="yyyy" locale="en" />
+  </tstamp>
+
+  <target name="print_properties" depends="print_default_properties">
+    <echo message="current_date:     ${time.current_date}"   />
+    <echo message="current_time:     ${time.current_time}"   />
+    <echo message="year_month_day:   ${time.year_month_day}" />
+  </target>
+
+  <target name="print_default_properties" >
+    <echo message="os.name:          ${os.name}"          />
+    <echo message="basdir:           ${basedir}"          />
+    <echo message="ant.file:         ${ant.file}"         />
+    <echo message="ant.project.name: ${ant.project.name}" />
+    <echo message="ant.java.version: ${ant.java.version}" />
+  </target>
+
+  <!-- MAIN TARGETS -->
+
+  <target name="make.all" description="Compile all the software, run tests, and create the .jar" depends="make.test,make.doc,make.jar"/>
+
+  <target name="make.build" description="Compile main classes, to test if the soft compiles" depends="clean.classes,compile"/>
+  
+  <target name="make.test" description="Compile all classes (main an test), and run tests" depends="clean.classes,clean.tests,test"/>
+
+  <target name="make.jar" description="Compile main classes and create both the jar and the fatjar" depends="make.build,jars"/>
+
+  <target name="make.doc" description="Compile all the software and create the .jar" depends="clean.doc,doc"/>
+  
+  <target name="clean" depends="clean.classes,clean.tests,clean.doc"/>
+  
+  <!-- CLEAN -->
+    
+  <target name="clean.classes">
+    <echo>Clean dir: "${classes}"...</echo>
+    <delete failonerror="false">
+      <fileset dir="${classes}" includes="**/*.class"/>
+    </delete>
+  </target>
+
+  <target name="clean.tests">
+    <echo>Clean dir: "${tclasses}"...</echo>
+    <delete failonerror="false">
+      <fileset dir="${tclasses}" includes="**/*.class"/>
+    </delete>
+    <echo>Clean dir: "${tresults}"...</echo>
+    <delete failonerror="false">
+      <fileset dir="${tresults}" includes="**/*"/>
+    </delete>
+  </target>
+
+  <target name="clean.doc">
+    <echo>Clean dir: "${doc}"...</echo>
+    <delete failonerror="false">
+      <fileset dir="${doc}" includes="**/*.html"/>
+    </delete>
+  </target>
+
+  <!-- BUILD CLASSES AND TESTS -->
+
+  <target name="compile">
+    <echo>Compile from "${src}" to "${classes}"...</echo>
+    <javac fork="true" debug="on" srcdir="${src}" destdir="${classes}" encoding="UTF-8">
+      <classpath refid="libs"/>
+    </javac>
+  </target>
+
+  <target name="tcompile">
+    <echo>Compile from "${tsrc}" to "${tclasses}"...</echo>
+    <javac fork="true" debug="on" srcdir="${src}" destdir="${tclasses}" encoding="UTF-8">
+      <classpath refid="libs"/>
+    </javac>
+    <javac fork="true" debug="on" srcdir="${tsrc}" destdir="${tclasses}" encoding="UTF-8">
+      <classpath refid="tlibs"/>
+    </javac>
+  </target>
+
+  <!-- EXEC TESTS -->
+
+  <target name="test" depends="compile,tcompile">
+  <junit fork="true">
+    <classpath>
+      <pathelement location="${classes}" />    
+      <pathelement location="${tclasses}" />
+      <fileset dir="${lib}/">
+        <include name="**/*.jar" />
+      </fileset>
+      <fileset dir="${tlib}/">
+        <include name="**/*.jar" />
+      </fileset>
+    </classpath>    
+    <batchtest>
+     <fileset dir="${tsrc}">
+       <include name="**/*Test*" />
+     </fileset>
+    </batchtest>
+    <formatter type="brief" usefile="false"/>
+  </junit>
+  </target>    
+ 
+
+  <!-- BUILD DOC -->
+
+  <target name="doc">
+    <echo>Create JavaDoc from "${src}" to "${doc}"...</echo>
+    <property name="ps" value="${path.separator}"/>
+    <javadoc destdir="${doc}" sourcepath="${src}" packagenames="*" author="true" version="true" access="public">
+      <link href="http://download.oracle.com/javase/8/docs/api/"/>
+      <!--arg value="-taglet"/>
+      <arg value="latexlet.InlineBlockLaTeXlet"/>
+      <arg value="-taglet"/>
+      <arg value="latexlet.BlockLaTeXlet"/>
+      <arg value="-taglet"/>
+      <arg value="latexlet.InlineLaTeXlet"/>
+      <arg value="-tagletpath"/>
+      <arg value="${ext}/LaTeXlet/LaTeXlet-1.1.jar"/-->
+      <!--doclet name="ydoc.doclets.YStandard" path="${ydoc}/lib/ydoc.jar${ps}${ydoc}/resources${ps}${ydoc}/doc">
+        <param name="-author"/>
+        <param name="-generic"/>
+        <param name="-umlautogen"/>
+        <param name="-filterpath" value="${ydocHome}/lib/ydoc.jar"/>
+        <param name="-filter"     value="ydoc.filters.ExcludeFilter"/>
+        <param name="-tag" value="y.precondition"/>
+        <param name="-tag" value="y.postcondition"/>
+        <param name="-tag" value="y.complexity"/>
+        <param name="-tag" value="param"/>
+        <param name="-tag" value="return"/>
+        <param name="-tag" value="see"/>
+        <param name="-tag" value="y.uml"/>
+      </doclet-->
+      <!--packageset dir="${src}" defaultexcludes="yes">
+        <include name="${src}/kdtree/**"/-->
+        <!--exclude name="com/dummy/test/doc-files/**"/-->
+      <!--/packageset-->
+      <doctitle><![CDATA[<h1>${title} doc</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; ${time.year} ${author}, ${affiliation}. All Rights Reserved.</i>]]></bottom>
+    </javadoc>
+  </target>
+ 
+
+  <!-- BUILD JARS -->
+ 
+  <target name="jars" depends="jar,fatjar"/>
+    
+  <target name="jar">
+    <echo>Create jar file "${target}/${jarname}_class.${version}_${build}.jar"...</echo>
+    <mkdir dir="${target}"/>
+    <delete file="${target}/${jarname}_class.${version}_${build}.jar"/>
+    <jar jarfile="${target}/${jarname}_class.${version}_${build}.jar" basedir="${classes}">
+      <manifest>
+        <attribute name="Mame" value="${projname}"/>
+        <attribute name="Specification-Title" value="${title}"/>
+        <attribute name="Specification-Version" value="${version}"/>
+        <attribute name="Specification-Vendor" value="${author}, ${affiliation}"/>
+        <attribute name="Implementation-Title" value="${packagename}"/>
+        <attribute name="Implementation-Version" value="build${build}"/>
+        <attribute name="Implementation-Vendor" value="${author}, ${affiliation}"/>
+        <attribute name="Main-Class" value="${mainclass}"/>
+      </manifest>
+    </jar>
+  </target>
+    
+  <target name="fatjar">
+    <echo>Create jar file "${target}/${jarname}.${version}_${build}.jar"...</echo>
+    <mkdir dir="${target}"/>
+    <delete file="${target}/${jarname}.${version}_${build}.jar"/>
+    <jar jarfile="${target}/${jarname}.${version}_${build}.jar" basedir="${classes}" duplicate="fail">
+      <zipgroupfileset dir="${lib}" includes="**/*.jar" />
+      <manifest>
+        <attribute name="Mame" value="${projname}"/>
+        <attribute name="Specification-Title" value="${title}"/>
+        <attribute name="Specification-Version" value="${version}"/>
+        <attribute name="Specification-Vendor" value="${author}, ${affiliation}"/>
+        <attribute name="Implementation-Title" value="${packagename}"/>
+        <attribute name="Implementation-Version" value="build${build}"/>
+        <attribute name="Implementation-Vendor" value="${author}, ${affiliation}"/>
+        <attribute name="Main-Class" value="${mainclass}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- EXEC -->
+
+  <target name="exec">
+    <java fork="true" classname="${mainclass}">
+      <classpath refid="libs"/>
+      <jvmarg value="-Xmx${xmx}"/>
+      <!--arg value="EpicSrcToArchSrc"/-->
+    </java>
+  </target>
+
+</project>

@@ -1,0 +1,7 @@
+# eclipse specific
+.classpath
+.project
+
+# target repository
+/target/
+

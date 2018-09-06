@@ -20,7 +20,8 @@ Then, in the root of the project (the directory containing the build.xml file, t
 ```bash
 > ant -p
 ```
-to list possible actions. You should get
+to list possible actions.  
+You should get:
 ```
 CDS Healpix library build.xml
 Main targets:
@@ -33,9 +34,22 @@ Main targets:
 Default target: print_properties
 ```
 
-To build the jar, simple type
+To build the jar, simply type
 ```bash
 >  ant make.jar
 ```
 
+To build the javadoc:
+```bash
+>  ant make.doc
+```
+Then open it in you favourite browser, e.g.:
+```bash
+>  firefox target/docs/apidocs/index.html
+```
+
+The test contains performances tests, run all of them with:
+```bash
+>  ant make.test
+```
 

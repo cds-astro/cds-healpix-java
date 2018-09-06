@@ -1,5 +1,4 @@
-Copyright (c) 2018, CDS, Observatoire astronomique de Strasbourg,
-Univerité de Strasbourg, CNRS.
+Copyright (c) 2018, Univerité de Strasbourg / CNRS.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

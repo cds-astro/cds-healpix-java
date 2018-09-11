@@ -85,4 +85,29 @@ public final class HealpixNestedPolygonComputerTest {
     
   }
   
+  @Test
+  public void polygonTest2() {
+    final String[] verticesDec = new String[]{
+        "287.18290328,-02.26765169",
+        "287.18290328,-02.26765169",
+        "287.19157232,-02.27546342",
+        "287.18274564,-02.27946381",
+        "287.18252498,-02.27562093",
+        "287.17477012,-02.27549490"
+    };
+    HealpixNested hn = Healpix.getNested(18);
+    HealpixNestedPolygonComputer pc = hn.newPolygonComputer();
+    final double[][] vertices = new double[verticesDec.length][2];
+    for (int i = 0; i < verticesDec.length; i++) {
+      final String[] lonlatDec = verticesDec[i].split(",");
+      vertices[i][0] = Math.toRadians(Double.parseDouble(lonlatDec[0]));
+      vertices[i][1] = Math.toRadians(Double.parseDouble(lonlatDec[1]));
+    }
+    final HealpixNestedBMOC bmoc = pc.overlappingCenters(vertices);
+    final FlatHashIterator it = bmoc.flatHashIterator();
+    while (it.hasNext()) {
+      System.out.println(it.next());
+    }
+  }
+  
 }

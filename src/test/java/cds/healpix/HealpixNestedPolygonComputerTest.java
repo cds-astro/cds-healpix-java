@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import cds.healpix.Healpix;
 import cds.healpix.HealpixNested;
+import cds.healpix.HealpixNestedBMOC.CurrentValueAccessor;
 import cds.healpix.HealpixNestedPolygonComputer;
 import cds.healpix.common.math.Math;
 
@@ -88,7 +89,7 @@ public final class HealpixNestedPolygonComputerTest {
   @Test
   public void polygonTest2() {
     final String[] verticesDec = new String[]{
-        "287.18290328,-02.26765169",
+        //"287.18290328,-02.26765169",
         "287.18290328,-02.26765169",
         "287.19157232,-02.27546342",
         "287.18274564,-02.27946381",
@@ -103,7 +104,15 @@ public final class HealpixNestedPolygonComputerTest {
       vertices[i][0] = Math.toRadians(Double.parseDouble(lonlatDec[0]));
       vertices[i][1] = Math.toRadians(Double.parseDouble(lonlatDec[1]));
     }
+    
     final HealpixNestedBMOC bmoc = pc.overlappingCenters(vertices);
+    
+    System.out.println("MOC VIEW");
+    for (CurrentValueAccessor curr : bmoc) {
+      System.out.println(curr);
+    }
+    
+    System.out.println("FLAT VIEW");
     final FlatHashIterator it = bmoc.flatHashIterator();
     while (it.hasNext()) {
       System.out.println(it.next());

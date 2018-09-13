@@ -39,6 +39,8 @@ public class NestedConeTest {
     final double coneCenterLatRad = Math.toRadians(coneCenterLatDeg);
     final double radiusRad = Math.toRadians(radiusDeg);
     final HealpixNestedFixedRadiusConeComputer cc = Healpix.getNested(depth).newConeComputer(radiusRad);
+    System.out.println(cc.getClass().getName());
+    
     final HealpixNestedBMOC moc = cc.overlappingCells(coneCenterLonRad, coneCenterLatRad);
     int i = 0;
     if (expectedRes != null) {
@@ -76,7 +78,7 @@ public class NestedConeTest {
       assertEquals(expectedRes.length, i);
     } else {
       for (final HealpixNestedBMOC.CurrentValueAccessor cell : moc) {
-        // System.out.println(cell);
+        System.out.println(cell);
         // if (cell.getHash() == 373286564231L) System.out.println("COUCOU");
       }
     }
@@ -129,6 +131,28 @@ public class NestedConeTest {
     // 18/373286564231 dedans?
   }
 
+  @Test
+  public void testCone4() {
+    // draw circle(0.0, +0.0, 37.0 deg)
+    double lon = 0;
+    double lat = 0;
+    double rad = 37;
+    int order = 3;
+   
+    coneTest(lon, lat, rad, order, null);
+    
+    //final HealpixNested hn = Healpix.getNested(order);
+    //final HealpixNestedFixedRadiusConeComputer cp = hn.newConeComputer( Math.toRadians(radius) );
+    //final HealpixNestedBMOC bmoc = cp.overlappingCells(Math.toRadians(ra), Math.toRadians(dec));
+    // long [] out = toFlatArrayOfHash(bmoc);
+   
+    // System.out.print("overlappingCells ra="+ra+" dec="+dec+" radius="+radius+" order="+order+"\n=> ");
+    // for( long a : out ) System.out.print(" "+a);
+    // System.out.println();
+
+  }
+  
+  
   public static void main(String[] args) {
     new NestedConeTest().tesCone3();
   }

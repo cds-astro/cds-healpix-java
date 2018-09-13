@@ -171,6 +171,8 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
     //     few risks of branche miss-predictions, except in South/North polar caps (effect should be
     //     negligeable, except if input positions are random and more or less uniformly distributed
     //     in South and North polar caps).
+    // - See HealpixNestedHashComputer code (with matrix lookup) for a completly branch free version
+    //   (except for the Cylindrical/Collignon test).
     checkLatitude(latRad);
     final double absLon = fromBits(toBits(lonRad) & BUT_SIGN_BIT_MASK_L);  assert  0 <= absLon && absLon <= 10 * TWO_PI : absLon; // 10 is arbitrary
     long signLat = toBits(latRad);                                         assert latRad == fromBits(signLat);
@@ -188,9 +190,9 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
       y += 2;                                                              assert  1 <= y && y <= 3;
       // Rotation of 45 and scale by sqrt(2) * nside / 2
       i = (int) fromBits(this.halfNside4IEEEdouble + toBits(y + x));       assert 0 <= i && i <= 2 * nside;
-      if (i == twiceNside) { --i; }    // if, but very rare case of branch miss-prediction
+      if (i == twiceNside) { --i; }    // if, but very rare case of branch miss-prediction (position exaclty on the modulo(pi/2) limit)
       j = (int) fromBits(this.halfNside4IEEEdouble + toBits(y - x));       assert 0 <= j && j <= 2 * nside;
-      if (j == twiceNside) { --j; }    // if, but very rare case of branch miss-prediction
+      if (j == twiceNside) { --j; }    // if, but very rare case of branch miss-prediction (position exaclty on the EQR/NPC transition)
       // Base cell hash computation
       final int id0c = i >>> this.depth;                                   assert id0c == 0 || id0c == 1;
       final int jd0c = j >>> this.depth;                                   assert jd0c == 0 || jd0c == 1;

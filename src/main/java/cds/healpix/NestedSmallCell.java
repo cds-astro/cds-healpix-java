@@ -91,7 +91,7 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
 
   private final FlatHashList neigList;
 
-  private final long[] specialHashs = new long[4]; 
+  private final long[] specialHashs = new long[5]; // index 4 = center
   private int iSpecialHash;
 
   private int baseCellHash;             // Hash value of the base cell (i.e. the depth 0 cell)
@@ -267,6 +267,7 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
         centerHash, this.vpComputers[0], this.vertices,
         cosConeCenterLat, sinConeCenterLat, this.twoSineOfHalfConeRadius, this.squareOfsinOfHalfR,
         this.specialHashs);
+    this.specialHashs[4] = centerHash;
     // Now start the work on all cells recursively :)
     this.neigSelector.neighbours(centerHash, this.neigList);
     this.neigList.put(centerHash);
@@ -309,9 +310,10 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
   
   private final int nVerticesInLonRanges(final int deltaDepth, final long hash, final double[] deltasLon,
       final double coneCenterLonRad) {
-    final int dd = this.deltaDepthMax - deltaDepth; // assert this.startingDepth + detaDepth; 
+    final int dd = this.deltaDepthMax - deltaDepth; // assert this.startingDepth + detaDepth; // = depth of the given hash 
     final int nside = 1 << dd;
-    final int ringIndexMax = ringIndex(this.deltaDepthMax, hash << (dd << 1)) + 1 - this.smallestCornerRingIndex;
+    final long hashAtDepthMax = hash << (dd << 1);
+    final int ringIndexMax = ringIndex(this.deltaDepthMax, hashAtDepthMax) + 1 - this.smallestCornerRingIndex;
     final int ringIndexCenter = ringIndexMax - nside;
     final int ringIndexMin = ringIndexCenter - nside ;
     this.vpComputers[deltaDepth].vertices(hash, this.vertices);
@@ -359,7 +361,8 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
     return (this.specialHashs[0] >>> twiceDeltaDepth) == hash
         || (this.specialHashs[1] >>> twiceDeltaDepth) == hash
         || (this.specialHashs[2] >>> twiceDeltaDepth) == hash
-        || (this.specialHashs[3] >>> twiceDeltaDepth) == hash;
+        || (this.specialHashs[3] >>> twiceDeltaDepth) == hash
+        || (deltaDepth == this.deltaDepthMax && this.specialHashs[4] == hash);
   }
 
   private final double squareOfSinOfHalfOf(final double angleRad) {

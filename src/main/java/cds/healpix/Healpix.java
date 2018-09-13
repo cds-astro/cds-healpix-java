@@ -583,7 +583,7 @@ public final class Healpix implements Projection {
    */
   public static int getBestStartingDepth(final double distMaxInRad) {
     // Unrolled binary search loop
-    if (distMaxInRad > SMALLER_EDGE2OPEDGE_DIST[0]) {
+    if (distMaxInRad != distMaxInRad || distMaxInRad > SMALLER_EDGE2OPEDGE_DIST[0]) {
       return -1;
     } else if (distMaxInRad < SMALLER_EDGE2OPEDGE_DIST[29]) {
       return 29;

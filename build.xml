@@ -9,9 +9,6 @@
 
   <property file="build.properties"/>
 
-  <!--property name="author" value="F.-X. Pineau"/-->
-  <property name="ant.project.name.low" value="healpix"/>
-
   <property name="src"       location="src/main/java"/>
   <property name="tsrc"      location="src/test/java"/>
   <property name="lib"       location="libs/main"/>

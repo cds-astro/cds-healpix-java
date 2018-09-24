@@ -312,10 +312,11 @@ public final class ZOrderCurve2DImpls {
     public final long hash2i0(long h) {
       // Verify all bit of j are set to 0
       assert (0x3333333333333333L & h) == 0;
-      h = ((h >> 1) | h) & 0x3333333333333333L;
-      h = ((h >> 2) | h) & 0x0F0F0F0F0F0F0F0FL;
-      h = ((h >> 4) | h) & 0x00FF00FF00FF00FFL;
-      h = ((h >> 8) | h) & 0x0000FFFF0000FFFFL;
+      h = ((h >>  1) | h) & 0x3333333333333333L;
+      h = ((h >>  2) | h) & 0x0F0F0F0F0F0F0F0FL;
+      h = ((h >>  4) | h) & 0x00FF00FF00FF00FFL;
+      h = ((h >>  8) | h) & 0x0000FFFF0000FFFFL;
+      h = ((h >> 16) | h) & 0x00000000FFFFFFFFL;
       return h;
     }
 

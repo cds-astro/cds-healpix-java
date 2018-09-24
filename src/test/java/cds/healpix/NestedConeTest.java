@@ -117,7 +117,7 @@ public class NestedConeTest {
     double lat = latFromSexa("+89 15 50.8000");
     double rad = 0.8410004718589024;
     int order = 6;
-    coneTest(lon, lat, rad, order, null); //new long[]{4092, 4093, 4094, 4095, 8190, 8191, 12287, 16381, 16383});
+    coneTest(lon, lat, rad, order, new long[]{4092, 4093, 4094, 4095, 8190, 8191, 12287, 16381, 16383});
   }
   
   @Test
@@ -151,6 +151,24 @@ public class NestedConeTest {
     // System.out.println();
 
   }
+  
+  
+  @Test
+  public void testCone5() {
+    double lon = 012.46214169;
+    double lat = -72.49285924;
+    double rad = 2.6 * 1.42;
+    int order=4;
+    // draw circle(12.46214169,+72.49285924,3.6919999999999997)
+    // draw moc 4/2058 2059 2080 2081 2082 2083
+    coneTest(lon, -lat, rad, order, new long[]{233, 235, 236, 237, 238, 239, 248, 250});
+    // draw circle(12.46214169,-72.49285924,3.6919999999999997)
+    // draw moc 4/2058 2059 2080 2081 2082 2083
+    coneTest(lon, lat, rad, order, new long[]{2058, 2059, 2080, 2081, 2082, 2083, 2088, 2089});
+   
+  }
+
+
   
   
   public static void main(String[] args) {

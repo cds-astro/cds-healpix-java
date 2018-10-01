@@ -96,10 +96,10 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     checkHashRange(hash);
     result.clear();
     final HashBits hBits = this.hn.pullBitsApart(hash);
-    if (isInBasePixelBorderFromBits(hBits.iInD0hBits, hBits.jInD0hBits)) {
-      edgePixelNeighbours(hash, result);
+    if (isInBaseCellBorderFromBits(hBits.iInD0hBits, hBits.jInD0hBits)) {
+      edgeCellNeighbours(hash, result);
     } else {
-      innerPixelNeighbours(hBits.d0hBits, hBits.iInD0hBits, hBits.jInD0hBits, result);
+      innerCellNeighbours(hBits.d0hBits, hBits.iInD0hBits, hBits.jInD0hBits, result);
     }
   }
   
@@ -108,10 +108,10 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     checkHashRange(hash);
     result.clear();
     final HashBits hBits = this.hn.pullBitsApart(hash);
-    if (isInBasePixelBorderFromBits(hBits.iInD0hBits, hBits.jInD0hBits)) {
-      edgePixelNeighbours(hash, result);
+    if (isInBaseCellBorderFromBits(hBits.iInD0hBits, hBits.jInD0hBits)) {
+      edgeCellNeighbours(hash, result);
     } else {
-      innerPixelNeighbours(hBits.d0hBits, hBits.iInD0hBits, hBits.jInD0hBits, result);
+      innerCellNeighbours(hBits.d0hBits, hBits.iInD0hBits, hBits.jInD0hBits, result);
     }
   }
 
@@ -127,28 +127,28 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     checkHashRange(hash);
     final HashBits hBits = this.hn.pullBitsApart(hash);
     result.clear();
-    if (isInBasePixelBorderFromBits(hBits.iInD0hBits, hBits.jInD0hBits)) {
-      edgePixelNeighbours(hash, directions, result);
+    if (isInBaseCellBorderFromBits(hBits.iInD0hBits, hBits.jInD0hBits)) {
+      edgeCellNeighbours(hash, directions, result);
     } else {
-      innerPixelNeighbours(hBits.d0hBits, hBits.iInD0hBits, hBits.jInD0hBits, directions, result);
+      innerCellNeighbours(hBits.d0hBits, hBits.iInD0hBits, hBits.jInD0hBits, directions, result);
     }
   }
 
-  /*private boolean isInBasePixelBorderFromCoo(final int iInBasePixel, final int jInBasePixel) {
-    return 0 == iInBasePixel || iInBasePixel == this.hn.nsideRemainderMask
-        || 0 == jInBasePixel || jInBasePixel == this.hn.nsideRemainderMask;
+  /*private boolean isInBaseCellBorderFromCoo(final int iInBaseCell, final int jInBaseCell) {
+    return 0 == iInBaseCell || iInBaseCell == this.hn.nsideRemainderMask
+        || 0 == jInBaseCell || jInBaseCell == this.hn.nsideRemainderMask;
   }*/
 
-  private boolean isInBasePixelBorderFromBits(
-      final long iInBasePixelBits, final long jInBasePixelBits) {
-    return 0 == iInBasePixelBits || iInBasePixelBits == this.hn.xMask
-        || 0 == jInBasePixelBits || jInBasePixelBits == this.hn.yMask;
+  private boolean isInBaseCellBorderFromBits(
+      final long iInBaseCellBits, final long jInBaseCellBits) {
+    return 0 == iInBaseCellBits || iInBaseCellBits == this.hn.xMask
+        || 0 == jInBaseCellBits || jInBaseCellBits == this.hn.yMask;
   }
 
-  private void innerPixelNeighbours(long d0hBits, long iBits, long jBits,
+  private void innerCellNeighbours(long d0hBits, long iBits, long jBits,
       final FlatHashList result) {
     // Could have simply been:
-    //     innerPixelNeighbours(d0hBits, iBits, jBits, EnumSet.allOf(MainWind.class), result);
+    //     innerCellNeighbours(d0hBits, iBits, jBits, EnumSet.allOf(MainWind.class), result);
     // but we preferred to unroll the for loop.
     long ij = this.fc.hash2ij(iBits | jBits);
     final int i = this.fc.ij2i(ij);
@@ -175,10 +175,10 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     result.put(bits2hash(d0hBits, ip1Bits, jp1Bits));
   }
   
-  private void innerPixelNeighbours(long d0hBits, long iBits, long jBits,
+  private void innerCellNeighbours(long d0hBits, long iBits, long jBits,
       final NeighbourList result) {
     // Could have simply been:
-    //     innerPixelNeighbours(d0hBits, iBits, jBits, EnumSet.allOf(MainWind.class), result);
+    //     innerCellNeighbours(d0hBits, iBits, jBits, EnumSet.allOf(MainWind.class), result);
     // but we preferred to unroll the for loop.
     long ij = this.fc.hash2ij(iBits | jBits);
     final int i = this.fc.ij2i(ij);
@@ -205,9 +205,9 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     result.put(bits2hash(d0hBits, ip1Bits, jp1Bits), MainWind.N);
   }
 
-  private void innerPixelNeighbours(long d0hBits, long iBits, long jBits, EnumSet<MainWind> directions,
+  private void innerCellNeighbours(long d0hBits, long iBits, long jBits, EnumSet<MainWind> directions,
       final NeighbourList result) {
-    // Part of this code redundant with "innerPixelNeighbours"
+    // Part of this code redundant with "innerCellNeighbours"
     // to avoid creation of object containing 4 longs
     long ij = this.fc.hash2ij(iBits | jBits);
     final int i = this.fc.ij2i(ij);
@@ -232,18 +232,18 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     }
   }
   
-  private void edgePixelNeighbours(long hash, final FlatHashList result) {
+  private void edgeCellNeighbours(long hash, final FlatHashList result) {
     final HashParts hashParts = this.hn.decodeRegularHash(hash);
-    edgePixelNeighbours(hashParts, result);
+    edgeCellNeighbours(hashParts, result);
   }
   
-  private void edgePixelNeighbours(long hash, final NeighbourList result) {
+  private void edgeCellNeighbours(long hash, final NeighbourList result) {
     final HashParts hashParts = this.hn.decodeRegularHash(hash);
-    edgePixelNeighbours(hashParts, result);
+    edgeCellNeighbours(hashParts, result);
   }
   
-  private void edgePixelNeighbours(final HashParts hashParts, final FlatHashList result) {
-    // Could have simply been edgePixelNeighbours(hash, EnumSet.allOf(MainWind.class) result)
+  private void edgeCellNeighbours(final HashParts hashParts, final FlatHashList result) {
+    // Could have simply been edgeCellNeighbours(hash, EnumSet.allOf(MainWind.class) result)
     // but we prefered to unroll the for loop.
     addNeighbourIfExists(neighbour(hashParts, MainWind.S ), result);
     addNeighbour        (neighbour(hashParts, MainWind.SE), result);
@@ -255,8 +255,8 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     addNeighbourIfExists(neighbour(hashParts, MainWind.N ), result);
   }
   
-  private void edgePixelNeighbours(final HashParts hashParts, final NeighbourList result) {
-    // Could have simply been edgePixelNeighbours(hash, EnumSet.allOf(MainWind.class) result)
+  private void edgeCellNeighbours(final HashParts hashParts, final NeighbourList result) {
+    // Could have simply been edgeCellNeighbours(hash, EnumSet.allOf(MainWind.class) result)
     // but we prefered to unroll the for loop.
     addNeighbourIfExists(neighbour(hashParts, MainWind.S ), MainWind.S , result);
     addNeighbour        (neighbour(hashParts, MainWind.SE), MainWind.SE, result);
@@ -268,7 +268,7 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     addNeighbourIfExists(neighbour(hashParts, MainWind.N ), MainWind.N , result);
   }
   
-  private void edgePixelNeighbours(long hash, final EnumSet<MainWind> directions,
+  private void edgeCellNeighbours(long hash, final EnumSet<MainWind> directions,
       final NeighbourList neighbours) {
     final HashParts hashParts = this.hn.decodeRegularHash(hash);
     for (final MainWind direction : directions) {
@@ -623,11 +623,11 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     result.clear();
     final NeighbourList neihbours = new NeighbourList(hn.depth);
     final HashBits hBits = this.hn.pullBitsApart(hash);
-    if (isInBasePixelBorderFromBits(hBits.iInD0hBits, hBits.jInD0hBits)) {
+    if (isInBaseCellBorderFromBits(hBits.iInD0hBits, hBits.jInD0hBits)) {
       // Not easy: opposite directions depends on base cell neighbours
       final HashParts hashParts = this.hn.decodeRegularHash(hash);
       final BaseHash baseHash = BaseHashes.get(hashParts.baseCellHash());
-      edgePixelNeighbours(hashParts, neihbours);
+      edgeCellNeighbours(hashParts, neihbours);
       if (sorted) {
         neihbours.sortByHashAsc();
       }
@@ -639,7 +639,7 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
       }
     } else {
       // Easy: always use opposite direction
-      innerPixelNeighbours(hBits.d0hBits, hBits.iInD0hBits, hBits.jInD0hBits, neihbours);
+      innerCellNeighbours(hBits.d0hBits, hBits.iInD0hBits, hBits.jInD0hBits, neihbours);
       if (sorted) {
         neihbours.sortByHashAsc();
       }

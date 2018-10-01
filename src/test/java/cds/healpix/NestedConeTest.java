@@ -158,7 +158,7 @@ public class NestedConeTest {
     double lon = 012.46214169;
     double lat = -72.49285924;
     double rad = 2.6 * 1.42;
-    int order=4;
+    int order = 4;
     // draw circle(12.46214169,+72.49285924,3.6919999999999997)
     // draw moc 4/2058 2059 2080 2081 2082 2083
     coneTest(lon, -lat, rad, order, new long[]{233, 235, 236, 237, 238, 239, 248, 250});
@@ -168,7 +168,38 @@ public class NestedConeTest {
    
   }
 
+  @Test
+  public void testCone6() {
+    // double lon = lonFromSexa("00 55 58.86840");
+    // double lat = latFromSexa("-73 22 13.6829");
+    double lon = lonFromSexa("00 53 35.72");
+    double lat = latFromSexa("-72 57 44.8");
+    double rad = 4.6;
+    int order = 4;
+    coneTest(lon, lat, rad, order, new long[]{2058, 2059, 2080, 2081, 2082, 2083, 2088, 2089, 2832, 2833, 2836});
+    // draw circle( 00:55:58.86840, -73:22:13.6829, 4.6)
+    // draw moc 4/2058 2059 2080 2081 2082 2083 2088 2089 2832 2833 2836*/
+   
+  }
 
+  
+  @Test
+  public void testCone7() {
+    double lon = 13.158329;
+    double lat = -72.80028;
+    double rad = 5.64323;
+    int order = 3;
+    
+    // draw circle(13.158329,+72.80028,5.64323)
+    // draw circle(103.158329,+72.80028,5.64323)
+    coneTest(lon, -lat, rad, order, new long[]{57, 58, 59, 60, 62, 245, 247});
+    
+    // draw circle(13.158329,-72.80028,5.64323)
+    // draw moc 3/ 514 515 520 521 522
+    coneTest(lon, lat, rad, order, new long[]{514, 515, 520, 521, 522, 708, 709});
+
+  }
+  
   
   
   public static void main(String[] args) {

@@ -231,15 +231,20 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
           latRad - coneCenterLatRad, zDxDyEq1);
       if (isFinite(deltaLon) && coneCenterLonModHalfPi - deltaLon >= 0) {
         result[resultSize++] = hashComputer.hash(coneCenterLonRad - deltaLon, latRad);
+// System.out.println(" 1C " + Arrays.toString(result));
       } else { // Peculiar point in the NW neighbour base cell
+        /*zDxDyEq1 = NewtonMethod.newtonSolveNorthPolarCapZone(
+            zStart, false, HALF_PI + coneCenterLonModHalfPi,
+            sinConeCenterLat, twoSineOfHalfConeRadius, false, relativePrecision, nIterMax);*/
         zDxDyEq1 = NewtonMethod.newtonSolveNorthPolarCapZone(
             zStart, false, HALF_PI + coneCenterLonModHalfPi,
-            sinConeCenterLat, twoSineOfHalfConeRadius, false, relativePrecision, nIterMax);
+            sinConeCenterLat, twoSineOfHalfConeRadius, true, relativePrecision, nIterMax);
         latRad = asin(zDxDyEq1);
         deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
             latRad - coneCenterLatRad, zDxDyEq1);
         if (isFinite(deltaLon)) { // Far from the North pole
           result[resultSize++] = hashComputer.hash(coneCenterLonRad - deltaLon, latRad);
+// System.out.println(" 2C " + Arrays.toString(result) + "; latDeg: " + Math.toDegrees(latRad) + "; deltaLonDeg: " + Math.toDegrees(deltaLon));
         } else { // Near from the North pole => compute south west 
           zDxDyEq1 = NewtonMethod.newtonSolveNorthPolarCapZone(
               sinConeCenterLat, false, HALF_PI + coneCenterLonModHalfPi,
@@ -248,6 +253,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
           deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
               coneCenterLatRad - latRad, zDxDyEq1);
           result[resultSize++] = isFinite(deltaLon) ? hashComputer.hash(coneCenterLonRad - deltaLon, latRad) : -1L;
+// System.out.println(" 3C " + Arrays.toString(result));
         }
       }
     }
@@ -343,6 +349,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
       double deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
           coneCenterLatRad - latRad, zDxDyEq1);
       result[resultSize++] = isFinite(deltaLon) ? hashComputer.hash(coneCenterLonRad + deltaLon, latRad) : -1;
+// System.out.println(" 1B - " + Arrays.toString(result));
       // look at the south west value in the west cell
       latStart = 0.5 * (d2 * cosL + d1 * sinL);
       zStart =  Math.sin(latStart);
@@ -353,6 +360,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
       deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
           coneCenterLatRad - latRad, zDxDyEq1);
       result[resultSize++] = isFinite(deltaLon) ? hashComputer.hash(coneCenterLonRad - deltaLon, latRad) : -1;
+// System.out.println(" 2B - " + Arrays.toString(result));
     } else {
       // South east
       final double zStart = Math.sin(-coneCenterLatRad + coneRadiusRad * 0.9);
@@ -364,6 +372,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
           coneCenterLatRad - latRad, zDxDyEq1);
       if (isFinite(deltaLon) && coneCenterLonModHalfPi + deltaLon <= PI_OVER_FOUR) {
         result[resultSize++] = hashComputer.hash(coneCenterLonRad + deltaLon, latRad);
+// System.out.println(" 3B - " + Arrays.toString(result));
       } else { // Peculiar point in the SE neighbour base cell
         zDxDyEq1 = -NewtonMethod.newtonSolveNorthPolarCapZone(
             zStart, true, coneCenterLonModHalfPi - HALF_PI,
@@ -373,6 +382,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
             coneCenterLatRad - latRad, zDxDyEq1);
         if (isFinite(deltaLon)) { // Far from the South pole
           result[resultSize++] = hashComputer.hash(coneCenterLonRad + deltaLon, latRad);
+// System.out.println(" 4B - " + Arrays.toString(result));
         } else { // Near from the South pole => compute north east
           zDxDyEq1 = -NewtonMethod.newtonSolveNorthPolarCapZone(
               -sinConeCenterLat, true, coneCenterLonModHalfPi - HALF_PI,
@@ -381,6 +391,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
           deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
               coneCenterLatRad - latRad, zDxDyEq1);
           result[resultSize++] = isFinite(deltaLon) ? hashComputer.hash(coneCenterLonRad + deltaLon, latRad) : -1L;
+// System.out.println(" 5B - " + Arrays.toString(result));
         }
       }
       // South west
@@ -392,15 +403,20 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
           latRad - coneCenterLatRad, zDxDyEq1);
       if (isFinite(deltaLon) && coneCenterLonModHalfPi - deltaLon >= 0) {
         result[resultSize++] = hashComputer.hash(coneCenterLonRad - deltaLon, latRad);
+// System.out.println(" 6B - " + Arrays.toString(result));
       } else { // Peculiar point in the WE neighbour base cell
+        /*zDxDyEq1 = -NewtonMethod.newtonSolveNorthPolarCapZone(
+            zStart, false, HALF_PI + coneCenterLonModHalfPi,
+            -sinConeCenterLat, twoSineOfHalfConeRadius, false, relativePrecision, nIterMax);*/
         zDxDyEq1 = -NewtonMethod.newtonSolveNorthPolarCapZone(
             zStart, false, HALF_PI + coneCenterLonModHalfPi,
-            -sinConeCenterLat, twoSineOfHalfConeRadius, false, relativePrecision, nIterMax);
+            -sinConeCenterLat, twoSineOfHalfConeRadius, true, relativePrecision, nIterMax);
         latRad = asin(zDxDyEq1);
         deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
             latRad - coneCenterLatRad, zDxDyEq1);
         if (isFinite(deltaLon)) { // Far from the North pole
           result[resultSize++] = hashComputer.hash(coneCenterLonRad - deltaLon, latRad);
+// System.out.println(" 7B - " + Arrays.toString(result));
         } else { // Near from the North pole => compute south west 
           zDxDyEq1 = -NewtonMethod.newtonSolveNorthPolarCapZone(
               -sinConeCenterLat, false, HALF_PI + coneCenterLonModHalfPi,
@@ -409,6 +425,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
           deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
               coneCenterLatRad - latRad, zDxDyEq1);
           result[resultSize++] = isFinite(deltaLon) ? hashComputer.hash(coneCenterLonRad - deltaLon, latRad) : -1L;
+// System.out.println(" 8B - " + Arrays.toString(result));
         }
       }
     }
@@ -435,7 +452,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
         coneCenterLatRad - latRad, zDxDyEq1);
     if (isFinite(deltaLon) && coneCenterLonModHalfPi + deltaLon <= PI_OVER_FOUR) {
       result[resultSize++] = hashComputer.hash(coneCenterLonRad + deltaLon, latRad);
-
+// System.out.println(" 1A - " + Arrays.toString(result));
     } else { // Look at the neighbour base cell, comute north east
       zDxDyEq1 = -NewtonMethod.newtonSolveNorthPolarCapZone(
           -sinConeCenterLat, true, coneCenterLonModHalfPi - HALF_PI,
@@ -444,7 +461,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
       deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
           coneCenterLatRad - latRad, zDxDyEq1);
       result[resultSize++] = isFinite(deltaLon) ? hashComputer.hash(coneCenterLonRad + deltaLon, latRad) : - 1L;
-
+// System.out.println(" 2A - " + Arrays.toString(result));
     }
     // North-west
     zDxDyEq1 = -NewtonMethod.newtonSolveNorthPolarCapZone(
@@ -455,7 +472,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
         coneCenterLatRad - latRad, zDxDyEq1);
     if (isFinite(deltaLon) && coneCenterLonModHalfPi - deltaLon >= 0) {
       result[resultSize++] = hashComputer.hash(coneCenterLonRad - deltaLon, latRad);
-
+// System.out.println(" 3A - " + Arrays.toString(result));
     } else { // Look at the neighbour base cell, comute south west
       zDxDyEq1 = -NewtonMethod.newtonSolveNorthPolarCapZone(
           -sinConeCenterLat, false, HALF_PI + coneCenterLonModHalfPi,
@@ -464,6 +481,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
       deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
           coneCenterLatRad - latRad, zDxDyEq1);
       result[resultSize++] = isFinite(deltaLon) ? hashComputer.hash(coneCenterLonRad - deltaLon, latRad): -1L;
+// System.out.println(" 4A - " + Arrays.toString(result));
     }
     return resultSize;
   }

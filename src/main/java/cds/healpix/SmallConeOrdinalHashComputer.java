@@ -334,8 +334,11 @@ final class SmallConeOrdinalHashComputer implements ConeOrdinalHashComputer {
             2 * lonLatN[LON_INDEX] - lonLatE[LON_INDEX], lonLatE[LAT_INDEX], lonLatN[LON_INDEX], lonLatN[LAT_INDEX],
             true, angDistComputer);
         // - Then exact calculation (hopefully only 1 iteration if the flat sky approx is good)
-        latRad = NewtonMethod.newtonSolveNorthPolarCapZone(latRad, false, HALF_PI + coneCenterLonModHalfPi,
+        /*latRad = NewtonMethod.newtonSolveNorthPolarCapZone(latRad, false, HALF_PI + coneCenterLonModHalfPi,
             coneCenterLatRad, cosConeCenterLat, squareOfsinOfHalfR, false, relativePrecision, nIterMax,
+            angDistComputer);*/
+        latRad = NewtonMethod.newtonSolveNorthPolarCapZone(latRad, false, HALF_PI + coneCenterLonModHalfPi,
+            coneCenterLatRad, cosConeCenterLat, squareOfsinOfHalfR, true, relativePrecision, nIterMax,
             angDistComputer);
         zDxDyEq1 = sin(latRad);
         latRad = asin(zDxDyEq1);
@@ -541,8 +544,11 @@ final class SmallConeOrdinalHashComputer implements ConeOrdinalHashComputer {
             2 * lonLatS[LON_INDEX] - lonLatE[LON_INDEX], lonLatE[LAT_INDEX], lonLatS[LON_INDEX], lonLatS[LAT_INDEX],
             false, angDistComputer);
         // - Then exact calculation (hopefully only 1 iteration if the flat sky approx is good)
-        latRad = -NewtonMethod.newtonSolveNorthPolarCapZone(-latRad, false, HALF_PI + coneCenterLonModHalfPi,
+        /*latRad = -NewtonMethod.newtonSolveNorthPolarCapZone(-latRad, false, HALF_PI + coneCenterLonModHalfPi,
             -coneCenterLatRad, cosConeCenterLat, squareOfsinOfHalfR, false, relativePrecision, nIterMax,
+            angDistComputer);*/
+        latRad = -NewtonMethod.newtonSolveNorthPolarCapZone(-latRad, false, HALF_PI + coneCenterLonModHalfPi,
+            -coneCenterLatRad, cosConeCenterLat, squareOfsinOfHalfR, true, relativePrecision, nIterMax,
             angDistComputer);
         zDxDyEq1 = sin(latRad);
         deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,

@@ -269,7 +269,7 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
         cosConeCenterLat, sinConeCenterLat, this.twoSineOfHalfConeRadius, this.squareOfsinOfHalfR,
         this.specialHashs);
     this.specialHashs[4] = centerHash;
-System.out.println("Special hashes: " + Arrays.toString(this.specialHashs));
+// System.out.println("Special hashes: " + Arrays.toString(this.specialHashs));
     // Now start the work on all cells recursively :)
     this.neigSelector.neighbours(centerHash, this.neigList);
     this.neigList.put(centerHash);

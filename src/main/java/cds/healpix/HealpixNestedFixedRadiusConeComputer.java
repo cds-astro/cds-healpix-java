@@ -26,12 +26,25 @@ package cds.healpix;
  */
 public interface HealpixNestedFixedRadiusConeComputer {
 
+  enum ReturnedCells {
+    /** Cells fully inside the cone:
+     *  CONE_AREA INTERSECT CELL_AREA = CELL_AREA. */
+    FULLY_IN,
+    /** Cells overlapping the cone (fully included in the cone or simply overlapping it):
+     * CONE_AREA INTERSECT CELL_AREA > 0. */
+    OVERLAPPING,
+    /** Cells having their center inside the cone. 
+     * (CONE_AREA INTERSECT CELL_AREA > 0) AND (CELL_CENTER IN CONE). */
+    CENTER_IN,
+  }
+  
   /**
    * Returns the radius of the cones, in radians.
    * @return he radius of the cones, in radians.
    */
   double getRadius();
   
+    
   /**
    * MOC of the cells having a part of their surface area in common with the given cone
    * @param coneCenterLonRad longitude of the center of the cone, in radians
@@ -48,6 +61,15 @@ public interface HealpixNestedFixedRadiusConeComputer {
    */
   HealpixNestedBMOC overlappingCenters(double coneCenterLonRad, double coneCenterLatRad);
 
+  /**
+   * Conveniency method to have a simgle entry point for the various possible cells-in-cone outputs.
+   * Remark: in the case of FULL_IN, we could have returned a simple MOC.
+   * @param coneCenterLonRad longitude of the center of the cone, in radians
+   * @param coneCenterLatRad latitude of the center of the cone, in radians
+   * @param returnedCells the type of cells we want in output
+   * @return the resulting MOC.
+   */
+  HealpixNestedBMOC overlappingCells(double coneCenterLonRad, double coneCenterLatRad, ReturnedCells returnedCells);
   
   /**
    * To obtain new instances in case we want to use multi-threading,

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 
 import cds.healpix.CompassPoint.Cardinal;
+import cds.healpix.HealpixNestedFixedRadiusConeComputer.ReturnedCells;
 import cds.healpix.common.math.HackersDelight;
 
 import static cds.healpix.CompassPoint.Cardinal.E;
@@ -114,11 +115,18 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
     boolean isOk(final int deltaDepth, final long hash, final double[] deltasLon,
         final double coneCenterLonRad);
   }
-  private static final AdditionalCheck ALWAYS_OK = new AdditionalCheck() {
+  private static final AdditionalCheck ALWAYS_TRUE = new AdditionalCheck() {
     @Override
     public boolean isOk(final int deltaDepth, final long hash, final double[] deltasLon,
         final double coneCenterLonRad) {
       return true;
+    }
+  };
+  private static final AdditionalCheck ALWAYS_FALSE = new AdditionalCheck() {
+    @Override
+    public boolean isOk(final int deltaDepth, final long hash, final double[] deltasLon,
+        final double coneCenterLonRad) {
+      return false;
     }
   };
   private final AdditionalCheck centerInCone = new AdditionalCheck() {
@@ -203,12 +211,26 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
   
   @Override
   public final HealpixNestedBMOC overlappingCells(double coneCenterLonRad, double coneCenterLatRad) {
-    return overlapping(coneCenterLonRad, coneCenterLatRad, ALWAYS_OK);
+    return overlapping(coneCenterLonRad, coneCenterLatRad, ALWAYS_TRUE);
   }
 
   @Override
   public HealpixNestedBMOC overlappingCenters(double coneCenterLonRad, double coneCenterLatRad) {
     return overlapping(coneCenterLonRad, coneCenterLatRad, this.centerInCone);
+  }
+  
+  @Override
+  public HealpixNestedBMOC overlappingCells(double coneCenterLonRad, double coneCenterLatRad, ReturnedCells returnedCells) {
+    switch(returnedCells) {
+    case FULLY_IN:
+      return overlapping(coneCenterLonRad, coneCenterLatRad, ALWAYS_FALSE);
+    case OVERLAPPING:
+      return overlappingCells(coneCenterLonRad, coneCenterLatRad);
+    case CENTER_IN:
+      return overlappingCenters(coneCenterLonRad, coneCenterLatRad);
+    default:
+      throw new Error("Type " + returnedCells + " not implemented!");
+    }
   }
   
   public final HealpixNestedBMOC overlapping(double coneCenterLonRad, double coneCenterLatRad, final AdditionalCheck check) {

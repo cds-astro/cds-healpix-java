@@ -22,7 +22,7 @@ import java.util.EnumSet;
 
 import cds.healpix.CompassPoint.Cardinal;
 import cds.healpix.CompassPoint.MainWind;
-
+import cds.healpix.HealpixNestedFixedRadiusConeComputer.ReturnedCells;
 import cds.healpix.common.math.HackersDelight;
 
 import static cds.healpix.CompassPoint.Cardinal.E;
@@ -47,6 +47,9 @@ final class NestedLargeCellSmallRadius implements HealpixNestedFixedRadiusConeCo
 
   // private static final Logger LOG = LoggerFactory.getLogger("fr.unistra.cds.healpix.cone"); // NestedLargeCell.class.getName()
 
+  private static final EnumSet<Cardinal> ALL_CARDINALS = EnumSet.allOf(Cardinal.class);
+
+  
   private final int nIterMax;
   private final double epsLat;
 
@@ -103,6 +106,58 @@ final class NestedLargeCellSmallRadius implements HealpixNestedFixedRadiusConeCo
     return this.rRad;
   }
 
+  @Override
+  public HealpixNestedBMOC overlappingCells(double coneCenterLonRad, double coneCenterLatRad,
+      ReturnedCells returnedCells) {
+    switch(returnedCells) {
+    case FULLY_IN:
+      return overlappingFullyIn(coneCenterLonRad, coneCenterLatRad);
+    case OVERLAPPING:
+      return overlappingCells(coneCenterLonRad, coneCenterLatRad);
+    case CENTER_IN:
+      return overlappingCenters(coneCenterLonRad, coneCenterLatRad);
+    default:
+      throw new Error("Type " + returnedCells + " not implemented!");
+    }
+  }
+  
+  private HealpixNestedBMOC overlappingFullyIn(double coneCenterLonRad, double coneCenterLatRad) {
+    final double cosConeCenterLat = cos(coneCenterLatRad);
+    // Compute hash of the cell containing the cone center
+    final long centerHash = this.hComputer.hash(coneCenterLonRad, coneCenterLatRad); // lat is checked here!
+    this.neigSelector.neighbours(centerHash, neigList);
+    neigList.put(centerHash, MainWind.C);
+    // Build result based on vertices
+    this.iNeig = 0;
+    final double[] center = new double[2];
+    for (int i = 0; i < this.neigList.size(); i++) {
+      final long h = this.neigList.get(i);
+      if (allVerticesOk(h, coneCenterLonRad, coneCenterLatRad, cosConeCenterLat)) {
+        insertSortRmDuplicates(h);
+      }
+    }
+    // Build moc from set set of Hash
+    final long[] moc = new long[this.iNeig];
+    for (int i = 0; i < this.iNeig; i++) {
+      moc[i] = HealpixNestedBMOC.buildValue(this.hn.depth(), neig[i], false, this.hn.depth());
+    }
+    return HealpixNestedBMOC.createUnsafe(this.hn.depth(), moc);
+  }
+  
+  private boolean allVerticesOk(final long hash, 
+      final double coneCenterLon, final double coneCenterLat, final double cosCenterLat) {
+    for (final double[] vertex : this.vpComputer.vertices(hash, ALL_CARDINALS).values()) {
+      final double vLon = vertex[LON_INDEX];
+      final double vLat = vertex[LAT_INDEX];
+      final double dConeCell = this.angDistComputer.haversineDistInRad(vLon - coneCenterLon,
+          vLat - coneCenterLat, cosCenterLat, cos(vLat));
+      if (dConeCell > this.rRad) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
   @Override
   public HealpixNestedBMOC overlappingCenters(double coneCenterLonRad, double coneCenterLatRad) {
     final double cosConeCenterLat = cos(coneCenterLatRad);

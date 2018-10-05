@@ -49,6 +49,11 @@ final class NestedAllSky implements HealpixNestedFixedRadiusConeComputer {
   public HealpixNestedBMOC overlappingCenters(double coneCenterLonRad, double coneCenterLatRad) {
     return this.moc;
   }
+  
+  @Override
+  public HealpixNestedBMOC overlappingCells(double coneCenterLonRad, double coneCenterLatRad, ReturnedCells returnedCells) {
+    return this.moc;
+  }
 
   @Override
   public HealpixNestedFixedRadiusConeComputer newComputer() {

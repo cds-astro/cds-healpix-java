@@ -26,8 +26,24 @@ import static cds.healpix.common.math.Math.PI;
 import static cds.healpix.common.math.Math.TWO_PI;
 import static cds.healpix.common.math.Math.cos;
 
+import java.util.EnumSet;
+
+import cds.healpix.CompassPoint.Cardinal;
+
+/**
+ * WARNING: the flags in the BMOC returned by the method 'overlappingCells(double, double)'
+ * may be aprroximation: a cell may be fully inside the cone, while its flag is set to 'PARTIAL'.
+ *  
+ * If you really want the list of cell fully inside, use the (slower) method
+ * 'overlappingCells(double, double, FULLY_IN)'  
+ * 
+ * @author F.-X. Pineau
+ *
+ */
 final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusConeComputer {
 
+  private static final EnumSet<Cardinal> ALL_CARDINALS = EnumSet.allOf(Cardinal.class);
+  
   private final AngularDistanceComputer angDistComputer;
   
   private final int startingDepth;
@@ -52,17 +68,50 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
   private static enum Mode {
     OVERLAPPING_CELLS() {
       @Override
-      public boolean isOk(final double dConeCell, final double rRad) {
+      public boolean isOk(final double dConeCell, final double rRad,
+          final VerticesAndPathComputer vpc, final long hash, 
+          final double coneCenterLon, final double coneCenterLat, final double cosCenterLat,
+          final AngularDistanceComputer angDistComputer) {
         return true;
       }
     },
     OVERLAPPING_CENTERS() {
       @Override
-      public boolean isOk(final double dConeCell, final double rRad) {
+      public boolean isOk(final double dConeCell, final double rRad,
+          final VerticesAndPathComputer vpc, final long hash, 
+          final double coneCenterLon, final double coneCenterLat, final double cosCenterLat,
+          final AngularDistanceComputer angDistComputer) {
         return dConeCell <= rRad;
       }
+    },
+    FULLY_IN() {
+      @Override
+      public boolean isOk(final double dConeCell, final double rRad,
+          final VerticesAndPathComputer vpc, final long hash, 
+          final double coneCenterLon, final double coneCenterLat, final double cosCenterLat,
+          final AngularDistanceComputer angDistComputer) {
+        return (dConeCell <= rRad) 
+            && allVerticesOk(rRad, vpc, hash, coneCenterLon, coneCenterLat, cosCenterLat, angDistComputer);
+      }
+      private boolean allVerticesOk(final double rRad,
+          final VerticesAndPathComputer vpc, final long hash, 
+          final double coneCenterLon, final double coneCenterLat, final double cosCenterLat,
+          final AngularDistanceComputer angDistComputer) {
+        for (final double[] vertex : vpc.vertices(hash, ALL_CARDINALS).values()) {
+          final double vLon = vertex[LON_INDEX];
+          final double vLat = vertex[LAT_INDEX];
+          final double dConeCell = angDistComputer.haversineDistInRad(vLon - coneCenterLon,
+              vLat - coneCenterLat, cosCenterLat, cos(vLat));
+          if (dConeCell > rRad) {
+            return false;
+          }
+        }
+        return true;
+      }
     };
-    public abstract boolean isOk(double dConeCell, final double rRad);
+    public abstract boolean isOk(double dConeCell, double rRad, VerticesAndPathComputer vpc,
+        long hash, double coneCenterLon, double coneCenterLat, double cosCenterLat,
+        AngularDistanceComputer angDistComputer);
   }
   
   
@@ -122,6 +171,21 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     return overlapping(coneCenterLonRad, coneCenterLatRad, Mode.OVERLAPPING_CENTERS);
   }
   
+  @Override
+  public HealpixNestedBMOC overlappingCells(double coneCenterLonRad, double coneCenterLatRad,
+      ReturnedCells returnedCells) {
+    switch(returnedCells) {
+    case FULLY_IN:
+      return overlapping(coneCenterLonRad, coneCenterLatRad, Mode.FULLY_IN);
+    case OVERLAPPING:
+      return overlappingCells(coneCenterLonRad, coneCenterLatRad);
+    case CENTER_IN:
+      return overlappingCenters(coneCenterLonRad, coneCenterLatRad);
+    default:
+      throw new Error("Type " + returnedCells + " not implemented!");
+    }
+  }
+  
   public HealpixNestedBMOC overlapping(double coneCenterLonRad, double coneCenterLatRad, final Mode mode) {
     // Pre-compute constants
     final double cosConeCenterLat = cos(coneCenterLatRad);
@@ -154,7 +218,8 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
       final double coneCenterLon, final double coneCenterLat, final double cosCenterLat, final Mode mode) {
     final int depth = this.startingDepth + deltaDepth;
     assert this.hcc[deltaDepth].depth() == depth;
-    final double[] center = this.hcc[deltaDepth].center(hash);
+    final VerticesAndPathComputer vpc = this.hcc[deltaDepth];
+    final double[] center = vpc.center(hash);
     final double cellCenterLon = center[LON_INDEX];
     final double cellCenterLat = center[LAT_INDEX];
     final double dConeCell = this.angDistComputer.haversineDistInRad(cellCenterLon - coneCenterLon,
@@ -163,9 +228,11 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
         cellCenterLon, cellCenterLat, depth);
     if (isCellFullyInCone(rRad, rCircumCircle, dConeCell)) {
       moc[mocLength++] = buildValue(this.startingDepth + deltaDepth, hash, true, this.deeperDepth);
-    } else if (isCellOverlapingCone(rRad, rCircumCircle, dConeCell) && mode.isOk(dConeCell, this.rRad)) {
+    } else if (isCellOverlapingCone(rRad, rCircumCircle, dConeCell)) {
       if (deltaDepth == this.deltaDepthMax) {
-        moc[mocLength++] = buildValue(this.deeperDepth, hash, false, this.deeperDepth);
+        if (mode.isOk(dConeCell, this.rRad, vpc, hash, coneCenterLon, coneCenterLat, cosCenterLat, this.angDistComputer)) { 
+          moc[mocLength++] = buildValue(this.deeperDepth, hash, false, this.deeperDepth);
+        }
       } else {
         hash <<= 2;
         deltaDepth++;
@@ -243,4 +310,5 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     final long jBasePixel = hn.dividedBy4Quotient(baseCellHash);
     return (int) (hn.nsideTime(jBasePixel + 2) - (h + 2));
   }
+
 }

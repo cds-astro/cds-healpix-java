@@ -200,10 +200,29 @@ public class NestedConeTest {
 
   }
   
-  
+  @Test
+  public void testCone8() {
+    double lon = 97.91750000;
+    double lat = 5.76952778;
+    double rad = 4.45 / 60;
+    int order = 9;
+   
+    // draw circle(97.91750000,+5.76952778, 0.07416666666666666666)
+    coneTest(lon, lat, rad, order, new long[]{1424261, 1424262, 1424263, 1424269, 1424274, 1424280});
+    
+    /*final HealpixNested hn = Healpix.getNested(order);
+    final HealpixNestedFixedRadiusConeComputer cp = hn.newConeComputer( Math.toRadians(radius) );
+    final HealpixNestedBMOC bmoc = cp.overlappingCells(Math.toRadians(ra), Math.toRadians(dec));
+    long [] out = toFlatArrayOfHash(bmoc);
+   
+    System.out.print("overlappingCells checker:\ndraw circle("+ra+","+dec+","+radius+")\ndraw moc "+order+"/");
+    for( long a : out ) System.out.print(" "+a);
+    System.out.println();*/
+  }
   
   public static void main(String[] args) {
-    new NestedConeTest().tesCone3();
+    // new NestedConeTest().tesCone3();
+    new NestedConeTest().testCone8();
   }
   
 }

@@ -364,13 +364,13 @@ final class NestedLargeCell implements HealpixNestedFixedRadiusConeComputer {
     if (testSE || testSW || testS) { // SE / SW edges
       if (isLatInNorthPolarCap(eastWestVerticesLat)) {   // SE/SW edges in north polar cap
         edgesSEWinNPC(coneCenterLonRad, coneCenterLatRad, cosConeCenterLat, sinConeCenterLat,
-            testNE, testNW);
+            testSE, testSW);
       } else if (isLatInSouthPolarCap(southVertexLat)) { // SE/SW edges in south polar cap
         edgesSEWinSPC(coneCenterLonRad, coneCenterLatRad, cosConeCenterLat, sinConeCenterLat,
-            testNE, testNW, testS);
+            testSE, testSW, testS);
       } else if (testSE || testSW) { // SE/SW edges in the EQR
         edgesSEWinEQR(coneCenterLonRad, coneCenterLatRad, cosConeCenterLat, sinConeCenterLat,
-            testNE, testNW);
+            testSE, testSW);
       }
     }
     // Build moc from set set of Hash
@@ -437,9 +437,13 @@ final class NestedLargeCell implements HealpixNestedFixedRadiusConeComputer {
     final double zDxDyEq1 = NewtonMethod.newtonSolveEquatorialZone(
         Math.sin(coneCenterLatRad - rRad * 0.9),
         sinConeCenterLat, twoSineOfHalfConeRadius, true, epsZ, nIterMax);
-    final double pointLat = asin(zDxDyEq1); 
+    final double pointLat = asin(zDxDyEq1);
     final double deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
         coneCenterLatRad - pointLat, zDxDyEq1);
+    /*System.out.println("Test SEW edge in EQR. zDxDyEq1: " + zDxDyEq1 
+        + "; pointLat: " + Math.toDegrees(pointLat) 
+        + " deg; deltaLon: " + Math.toDegrees(deltaLon) + " deg");
+    System.out.println("testSE: " + testSE + "; testSW: " + testSW);*/
  // LOG.debug("Test SEW edge in EQR. zDxDyEq1: {}; pointLat: {} deg; deltaLon: {} deg",
  //     zDxDyEq1, Math.toDegrees(pointLat), Math.toDegrees(deltaLon));
     final boolean isValidDeltaLon = isFinite(deltaLon);

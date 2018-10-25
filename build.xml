@@ -116,6 +116,8 @@
 
   <target name="compile">
     <echo>Compile from "${src}" to "${classes}"...</echo>
+    <mkdir dir="${lib}"/>
+    <mkdir dir="${classes}"/>
     <javac fork="true" debug="on" srcdir="${src}" destdir="${classes}" encoding="UTF-8">
       <classpath refid="libs"/>
     </javac>
@@ -123,6 +125,7 @@
 
   <target name="tcompile">
     <echo>Compile from "${tsrc}" to "${tclasses}"...</echo>
+    <mkdir dir="${tclasses}"/>
     <javac fork="true" debug="on" srcdir="${src}" destdir="${tclasses}" encoding="UTF-8">
       <classpath refid="libs"/>
     </javac>
@@ -159,6 +162,7 @@
 
   <target name="doc">
     <echo>Create JavaDoc from "${src}" to "${doc}"...</echo>
+    <mkdir dir="${doc}"/>
     <property name="ps" value="${path.separator}"/>
     <javadoc destdir="${doc}" sourcepath="${src}" packagenames="*" author="true" version="true" access="public">
       <link href="http://download.oracle.com/javase/8/docs/api/"/>

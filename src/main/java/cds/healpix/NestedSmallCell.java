@@ -195,7 +195,7 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
     // and the serie 1/2 + 1/4 + ... = 1
     // ~= nRing * (2 + 1 + 1) = 4  * nRing
     // Constant should be 4, we use 6 to be conservative
-    return 6 * (nRings + nRingOtherSideOfThePole);
+    return 8 * (nRings + nRingOtherSideOfThePole);
   }
   
   

@@ -85,7 +85,7 @@ public final class Polygon {
     },
     /**
      * Consider that the gravity center of the first 3 non-aligned vertices is inside the polygon
-     * if it is on the left of the fisrt two edges, then test is the south pole is inside or outside
+     * if it is on the left of the first two edges, then test is the south pole is inside or outside
      * the polygon.
      */
     STD_FXP() {
@@ -142,8 +142,13 @@ public final class Polygon {
   /**
    * Create a new polygon from the given list of vertices, using the
    * given method to define its inside and outside.
+   * WARNING: so far the algorithm compute a minimum encoding cone and methods other than
+   * the default, {@link ContainsSouthPoleComputer#STD_FXP} and 
+   * {@link ContainsSouthPoleComputer#STD_IVOA} may not work properly!!
    * @param polyVertices vertices defining the polygon
-   * @param cspc method used to defined the inseide and the outside of the polygon
+   * @param cspc method used to defined the inside and the outside of the polygon.
+   * So far do not use 
+   * {@link ContainsSouthPoleComputer#STD_FXP} and {@link ContainsSouthPoleComputer#STD_IVOA}.
    */
   public Polygon(final CooXYZ[] polyVertices, ContainsSouthPoleComputer cspc) {
     if (polyVertices.length < 3) {

@@ -581,7 +581,7 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
   };
 
   /**
-   * Simpler version of the cone search, but at the cost of approximation (false positieves).
+   * Simpler version of the cone search, but at the cost of approximation (false positives).
    * @param coneRadiusRad radius of the cone
    * @return an object allowing to perform fixed radius cone search queries.
    */
@@ -780,7 +780,7 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
   
   private static int getBaseCellHash(int i, int j) {
     // retrun D0C_LOOKUP[iBaseCell][jBaseCell]; 
-    // Tests on new computer show that NOBRANCH performs netter than LOOKUP_MATRIX
+    // Tests on new computer show that NOBRANCH performs better than LOOKUP_MATRIX
     // (and uses less CPU cache!).
     j = 4 - (j + i);
     return ((i - (j >>> 63)) & 3) + (++j << 2);

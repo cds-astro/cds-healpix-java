@@ -46,7 +46,7 @@ interface ConeOrdinalHashComputer {
       // Minimum parameters required
       double coneCenterLonRad, double coneCenterLatRad,
       double coneRadiusRad, HashComputer hashComputer, AngularDistanceComputer angDistComputer,
-      // Alog params
+      // Algo params
       double relativePrecision, int nIterMax,
       // Pre-computed quantities
       final long hashCenterAtSmallestDepth,

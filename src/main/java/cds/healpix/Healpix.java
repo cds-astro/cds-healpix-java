@@ -83,8 +83,8 @@ public final class Healpix implements Projection {
    * edge of the same cell. If the radius of a cone is smaller than this distance, we know that
    * it will overlap maximum 9 pixels (the pixel containing the center of the cone plus
    * the 8 neighbours).
-   * In practice, this distance if the distance between the point of coordinate
-   * (0, {@link Healpix#TRANSITION_LATITUDE}) and it nearest point on the Northeast edge of the
+   * In practice, this distance is the distance between the point of coordinate
+   * (0, {@link Healpix#TRANSITION_LATITUDE}) and its nearest point on the Northeast edge of the
    * cell of base hash 0 and coordinates in the base hash (x=0, y=nside-1).
    * IMPORTANT REMARK:
    * - this value is larger than the smallest center to vertex distance
@@ -183,7 +183,7 @@ public final class Healpix implements Projection {
    * It is the distance between the transition latitude ring (Y = 1) and the previous 
    * ring (Y = 1 + 1 / nside).
    * So, it is the distance between the Center and the North vertex of a cell having its center
-   * on the transition latitude, and the its north pole on the vertical. */
+   * on the transition latitude, and its north pole on the vertical. */
   private static final double[] DIST_TRANSIT_LAT_TO_PREV_RING = new double[]{
       0.8410686705679302,    // depth = 0
       0.4299308082455824,    // depth = 1
@@ -293,7 +293,7 @@ public final class Healpix implements Projection {
   };
   
   /**
-   * For a given position on the unit sphere and a given depth, returns an upper limit and the
+   * For a given position on the unit sphere and a given depth, returns an upper limit on the
    * distance between the center of a cell and its farthest vertex.
    * @param lonRad longitude in radians.
    * @param latRad latitude in radians.

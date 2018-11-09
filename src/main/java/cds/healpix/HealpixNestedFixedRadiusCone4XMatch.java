@@ -23,12 +23,12 @@ import static cds.healpix.Healpix.getBestStartingDepth;
  * The idea of this class is to avoid making multiple time the same operations (like selecting
  * the optimal starting depth) in case of fixed radius cross-match.
  * 
- * This is especially made for cross-matches with the folowing ideas:
- *  - The list of cells returned is small (maximum 9 elements)
- *  - we assume that cells are not fully overlaped by the xmatch cone
- *  - we accept false positives (i.e. cell wich are close but do not overlap the xmatch cone
+ * This is especially made for cross-matches with the following ideas:
+ *  - the list of cells returned is small (maximum 9 elements, but more likely maximum 4)
+ *  - we assume that cells are not fully overlapped by the xmatch cone
+ *  - we accept false positives (i.e. cell which are close but do not overlap the xmatch cone)
  * 
- * The idea is to have a function which is a quick as possible (no much longer than looking
+ * The idea is to have a function which is a quick as possible (not much longer than looking
  * into a HashMap).
  * 
  * @author F.-X. Pineau

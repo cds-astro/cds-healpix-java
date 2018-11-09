@@ -1,3 +1,4 @@
+
 // Copyright 2017-2018 - Université de Strasbourg/CNRS
 // The CDS HEALPix library is developped by the Centre de Données
 // astronomiques de Strasbourgs (CDS) from the following external papers:

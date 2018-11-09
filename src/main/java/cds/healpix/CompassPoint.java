@@ -524,7 +524,7 @@ public final class CompassPoint {
   }
   
   /**
-   * Enul defining the compass cardinal points.
+   * Enum defining the compass cardinal points.
    * @author F.-X. Pineau
    *
    */

@@ -498,7 +498,7 @@ public final class HealpixNestedBMOC implements Iterable<HealpixNestedBMOC.Curre
     // Set the sentinel bit
     hash <<= 1;
     hash |= 1L;
-    // Shit according to the depth and add space for the flag bit
+    // Shift according to the depth and add space for the flag bit
     hash <<= (1 + ((depthMax - depth) << 1));
     // Set the flag bit
     hash |= (isFull ? 1L : 0L);

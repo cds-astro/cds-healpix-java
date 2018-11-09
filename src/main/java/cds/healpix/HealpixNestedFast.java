@@ -160,7 +160,7 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
   public long hash(double lonRad, double latRad) {
     // We change the algo with respect to the cleaner code in HealpixNestedHashComputer.
     // The reasons are:
-    // - see class Javadoc (for performacnes: we introduce redundancy, inline all method calls, ...)
+    // - see class Javadoc (for performances: we introduce redundancy, inline all method calls, ...)
     // - as we introduce redondancy, we do not have to keep the projection code separated
     //   - it allows to perform the computations in the 2 canonical base cells (NPC: 0; EQR: 4),
     //     with the y-origin of the Collignon projection set to 0 (instead of 1), and only then 
@@ -190,9 +190,9 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
       y += 2;                                                              assert  1 <= y && y <= 3;
       // Rotation of 45 and scale by sqrt(2) * nside / 2
       i = (int) fromBits(this.halfNside4IEEEdouble + toBits(y + x));       assert 0 <= i && i <= 2 * nside;
-      if (i == twiceNside) { --i; }    // if, but very rare case of branch miss-prediction (position exaclty on the modulo(pi/2) limit)
+      if (i == twiceNside) { --i; }    // if, but very rare case of branch miss-prediction (position exactly on the modulo(pi/2) limit)
       j = (int) fromBits(this.halfNside4IEEEdouble + toBits(y - x));       assert 0 <= j && j <= 2 * nside;
-      if (j == twiceNside) { --j; }    // if, but very rare case of branch miss-prediction (position exaclty on the EQR/NPC transition)
+      if (j == twiceNside) { --j; }    // if, but very rare case of branch miss-prediction (position exactly on the EQR/NPC transition)
       // Base cell hash computation
       final int id0c = i >>> this.depth;                                   assert id0c == 0 || id0c == 1;
       final int jd0c = j >>> this.depth;                                   assert jd0c == 0 || jd0c == 1;

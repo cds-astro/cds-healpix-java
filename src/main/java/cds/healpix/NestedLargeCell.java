@@ -80,7 +80,7 @@ import static cds.healpix.common.math.Math.isFinite;
  *   or
  *   => sigy * y' -sigx * x' - b = 0 (for by+ax+c=0)
  *   
- * 4 - diqtence entre un point et une droite
+ * 4 - distence entre un point et une droite
  *   d = |sigy * y'c - sigx * x'c - b| / sqrt(sigy^2+sigx^2)
  *   but y'c = x'c = 0
  *   => d = b/sqrt()

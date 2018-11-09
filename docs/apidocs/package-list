@@ -1,0 +1,5 @@
+cds.healpix
+cds.healpix.common
+cds.healpix.common.math
+cds.healpix.common.sphgeom
+cds.healpix.fillingcurve

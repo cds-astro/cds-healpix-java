@@ -53,6 +53,12 @@ The test contains performances tests, run all of them with:
 >  ant make.test
 ```
 
+Online Javadoc
+--------------
+
+Look [here](https://cds-astro.github.io/cds-healpix-java/apidocs/index.html).  
+The library entry point is the class `Healpix` in the package `cds.healpix`.
+
 Usage examples
 --------------
 
@@ -64,7 +70,7 @@ int depth = 8;
 double ra  = Math.toRadians(10.509734);
 double dec = Math.toRadians(21.657381);
 
-// Result
+// Get the cell number
 HealpixNested hn = Healpix.getNested(depth);
 long cellNumber = hn.hash(ra, dec);
 
@@ -88,7 +94,7 @@ import static cds.healpix.VerticesAndPathComputer.LAT_INDEX;
 int depth = 8;
 long cellNumber = 12394L;
 
-// Result
+// Get the center coordinates
 HealpixNested hn = Healpix.getNested(depth);
 double[] centerCoos = hn.center(cellNumber);
 double raDeg  = Math.toDegrees(centerCoos[LON_INDEX]);
@@ -111,7 +117,7 @@ import static cds.healpix.VerticesAndPathComputer.ALL_CARDINAL_POINTS;
 int depth = 8;
 long cellNumber = 12394L;
 
-// Result
+// Get vertices
 HealpixNested hn = Healpix.getNested(depth);
 EnumMap<Cardinal, double[]> vertices = vertices(cellNumber, ALL_CARDINAL_POINTS);
 
@@ -141,7 +147,7 @@ vertices = vertices(cellNumber, EnumSet.of(Cardinal.E, Cardinal.W));
 int depth = 8;
 long cellNumber = 12394L;
 
-// Results
+// Get the neighbours list
 HealpixNested hn = Healpix.getNested(depth);
 NeighbourList neigList = hn.neighbours(cellNumber);
 
@@ -164,7 +170,7 @@ double coneCenterRa  = Math.toRadians(10.509734);
 double coneCenterDec = Math.toRadians(21.657381);
 double coneRadiusRad = Math.toRadians(1.0);
 
-// Resulting BMOC (MOC + flag telling is a cell is fully or partially overlapped by the cone)
+// Resulting BMOC (MOC + flag telling if a cell is fully or partially overlapped by the cone)
 HealpixNested hn = Healpix.getNested(depth);
 HealpixNestedFixedRadiusConeComputer cc = hn.newConeComputer(coneRadiusRad);
 HealpixNestedBMOC bmoc = cc.overlappingCells(coneCenterLonRad, coneCenterLatRad);

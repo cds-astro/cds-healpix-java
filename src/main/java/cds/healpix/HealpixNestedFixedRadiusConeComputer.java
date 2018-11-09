@@ -1,5 +1,5 @@
-// Copyright 2017-2018 - Université de Strasbourg/CNRS
-// The CDS HEALPix library is developped by the Centre de Données
+// Copyright 2017-2018 - Universite de Strasbourg/CNRS
+// The CDS HEALPix library is developped by the Centre de Donnees
 // astronomiques de Strasbourgs (CDS) from the following external papers:
 //  - [Gorsky2005]     - "HEALPix: A Framework for High-Resolution Discretization and
 //                       Fast Analysis of Data Distributed on the Sphere"
@@ -31,10 +31,10 @@ public interface HealpixNestedFixedRadiusConeComputer {
      *  CONE_AREA INTERSECT CELL_AREA = CELL_AREA. */
     FULLY_IN,
     /** Cells overlapping the cone (fully included in the cone or simply overlapping it):
-     * CONE_AREA INTERSECT CELL_AREA > 0. */
+     * CONE_AREA INTERSECT CELL_AREA &gt; 0. */
     OVERLAPPING,
     /** Cells having their center inside the cone. 
-     * (CONE_AREA INTERSECT CELL_AREA > 0) AND (CELL_CENTER IN CONE). */
+     * (CONE_AREA INTERSECT CELL_AREA &gt; 0) AND (CELL_CENTER IN CONE). */
     CENTER_IN,
   }
   

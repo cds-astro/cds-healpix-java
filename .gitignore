@@ -1,6 +1,7 @@
 # eclipse specific
 .classpath
 .project
+toAladin.bash
 
 # target repository
 /target/

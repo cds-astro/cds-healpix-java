@@ -1,5 +1,5 @@
-// Copyright 2017-2018 - Université de Strasbourg/CNRS
-// The CDS HEALPix library is developped by the Centre de Données
+// Copyright 2017-2018 - Universite de Strasbourg/CNRS
+// The CDS HEALPix library is developped by the Centre de Donnees
 // astronomiques de Strasbourgs (CDS) from the following external papers:
 //  - [Gorsky2005]     - "HEALPix: A Framework for High-Resolution Discretization and
 //                       Fast Analysis of Data Distributed on the Sphere"
@@ -34,8 +34,8 @@ class PutHeader {
   String PATH = "/home/pineau/Eclipse/Healpix/src";
   String [] EXCEPTION = { "savot","astrores","table" };
   String HEAD =
-          "// Copyright 2017-2018 - Université de Strasbourg/CNRS\n" +
-          "// The CDS HEALPix library is developped by the Centre de Données\n" +
+          "// Copyright 2017-2018 - Universite de Strasbourg/CNRS\n" +
+          "// The CDS HEALPix library is developped by the Centre de Donnees\n" +
           "// astronomiques de Strasbourgs (CDS) from the following external papers:\n" +
           "//  - [Gorsky2005]     - \"HEALPix: A Framework for High-Resolution Discretization and\n" +
           "//                       Fast Analysis of Data Distributed on the Sphere\"\n" +

@@ -17,6 +17,13 @@
 
 package cds.healpix;
 
+/**
+ * Interface defining a simple flat list of hash values (we do not
+ * use a Java List to avoid autoboxing.
+ *
+ * @author F.-X. Pineau
+ *
+ */
 public interface ListOfHash extends FlatHashIterable {
 
   /**

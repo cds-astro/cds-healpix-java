@@ -2,7 +2,12 @@
 About
 -----
 
-CDS implementation in Java of the HEALPix tesselation.
+[CDS](http://cdsweb.u-strasbg.fr) implementation in Java of the HEALPix tesselation.
+
+For informations on HEALPix in general, see:
+- The [official web site](https://healpix.jpl.nasa.gov/)
+- The [Wikipedia page](https://en.wikipedia.org/wiki/HEALPix)
+- The two main related papers: [Gorsky (2005)](http://adsabs.harvard.edu/abs/2005ApJ...622..759G) and [Calabretta (2007)](http://adsabs.harvard.edu/abs/2007MNRAS.381..865C)
 
 License
 -------

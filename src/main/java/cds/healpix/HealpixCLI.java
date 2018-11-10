@@ -12,6 +12,12 @@ import static cds.healpix.VerticesAndPathComputer.LON_INDEX;
 import static cds.healpix.VerticesAndPathComputer.LAT_INDEX;
 import static cds.healpix.VerticesAndPathComputer.ALL_CARDINAL_POINTS;
 
+/**
+ * Simple and Basic CLI (Command Line Interface) for quick testing.
+ * 
+ * @author F.-X. Pineau
+ *
+ */
 public class HealpixCLI {
 
 

@@ -203,9 +203,7 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
       {nill, mg0y, m3xy}
     };
   }*/
-  
-  
-  
+
   /*
    * Project the given position on the unit sphere onto an Euclidean two-dimensional plane using
    * the HEALPix projection of center (0, 0) and parameters H=4 anf K=3 (see Calabrett2007).
@@ -293,7 +291,7 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
   
   
   /**
-   * This method is thread safe. For better performances, use one {@link HashComputer} created by
+   * This method is **not** thread safe. For better performances, use one {@link HashComputer} created by
    * {@link #newHashComputer()} per thread.
    * WARNING: this method IS NOT thread safe. In multi-threaded environments, use the method
    * {@link #newHashComputer()} to create a {@link HashComputer} for each thread.
@@ -812,11 +810,11 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
   }*/
   
   
-  public int nsideTime(int i) {
+  int nsideTime(int i) {
     return i << depth;
   }
 
-  public long nsideTime(long i) {
+  long nsideTime(long i) {
     return i << depth;
   }
   

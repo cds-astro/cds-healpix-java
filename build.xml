@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
  Simple ANT build.xml file for compiling and generating healpix.jar
  * Author : F.-X. Pineau [CDS]
 -->
 <project name="Healpix" default="print_properties" basedir=".">
-    
+
   <description>${title} build.xml</description>
 
   <property file="build.properties"/>
@@ -39,7 +39,7 @@
   </path>
 
   <!--path id="rtlibs">
-    <pathelement location="${classes}/" />    
+    <pathelement location="${classes}/" />
     <pathelement location="${tclasses}/" />
     <fileset dir="${lib}/">
       <include name="**/*.jar" />
@@ -76,17 +76,17 @@
   <target name="make.all" description="Compile all the software, run tests, and create the .jar" depends="make.test,make.doc,make.jar"/>
 
   <target name="make.build" description="Compile main classes, to test if the soft compiles" depends="clean.classes,compile"/>
-  
+
   <target name="make.test" description="Compile all classes (main an test), and run tests" depends="clean.classes,clean.tests,test"/>
 
   <target name="make.jar" description="Compile main classes and create both the jar and the fatjar" depends="make.build,jars"/>
 
   <target name="make.doc" description="Compile all the software and create the .jar" depends="clean.doc,doc"/>
-  
+
   <target name="clean" depends="clean.classes,clean.tests,clean.doc"/>
-  
+
   <!-- CLEAN -->
-    
+
   <target name="clean.classes">
     <echo>Clean dir: "${classes}"...</echo>
     <delete failonerror="false">
@@ -119,7 +119,7 @@
     <mkdir dir="${lib}"/>
     <mkdir dir="${classes}"/>
     <javac fork="true" debug="on" srcdir="${src}" destdir="${classes}" encoding="UTF-8">
-      <classpath refid="libs"/>
+<compilerarg line="-encoding utf-8"/>      <classpath refid="libs"/>
     </javac>
   </target>
 
@@ -127,10 +127,10 @@
     <echo>Compile from "${tsrc}" to "${tclasses}"...</echo>
     <mkdir dir="${tclasses}"/>
     <javac fork="true" debug="on" srcdir="${src}" destdir="${tclasses}" encoding="UTF-8">
-      <classpath refid="libs"/>
+<compilerarg line="-encoding utf-8"/>      <classpath refid="libs"/>
     </javac>
     <javac fork="true" debug="on" srcdir="${tsrc}" destdir="${tclasses}" encoding="UTF-8">
-      <classpath refid="tlibs"/>
+<compilerarg line="-encoding utf-8"/>      <classpath refid="tlibs"/>
     </javac>
   </target>
 
@@ -139,7 +139,7 @@
   <target name="test" depends="compile,tcompile">
   <junit fork="true">
     <classpath>
-      <pathelement location="${classes}" />    
+      <pathelement location="${classes}" />
       <pathelement location="${tclasses}" />
       <fileset dir="${lib}/">
         <include name="**/*.jar" />
@@ -147,7 +147,7 @@
       <fileset dir="${tlib}/">
         <include name="**/*.jar" />
       </fileset>
-    </classpath>    
+    </classpath>
     <batchtest>
      <fileset dir="${tsrc}">
        <include name="**/*Test*" />
@@ -155,8 +155,8 @@
     </batchtest>
     <formatter type="brief" usefile="false"/>
   </junit>
-  </target>    
- 
+  </target>
+
 
   <!-- BUILD DOC -->
 
@@ -164,7 +164,7 @@
     <echo>Create JavaDoc from "${src}" to "${doc}"...</echo>
     <mkdir dir="${doc}"/>
     <property name="ps" value="${path.separator}"/>
-    <javadoc destdir="${doc}" sourcepath="${src}" packagenames="*" author="true" version="true" access="public">
+    <javadoc destdir="${doc}" sourcepath="${src}" packagenames="*" author="true" version="true" access="public" charset="UTF-8" docencoding="UTF-8" encoding="UTF-8">
       <link href="http://download.oracle.com/javase/8/docs/api/"/>
       <!--arg value="-taglet"/>
       <arg value="latexlet.InlineBlockLaTeXlet"/>
@@ -196,12 +196,12 @@
       <bottom><![CDATA[<i>Copyright &#169; ${time.year} ${author}, ${affiliation}. All Rights Reserved.</i>]]></bottom>
     </javadoc>
   </target>
- 
+
 
   <!-- BUILD JARS -->
- 
+
   <target name="jars" depends="jar,fatjar"/>
-    
+
   <target name="jar">
     <echo>Create jar file "${target}/${jarname}_class.${version}_${build}.jar"...</echo>
     <mkdir dir="${target}"/>
@@ -219,7 +219,7 @@
       </manifest>
     </jar>
   </target>
-    
+
   <target name="fatjar">
     <echo>Create jar file "${target}/${jarname}.${version}_${build}.jar"...</echo>
     <mkdir dir="${target}"/>

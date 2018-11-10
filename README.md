@@ -53,11 +53,29 @@ The test contains performances tests, run all of them with:
 >  ant make.test
 ```
 
+Very basic CLI interface for quick testing
+------------------------------------------
+
+Firs build the JAR file
+```bash
+ant make.jar
+```
+and then execute it:
+```bash
+java -jar cdshealpix.x.x_x.jar
+```
+
+Or direclty
+```bash
+ant exec
+```
+
 Online Javadoc
 --------------
 
 Look [here](https://cds-astro.github.io/cds-healpix-java/apidocs/index.html).  
 The library entry point is the class `Healpix` in the package `cds.healpix`.
+
 
 Usage examples
 --------------
@@ -119,7 +137,7 @@ long cellNumber = 12394L;
 
 // Get vertices
 HealpixNested hn = Healpix.getNested(depth);
-EnumMap<Cardinal, double[]> vertices = vertices(cellNumber, ALL_CARDINAL_POINTS);
+EnumMap<Cardinal, double[]> vertices = hn.vertices(cellNumber, ALL_CARDINAL_POINTS);
 
 // and then
 for (double[] vertexCoos : vertices) {

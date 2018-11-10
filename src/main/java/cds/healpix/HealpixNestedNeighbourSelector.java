@@ -304,7 +304,7 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
    * http://ithare.com/infographics-operation-costs-in-cpu-clock-cycles/
    * a "Wrong" branch of "if" (branch miss-prediction) cost 10-20 CPU cycle.
    * Here, no "if" but 5 additional operations, each costing <1 cycles.
-   * And also 5 + 4 useless operation when if is wong
+   * And also 5 + 4 useless operation when if is wrong
    * @param neighbourHash
    * @param direction
    * @param neighbours

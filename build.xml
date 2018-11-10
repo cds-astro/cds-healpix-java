@@ -241,11 +241,9 @@
 
   <!-- EXEC -->
 
-  <target name="exec">
-    <java fork="true" classname="${mainclass}">
-      <classpath refid="libs"/>
+  <target name="exec" description="Create the JAR and exec the CLI" depends="make.jar">
+    <java fork="true" jar="${target}/${jarname}.${version}_${build}.jar">
       <jvmarg value="-Xmx${xmx}"/>
-      <!--arg value="EpicSrcToArchSrc"/-->
     </java>
   </target>
 

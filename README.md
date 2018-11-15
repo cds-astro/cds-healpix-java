@@ -15,6 +15,10 @@ License
 This software is released under the 3-Clause BSD license.
 See the license [file](LICENSE.md).  
 
+Warning
+-------
+
+The libray in still in the testing phase, especially for the exact cell-in-cone function.
 
 Install
 -------
@@ -186,6 +190,9 @@ long northeastCellNumber = neigList.get(MainWind.NE);
 
 #### Cells in a cone
 
+WARNING: the exact method is still in testing phase, 
+so far the approx method is more robust!
+
 ```java
 // Inputs
 int depth = 8;
@@ -195,7 +202,10 @@ double coneRadiusRad = Math.toRadians(1.0);
 
 // Resulting BMOC (MOC + flag telling if a cell is fully or partially overlapped by the cone)
 HealpixNested hn = Healpix.getNested(depth);
-HealpixNestedFixedRadiusConeComputer cc = hn.newConeComputer(coneRadiusRad);
+// Choose one of the two following lines of code:
+HealpixNestedFixedRadiusConeComputer cc = hn.newConeComputer(coneRadiusRad);       // beta code!!
+HealpixNestedFixedRadiusConeComputer cc = hn.newConeComputerApprox(coneRadiusRad); // robust code
+
 HealpixNestedBMOC bmoc = cc.overlappingCells(coneCenterLonRad, coneCenterLatRad);
 
 // BMoc view

@@ -159,7 +159,7 @@ public final class Polygon {
     this.vectProds = new Vect3D[this.vertices.length];
     for (int i = 0, j = this.vertices.length - 1; i < this.vertices.length; j = i++) {
       final Vect3D xprod = CooXYZ.crossProd(this.vertices[i], this.vertices[j]);
-      if (NORTH_POLE.scalarProd(xprod) < 0) {
+      if (xprod.z() < 0) { // => scalar product with north pole < 0
         this.vectProds[i] = xprod.opposite();
       } else {
         this.vectProds[i] = xprod;

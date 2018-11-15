@@ -1134,6 +1134,26 @@ public class NestedConeTest {
     
   }
   
+  @Test
+  public void testCone10() {
+    double lon = 36.80105218;
+    double lat = 56.78028536;
+    double rad = 14.93;
+    int order = 3;
+    
+    // draw circle(36.80105218,+56.78028536, 14.93)
+    
+    // We miss 26L, 27L, 30L => SE special point in the NORTH POLAR CAP
+    
+    coneTest(lon, lat, rad, order, new long[]{26L, 27L, 30L, 37L, 38L, 39L, 44L, 45L, 46L, 47L, 48L,
+        49L, 50L, 51L, 52L, 54L, 56L, 57L, 58L,
+        59L, 60L});
+
+  }
+  
+
+  
+  
   public static void main(String[] args) {
     new NestedConeTest().testCone9();
   }

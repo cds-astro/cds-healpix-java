@@ -28,6 +28,7 @@ import cds.healpix.fillingcurve.FillingCurve2DType;
 
 import static cds.healpix.Healpix.nside;
 import static cds.healpix.Healpix.getBestStartingDepth;
+import static cds.healpix.HealpixNested.bits2hash;
 import static cds.healpix.common.math.HackersDelight.fromBits;
 import static cds.healpix.common.math.HackersDelight.toBits;
 import static cds.healpix.common.math.Math.FOUR_OVER_PI;
@@ -752,12 +753,12 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
       iInBaseCell = (h + l) >>> 1;
       jInBaseCell = (h - l) >>> 1;
     } else { // Equatorial region
-      // Set origin of ring indexes at the center of small cell in north corner of base cell 4 (Noth to South direction)
+      // Set origin of ring indexes at the center of small cell in north corner of base cell 4 (North to South direction)
       iRing = hash - firstHashInEquatorialRegion; 
       iInRing = iRing;
       // <=> /= 4*nside (number of hash per line) => count the number of line from first equatorial line
       iRing >>= depth + 2;
-      // Subtract number of hash in previous rings (-= nRings * 4*nside)
+      // Substract number of hash in previous rings (-= nRings * 4*nside)
       iInRing -= iRing << (depth + 2);
       l = (iInRing << 1) + modulo2(iRing);
       // Set origin of h axis at center of small cell in south corner of base cell 4 (South to North direction)

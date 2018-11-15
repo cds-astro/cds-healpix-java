@@ -26,7 +26,7 @@ import static cds.healpix.Healpix.isLatInSouthPolarCap;
 import static cds.healpix.Projection.LAT_INDEX;
 import static cds.healpix.Projection.LON_INDEX;
 import static cds.healpix.common.math.Math.HALF_PI;
-import static cds.healpix.common.math.Math.PI_OVER_FOUR;
+// import static cds.healpix.common.math.Math.PI_OVER_FOUR;
 import static cds.healpix.common.math.Math.abs;
 import static cds.healpix.common.math.Math.asin;
 import static cds.healpix.common.math.Math.sin;
@@ -281,7 +281,7 @@ final class SmallConeOrdinalHashComputer implements ConeOrdinalHashComputer {
       double zDxDyEq1 = sin(latRad);
       double deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
           latRad - coneCenterLatRad, zDxDyEq1);
-      if (isFinite(deltaLon) && coneCenterLonModHalfPi + deltaLon <= PI_OVER_FOUR) {
+      if (isFinite(deltaLon) && coneCenterLonModHalfPi + deltaLon <= HALF_PI) {
         result[resultSize++] = hashComputer.hash(coneCenterLonRad + deltaLon, latRad);
       } else { // Peculiar point in the NE neighbour base cell
         // - First solution in the flat sky approximation (can save loops with trigo functions)
@@ -391,7 +391,7 @@ final class SmallConeOrdinalHashComputer implements ConeOrdinalHashComputer {
     double zDxDyEq1 = sin(latRad);
     double deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
         coneCenterLatRad - latRad, zDxDyEq1);
-    if (isFinite(deltaLon) && coneCenterLonModHalfPi + deltaLon <= PI_OVER_FOUR) {
+    if (isFinite(deltaLon) && coneCenterLonModHalfPi + deltaLon <= HALF_PI) {
       result[resultSize++] = hashComputer.hash(coneCenterLonRad + deltaLon, latRad);
     } else { // Look at the neighbour base cell, compute south east (vertical edge, i.e. // to NE)
       final double[] lonLatN = vertices.get(S);
@@ -491,7 +491,7 @@ final class SmallConeOrdinalHashComputer implements ConeOrdinalHashComputer {
       double zDxDyEq1 = sin(latRad);
       double deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
           coneCenterLatRad - latRad, zDxDyEq1);
-      if (isFinite(deltaLon) && coneCenterLonModHalfPi + deltaLon <= PI_OVER_FOUR) {
+      if (isFinite(deltaLon) && coneCenterLonModHalfPi + deltaLon <= HALF_PI) {
         result[resultSize++] = hashComputer.hash(coneCenterLonRad + deltaLon, latRad);
       } else { // Peculiar point in the SE neighbour base cell
         // - First solution in the flat sky approximation (can save loops with trigo functions)
@@ -599,7 +599,7 @@ final class SmallConeOrdinalHashComputer implements ConeOrdinalHashComputer {
     double zDxDyEq1 = sin(latRad);
     double deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
         coneCenterLatRad - latRad, zDxDyEq1);
-    if (isFinite(deltaLon) && coneCenterLonModHalfPi + deltaLon <= PI_OVER_FOUR) {
+    if (isFinite(deltaLon) && coneCenterLonModHalfPi + deltaLon <= HALF_PI) {
       result[resultSize++] = hashComputer.hash(coneCenterLonRad + deltaLon, latRad);
     } else { // Look at the neighbour base cell, comute north east
       final double[] lonLatS = vertices.get(S);

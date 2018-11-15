@@ -154,7 +154,7 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     final int i = this.fc.ij2i(ij);
     final int j = this.fc.ij2j(ij);
     // Compute i-1 and j-1 bits.
-    // Depending to the FillingCurve implementation, calling 2 x fc.i02hash(...) twice could result
+    // Depending on the FillingCurve implementation, calling 2 x fc.i02hash(...) twice could result
     // in making fewer operations
     ij = this.fc.ij2hash(i - 1, j - 1);
     final long jm1Bits = ij & this.hn.yMask;

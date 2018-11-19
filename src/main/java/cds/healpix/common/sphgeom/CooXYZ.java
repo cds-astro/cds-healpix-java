@@ -28,7 +28,17 @@ import java.util.Random;
 
 /**
  * Defines a coordinates on the unit-sphere, internally both Euclidean and Spherical coordinates
- * are storef.
+ * are stored.
+ * 
+ * To solve the Minimum Enclosing Cone (MEC) problem, we use the same algorithm as in 
+ * Berg et al. (2008) "Computational Geometry - Algorithms and Applications, 3rd Ed.pdf", 
+ * see §4.7, p. 86-89 (), which principle is general on works well in the sphere 
+ * as cited in Barequet & Elber (2005) "Optimal bounding cones of vectors in three dimensions"
+ * (https://www.sciencedirect.com/science/article/pii/S0020019004002911?via%3Dihub).
+ * It uses LP (linear programming) and performs in O(n), n being the number of points we
+ * want the smallest enclosing cone.
+ * The code and its documentation (for the case of the unit sphere) is originally part of the 
+ * ARCHES x-match tool (developped by F.-X. Pineau for the European FP7 project ARCHES).
  * 
  * @author F.-X. Pineau
  *

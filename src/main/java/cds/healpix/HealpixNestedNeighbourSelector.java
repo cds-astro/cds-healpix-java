@@ -524,13 +524,13 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
       result.hList[k0++] = hash | xs;
       // South square, south west part
       result.hList[k1++] = hash | (xs << 1);
-      // East square, nort east part
+      // East square, north east part
       result.hList[k2++] = hash | (xs << 1) | xMaskDD;
       // West square, north west part
       result.hList[k3++] = hash | yMaskDD | xs;
       // North square, north west
       result.hList[size - k0] = hash | yMaskDD | (xn >> 1);
-      // North square, north EAST
+      // North square, north east
       result.hList[size - k1] = hash | xn | xMaskDD;
       // West square, north west part
       result.hList[size - k2] = hash | xn;

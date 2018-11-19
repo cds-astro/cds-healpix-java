@@ -22,7 +22,9 @@ import static cds.healpix.common.math.Math.abs;
 import static cds.healpix.common.math.Math.sqrt;
 
 /**
- * Class defines (and storing the vertices of) a polygon on the unit sphere.
+ * Class defining (and storing the vertices of) a polygon on the unit sphere.
+ * The original 2D method comes from https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html
+ * We adapted it here to the case of the sphere.
  * 
  * @author F.-X. Pineau
  *

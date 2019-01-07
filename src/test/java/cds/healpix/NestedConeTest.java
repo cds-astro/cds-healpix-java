@@ -1152,6 +1152,20 @@ public class NestedConeTest {
   }
   
 
+  @Test
+  public void testCone11() {
+    double lon = 160.771389;
+    double lat = 64.3813;
+    double rad = 0.8962;
+    int order = 6;
+    
+    // draw circle(160.771389, 64.3813, 0.8962)
+    coneTest(lon, lat, rad, order, new long[]{7477L, 7479L, 7498L, 7499L, 7520L, 7521L, 7522L, 7523L});
+    
+    // draw circle(160.771389, -64.3813, 0.8962)
+    coneTest(lon, -lat, rad, order, new long[]{37228L, 37229L, 37230L, 37231L, 37240L, 37242L, 37316L, 37317L});
+    
+  }
   
   
   public static void main(String[] args) {

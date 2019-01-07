@@ -26,7 +26,25 @@ package cds.healpix;
  */
 class HealpixNestedBMOCBuilder {
 
-  // BuilderFactory
   // accumulate data
+  // sort (if needed)
+  // pack
+  // union with previous MOC
+  
+  /*fromCoo(int maxOrder, double[]... lonlat) {
+    
+  }
+  
+  fromCoo(int maxOrder, Iterable<double[]> lonlat) {
+    
+  }
+  
+  fromHashs(int maxOrder, long[]... orderMaxHashs) {
+    
+  }
 
+  fromHashsWithSentinel(int maxOrder, long[]... hashsWithSentinel) {
+    
+  }*/
+  
 }

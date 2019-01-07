@@ -308,7 +308,7 @@ public final class HealpixNestedBMOC implements Iterable<HealpixNestedBMOC.Curre
           currCellDepth = getDepth(currCell, mocDepth);
           currCellHash = getHashFromDepthDiff(currCell, mocDepth - currCellDepth);
         }
-        // Look at the 3 sibling
+        // Look at the 3 siblings
         if (iPrevMoc + 2 < prevToIndex
             && mocCells[iPrevMoc + 0] == buildValue(currCellDepth, currCellHash | 1, true, mocDepth)
             && mocCells[iPrevMoc + 1] == buildValue(currCellDepth, currCellHash | 2, true, mocDepth)
@@ -321,8 +321,9 @@ public final class HealpixNestedBMOC implements Iterable<HealpixNestedBMOC.Curre
       }
       currToIndex = iCurrMoc;
     }
-    // We may find a better algorithm doing a sngle pass on the input MOC
+    // We may find a better algorithm doing a single pass on the input MOC
     // Here the number of passes max = mocDepth - smallestDepthOfACellInOutputMoc
+    // YEP: new idea: do it like a buffer with a cursor on the last "unmergeable" element!!
     return createUnsafe(mocDepth, mocCells, currToIndex);
   }
   
@@ -416,7 +417,7 @@ public final class HealpixNestedBMOC implements Iterable<HealpixNestedBMOC.Curre
    */
   public Status statut(int depth, long hash) {
     checkDepth(depth);
-    // assert cells is sorted!!!
+    // assert cells are sorted!!!
     long h = buildValue(depth, hash, false, this.depthMax);
     long hNoSentinel = rmSentinelNoFlag(h);
     if (h < this.cells[0]) {
@@ -445,7 +446,7 @@ public final class HealpixNestedBMOC implements Iterable<HealpixNestedBMOC.Curre
       if(index >= 0) {
         return Status.PARTIAL; // since we found the same value, with flag set to 0
       }
-      // look at the larger elem)
+      // look at the larger element
       long hp1 = this.cells[-index - 1];
       long hp1NoFlag = setFlagTo0(hp1);
       if (h == hp1NoFlag) {
@@ -459,7 +460,7 @@ public final class HealpixNestedBMOC implements Iterable<HealpixNestedBMOC.Curre
       } else if (contains(hp1NoSentinelNoFlag, hNoSentinel) ) {
         return selfStatus(hp1, hp1NoFlag); 
       }
-      // look at the smaller elem
+      // look at the smaller element
       long hm1 = this.cells[-index - 2];
       long hm1NoFlag = setFlagTo0(hm1);
       if (h == hm1NoFlag) {

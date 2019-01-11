@@ -76,7 +76,7 @@ public class CooXYZ {
 
   public static CooXYZ toEquaCooXYZ(final CooXYZ pos) {
     return new CooXYZ(pos.lon(), pos.lat());
-  } 
+  }
 
   /**
    * Getter
@@ -424,6 +424,7 @@ public class CooXYZ {
   private static final double R_MAX = Healpix.SMALLER_EDGE2OPEDGE_DIST[0];
   
   private static Cone minSphericalCircle(final CooXYZ[] p) {
+    shuffle(p, 0, p.length);
     double r = 0.5 * spheDist(p[0], p[1]);
     if (r > R_MAX) { return null; }
     Cone c = new Cone(arcCenter(p[0], p[1]), r);
@@ -435,7 +436,7 @@ public class CooXYZ {
         c =  new Cone(arcCenter(p[0], p[i]), r);
         for (int j = 1; j < i; j++) {
           if (!c.contains(p[j])) {
-            // shuffle(p, 0, i); // try with/without this and compare performances!
+            shuffle(p, 0, j); // try with/without this and compare performances!
             r = 0.5 * spheDist(p[j], p[i]);
             if (r > R_MAX) { return null; }
             c =  new Cone(arcCenter(p[j], p[i]), r);

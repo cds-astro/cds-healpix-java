@@ -32,7 +32,7 @@ import java.util.Random;
  * 
  * To solve the Minimum Enclosing Cone (MEC) problem, we use the same algorithm as in 
  * Berg et al. (2008) "Computational Geometry - Algorithms and Applications, 3rd Ed.pdf", 
- * see §4.7, p. 86-89 (), which principle is general on works well in the sphere 
+ * see §4.7, p. 86-89 (), which principle is general and works well in the sphere 
  * as cited in Barequet & Elber (2005) "Optimal bounding cones of vectors in three dimensions"
  * (https://www.sciencedirect.com/science/article/pii/S0020019004002911?via%3Dihub).
  * It uses LP (linear programming) and performs in O(n), n being the number of points we
@@ -237,6 +237,11 @@ public class CooXYZ {
   /**
    * Returns the Minimum Enclosing Cone, i.e. the cone containig all the given points and having the
    * smallest possible radius.
+   * WARNING: the algorithm used here is not made to work with nonreflex cones 
+   * (i.e. if the points are distributed is more than an hemispehere).
+   * For our purpose, we stop the algo AND RETURN NULL if we detect a radius > 7 rad ( i.e. ~97 deg) 
+   * since below this value, the cell-in-cone or cell-in-polygone algorithm will test the 12
+   * healpix base cells.
    * @param p list of the points we look for the minimum enclising cone
    * @return the Minimum Enclosing Cone, i.e. the cone containig all the given points and having the
    * smallest possible radius.
@@ -357,16 +362,16 @@ public class CooXYZ {
     final double d = a.x() * (b.y() * c.z() - c.y() * b.z())
         - b.x() * (a.y() * c.z() - c.y() * a.z())
         + c.x() * (a.y() * b.z() - b.y() * a.z());
-    final double x = e * (b.y() * c.z() - c.y() * b.z())
-        - e * (a.y() * c.z() - c.y() * a.z())
-        + e * (a.y() * b.z() - b.y() * a.z());
-    final double y = a.x() * (e * c.z() - e * b.z())
-        - b.x() * (e * c.z() - e * a.z())
-        + c.x() * (e * b.z() - e * a.z());
-    final double z = a.x() * (b.y() * e - c.y() * e)
-        - b.x() * (a.y() * e - c.y() * e)
-        + c.x() * (a.y() * e - b.y() * e);
-    return new CooXYZ(x / d, y / d, z / d);
+    final double x = (b.y() * c.z() - c.y() * b.z())
+        - (a.y() * c.z() - c.y() * a.z())
+        + (a.y() * b.z() - b.y() * a.z());
+    final double y = a.x() * (c.z() - b.z())
+        - b.x() * (c.z() - a.z())
+        + c.x() * (b.z() - a.z());
+    final double z = a.x() * (b.y() - c.y())
+        - b.x() * (a.y() - c.y())
+        + c.x() * (a.y() - b.y());
+    return new CooXYZ((e * x) / d, (e * y) / d, (e * z) / d);
   }
 
   /**
@@ -384,6 +389,7 @@ public class CooXYZ {
   /**
    * Faster version of {@link #arcCenter(CooXYZ, CooXYZ)} when we already know the distance between
    * the two given points.
+   * INFO (2019/10/01 while porting in Rust): WE CAN SIMPLY COMPUTE THE NORMALIZED MEAN OF THE TWO VECTORS!!
    * @param a first point
    * @param b second point
    * @param r half the distance between a and b
@@ -412,22 +418,28 @@ public class CooXYZ {
     return new CooXYZ(x / d, y / d, z / d);
   }
 
+  
   private static Cone minSphericalCircle(final CooXYZ[] p) {
     double r = 0.5 * spheDist(p[0], p[1]);
+    if (r > 1.7) { return null; }
     Cone c = new Cone(arcCenter(p[0], p[1]), r);
     for (int i = 2; i < p.length; i++) {
       if (!c.contains(p[i])) {
         shuffle(p, 0, i); // try without this and compare performances!
         r = 0.5 * spheDist(p[0], p[i]);
+        if (r > 1.7) { return null; }
         c =  new Cone(arcCenter(p[0], p[i]), r);
         for (int j = 1; j < i; j++) {
           if (!c.contains(p[j])) {
+            // shuffle(p, 0, i); // try with/without this and compare performances!
             r = 0.5 * spheDist(p[j], p[i]);
+            if (r > 1.7) { return null; }
             c =  new Cone(arcCenter(p[j], p[i]), r);
             for (int k = 0; k < j; k++) {
               if (!c.contains(p[k])) {
                 c = mec(p[k], p[j], p[i]);
                 r = c.radiusRad();
+                if (r > 1.7) { return null; }
               }
             }
           }

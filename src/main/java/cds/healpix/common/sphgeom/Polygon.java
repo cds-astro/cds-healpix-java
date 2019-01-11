@@ -26,6 +26,11 @@ import static cds.healpix.common.math.Math.sqrt;
  * The original 2D method comes from https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html
  * We adapted it here to the case of the sphere.
  * 
+ * Remark: in the case of polygons having all their points on a semi-hemisphere, we could have use
+ * the classical 2D algorithm on the points projected on a plane by the Gnomonic projections
+ * (centered to the center of the MEC). In the gnomonic projection, all great circles arc are 
+ * strait lines.
+ * 
  * @author F.-X. Pineau
  *
  */
@@ -248,7 +253,7 @@ public final class Polygon {
   /**
    * Returns {@code true} if the line at constant (x, y) and decreasing z going from the given point
    * toward south intersect the plane of given normal vector. The normal vector must have a positive
-   * z coordinate (=> mist be in the north hemisphere)
+   * z coordinate (=> must be in the north hemisphere)
    */
   private static boolean crossPlaneGoingSouth(final CooXYZ p,
       final Vect3D planeNormalDirInNorthHemisphere) {
@@ -310,8 +315,8 @@ public final class Polygon {
   }
   
   /**
-   * Tells if the intersetion line (i) between the two plane defined by vector a, b and pA, pB
-   * respectively in inside the zone [pA, pB].
+   * Tells if the intersection line (i) between the two planes defined by vector a, b and pA, pB
+   * respectively is inside the zone [pA, pB].
    * @param a
    * @param b
    * @param pA

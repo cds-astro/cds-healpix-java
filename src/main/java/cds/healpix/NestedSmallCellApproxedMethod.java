@@ -246,7 +246,7 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
   }
   
   private final int mocSizeUpperLimit(final double coneCenterLonRad, final double coneCenterLatRad) {
-    // Count the number of rings in the other sie of a pole (if the cone contain a pole),
+    // Count the number of rings in the other side of a pole (if the cone contains a pole),
     // the smallest possible ring index...
     int nRingsOtherSideOfPole = 0;
     int smallestCornerRingIndex = -1;  

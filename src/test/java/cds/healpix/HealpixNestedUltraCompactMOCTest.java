@@ -67,7 +67,7 @@ public class HealpixNestedUltraCompactMOCTest {
     
     byte[] bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
     System.out.println("nBytes: " + bytes.length);
-    System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
+    // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
     
     bmoc = HealpixNestedUltraCompactMOC.decompress(3, bytes);
     System.out.println("bmoc: ");
@@ -78,7 +78,7 @@ public class HealpixNestedUltraCompactMOCTest {
     
     
     bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
-    System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
+    // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
   }
   
   @Test
@@ -107,13 +107,13 @@ public class HealpixNestedUltraCompactMOCTest {
     System.out.println("bmoc size: " + bmoc.size());
     
     byte[] bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
-    System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
+    // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
     
     bmoc = HealpixNestedUltraCompactMOC.decompress(order, bytes);
     System.out.println("bmoc size: " + bmoc.size());
     
     bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
-    System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
+    // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
     
   }
   
@@ -128,13 +128,13 @@ public class HealpixNestedUltraCompactMOCTest {
     System.out.println("bmoc size: " + bmoc.size());
     
     byte[] bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
-    System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
+    // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
     
     bmoc = HealpixNestedUltraCompactMOC.decompress(order, bytes);
     System.out.println("bmoc size: " + bmoc.size());
     
     bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
-    System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
+    // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
     
   }
   
@@ -770,16 +770,16 @@ public class HealpixNestedUltraCompactMOCTest {
     long l1 = System.nanoTime();
     byte[] bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
     long l2 = System.nanoTime();
-    final String s = HealpixNestedUltraCompactMOC.compressB64(bytes);
+    // final String s = HealpixNestedUltraCompactMOC.compressB64(bytes);
     long l3 = System.nanoTime();
     bmoc = HealpixNestedUltraCompactMOC.decompress(order, bytes);
     long l4 = System.nanoTime();
     
-    System.out.println(s);
+    // System.out.println(s);
     System.out.println("bmoc size: " + bmoc.size());
     
     bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
-    System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
+    // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
     
     System.out.println("Compress: " + (l2 - l1) / 1.0e6 + " ms. nBytes: " + bytes.length);
     System.out.println("Base64: " + (l3 - l2) / 1.0e6 + " ms");
@@ -815,7 +815,7 @@ public class HealpixNestedUltraCompactMOCTest {
     long l1 = System.nanoTime();
     byte[] bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
     long l2 = System.nanoTime();
-    final String s = HealpixNestedUltraCompactMOC.compressB64(bytes);
+    // final String s = HealpixNestedUltraCompactMOC.compressB64(bytes);
     long l3 = System.nanoTime();
     bmoc = HealpixNestedUltraCompactMOC.decompress(orderMax, bytes);
     long l4 = System.nanoTime();

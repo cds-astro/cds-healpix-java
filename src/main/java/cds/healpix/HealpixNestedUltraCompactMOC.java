@@ -2,7 +2,7 @@ package cds.healpix;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
+// import java.util.Base64;
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
@@ -179,12 +179,12 @@ public class HealpixNestedUltraCompactMOC {
   }
   
   
-  public static String compressB64(byte[] bytes) {
+  /*public static String compressB64(byte[] bytes) {
     return Base64.getEncoder().encodeToString(bytes);
   }
   
   public static byte[] decompressB64(final String b64Encoded) {
     return Base64.getDecoder().decode(b64Encoded);
-  }
+  }*/
   
 }

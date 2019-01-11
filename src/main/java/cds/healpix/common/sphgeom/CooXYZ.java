@@ -17,6 +17,8 @@
 
 package cds.healpix.common.sphgeom;
 
+import cds.healpix.Healpix;
+
 import static cds.healpix.common.math.Math.PI;
 import static cds.healpix.common.math.Math.asin;
 import static cds.healpix.common.math.Math.atan2;
@@ -238,7 +240,7 @@ public class CooXYZ {
    * Returns the Minimum Enclosing Cone, i.e. the cone containig all the given points and having the
    * smallest possible radius.
    * WARNING: the algorithm used here is not made to work with nonreflex cones 
-   * (i.e. if the points are distributed is more than an hemispehere).
+   * (i.e. if the points are distributed is more than an hemisphere).
    * For our purpose, we stop the algo AND RETURN NULL if we detect a radius > 7 rad ( i.e. ~97 deg) 
    * since below this value, the cell-in-cone or cell-in-polygone algorithm will test the 12
    * healpix base cells.
@@ -419,27 +421,29 @@ public class CooXYZ {
   }
 
   
+  private static final double R_MAX = Healpix.SMALLER_EDGE2OPEDGE_DIST[0];
+  
   private static Cone minSphericalCircle(final CooXYZ[] p) {
     double r = 0.5 * spheDist(p[0], p[1]);
-    if (r > 1.7) { return null; }
+    if (r > R_MAX) { return null; }
     Cone c = new Cone(arcCenter(p[0], p[1]), r);
     for (int i = 2; i < p.length; i++) {
       if (!c.contains(p[i])) {
         shuffle(p, 0, i); // try without this and compare performances!
         r = 0.5 * spheDist(p[0], p[i]);
-        if (r > 1.7) { return null; }
+        if (r > R_MAX) { return null; }
         c =  new Cone(arcCenter(p[0], p[i]), r);
         for (int j = 1; j < i; j++) {
           if (!c.contains(p[j])) {
             // shuffle(p, 0, i); // try with/without this and compare performances!
             r = 0.5 * spheDist(p[j], p[i]);
-            if (r > 1.7) { return null; }
+            if (r > R_MAX) { return null; }
             c =  new Cone(arcCenter(p[j], p[i]), r);
             for (int k = 0; k < j; k++) {
               if (!c.contains(p[k])) {
                 c = mec(p[k], p[j], p[i]);
                 r = c.radiusRad();
-                if (r > 1.7) { return null; }
+                if (r > R_MAX) { return null; }
               }
             }
           }

@@ -96,7 +96,7 @@ public final class Healpix implements Projection {
    * -edge-to-opposite-edge-radius radius can contains the 4 vertices of a cell (but 3 is ok)
    * vertices 
    */
-  private static double[] SMALLER_EDGE2OPEDGE_DIST = new double[] {
+  public static double[] SMALLER_EDGE2OPEDGE_DIST = new double[] {
       0.8410686705685088,    // depth = 0
       0.37723631722170053,   // depth = 1
       0.18256386461918295,   // depth = 2
@@ -880,7 +880,7 @@ public final class Healpix implements Projection {
       if (d != Healpix.DEPTH_MAX) {
         System.out.println(", // depth = " + d);
       }
-    }
+    }SMALLER_EDGE2OPEDGE_DIST
     System.out.println("};");
   }
   

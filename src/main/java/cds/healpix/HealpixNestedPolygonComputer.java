@@ -125,15 +125,15 @@ public final class HealpixNestedPolygonComputer {
   private HealpixNestedBMOC overlapping(double[][] vertices, final AdditionalCheck check) {
     final CooXYZ[] polyVertices = buildArrayOfCooXYZ(vertices);
     final Polygon poly = new Polygon(polyVertices);
-    final Cone mec = CooXYZ.mec(polyVertices);
-    int startingDepth = mec == null ? -1 : getBestStartingDepth(mec.radiusRad());
+    final Cone boundingCone = CooXYZ.boundingCone(polyVertices); // replca CooXYZ.mec()
+    int startingDepth = /*boundingCone == null ? -1 :*/ getBestStartingDepth(boundingCone.radiusRad());
     // Compute smaller depth cells hashs
     if (startingDepth == -1) {
       neigs.clear();
       neigs.put(0).put(1).put(2).put(3).put(4).put(5).put(6).put(7).put(8).put(9).put(10).put(11);
       startingDepth = 0;
     } else {
-      final long hashCenter = getHC(startingDepth).hash(mec.lon(), mec.lat());
+      final long hashCenter = getHC(startingDepth).hash(boundingCone.lon(), boundingCone.lat());
       getNeigSelect(startingDepth).neighbours(hashCenter, neigs);
       neigs.put(hashCenter);
       neigs.sortByHashAsc();

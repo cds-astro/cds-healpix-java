@@ -200,6 +200,38 @@ public class CooXYZ {
   }
 
   /**
+   * Returns a bounding cone (not the smallest one, for the samllest one, {@link #mec}).
+   * In the worst case, the bounding cone has a radius ~= 2x the MEC radius.
+   * @param p
+   * @return
+   */
+  public static Cone boundingCone(final CooXYZ... p) {
+    // Comppute center
+    double x = 0, y = 0, z = 0;
+    for (final CooXYZ coo : p) {
+      x += coo.x;
+      y += coo.y;
+      z += coo.z;
+    }
+    x /= p.length;
+    y /= p.length;
+    z /= p.length;
+    final double norm = Math.sqrt(x * x + y * y + z * z);
+    final CooXYZ center = new CooXYZ(x / norm, y / norm, z / norm);
+    // Compute dmax
+    double dmax = 0;
+    CooXYZ furthest = null;
+    for (final CooXYZ coo : p) {
+      final double d = euclDist(center, coo);
+      if (d > dmax) {
+        dmax = d;
+        furthest = coo;
+      }
+    }
+    return new Cone(center, spheDist(center, furthest));
+  }
+  
+  /**
    * Returns the minimum enclosing cone, i.e. the cone containig the two given points and having
    * the smallest possible radius. In this trivial case, the diameter of the cone is the arc (ab).
    * @param a first point

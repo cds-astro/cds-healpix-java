@@ -139,8 +139,7 @@ public final class HealpixNestedPolygonComputer {
       neigs.sortByHashAsc();
     }
     // Compute and sort the list of cell containing at least one polygon vertex
-    final long[] polyVerticesHash = buildArrayOfPolyVerticesHash(polyVertices);
-    Arrays.sort(polyVerticesHash);
+    final long[] polyVerticesHash = buildOrderedArrayOfPolyVerticesAndSpecialPointsHash(polyVertices);
     // Build the list (removing duplicated) for all deltaDepth?
     final ArraysListOfLong moc = new ArraysListOfLong(10000);
     for (int i = 0 ; i < neigs.size; i++) {
@@ -152,7 +151,7 @@ public final class HealpixNestedPolygonComputer {
   
   private void buildMocRecursively(final ArraysListOfLong moc, int depth, long hash,
       final Polygon poly, final long[] polyVerticesHash, final AdditionalCheck check) {
-    int nVerticesInPoly;
+    int nVerticesInPoly = 0;
     if (isInList(depth, hash, polyVerticesHash)
         || ((nVerticesInPoly = nVerticesInPoly(depth, hash, poly)) > 0 && nVerticesInPoly < 4)
         || hasIntersection(depth, hash, poly)) {
@@ -193,16 +192,16 @@ public final class HealpixNestedPolygonComputer {
     this.vertexW = new CooXYZ(vcoos[LON_INDEX], vcoos[LAT_INDEX]); // Costly: compute sin/cos
     int nIn = 0;
     if (poly.contains(this.vertexN)) { 
-      nIn++; 
+      nIn++;
     }
     if (poly.contains(this.vertexE)) { 
-      nIn++; 
+      nIn++;
     }
     if (poly.contains(this.vertexS)) { 
-      nIn++; 
+      nIn++;
     }
     if (poly.contains(this.vertexW)) { 
-      nIn++; 
+      nIn++;
     }
     return nIn;
   }
@@ -225,13 +224,30 @@ public final class HealpixNestedPolygonComputer {
     return polyVertices;
   }
 
-  private final long[] buildArrayOfPolyVerticesHash(final CooXYZ[] polyVertices) {
-    final long[] polyVerticesHash = new long[polyVertices.length];
+  private final long[] buildOrderedArrayOfPolyVerticesAndSpecialPointsHash(final CooXYZ[] polyVertices) {
+    final long[] polyVerticesAndSpeicalPointsHash = new long[polyVertices.length << 1];
+    // Special points (if any)
+    int k = 0;
+    for (int i = 0, j = polyVertices.length - 1; i < polyVertices.length; j = i++) {
+      for (final CooXYZ v : NewtonMethod.arcSpecialPoints(polyVertices[i], polyVertices[j], 1e-14, 20)) {
+        polyVerticesAndSpeicalPointsHash[k++] = this.hcDepthMax.hash(v.lon(), v.lat());
+      }
+    }
+    // Vertices
     for (int i = 0; i < polyVertices.length; i++) {
       final CooXYZ polyVertex = polyVertices[i];
-      polyVerticesHash[i] = this.hcDepthMax.hash(polyVertex.lon(), polyVertex.lat());
+      polyVerticesAndSpeicalPointsHash[k++] = this.hcDepthMax.hash(polyVertex.lon(), polyVertex.lat());
     }
-    return polyVerticesHash;
+    // Sort
+    Arrays.sort(polyVerticesAndSpeicalPointsHash,0, k);
+    // Rm duplicates
+    int l = 0;
+    for (int i = 1; i < l; i++) {
+      if (polyVerticesAndSpeicalPointsHash[i] != polyVerticesAndSpeicalPointsHash[k]) {
+        polyVerticesAndSpeicalPointsHash[++k] = polyVerticesAndSpeicalPointsHash[i];
+      }
+    }
+    return Arrays.copyOf(polyVerticesAndSpeicalPointsHash, ++k);
   }
 
 }

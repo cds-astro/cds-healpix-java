@@ -200,7 +200,7 @@ public final class Polygon {
   public boolean contains(final CooXYZ p) {
     return this.containsSouthPole ^ oddNumberOfIntersectionGoingSouth(p);
   }
-
+  
   /**
    * Returns {@code true} if there is a odd number of intersection going from the given point
    * to the south pole (at the given piont constant longitude).
@@ -215,12 +215,6 @@ public final class Polygon {
           && crossPlaneGoingSouth(p, this.vectProds[i])) {
         c = !c;
       }
-      /*// Commented the time to verify results are correct
-       if ((   (abs(this.vertices[i].lon() - this.vertices[j].lon()) > PI)
-            ^ (this.vertices[i].lon() > p.lon() != this.vertices[j].lon() > p.lon())
-          ) && p.scalarProd(this.vectProds[i]) > 0) {
-        c = !c;
-      }*/
     }
     return c;
   }
@@ -259,8 +253,7 @@ public final class Polygon {
       final Vect3D planeNormalDirInNorthHemisphere) {
     return p.scalarProd(planeNormalDirInNorthHemisphere) > 0;
   }
-  
-  
+
   /**
    * Returns {@code true} if an edge of the polygone intersects the line defined by the two given
    * points.
@@ -288,7 +281,7 @@ public final class Polygon {
       }
       if (segmentsAreOverlappingInLon(a, b, pA, pB) 
           && polygonEdgeIntersectsGreatCircle(ua = a.scalarProd(this.vectProds[i]), ub = b.scalarProd(this.vectProds[i]))
-          && intersectPointInPolygonSegment(a, b, pA, pB, this.vectProds[i], ua, ub)) {
+          && intersectPointInPolygonSegment(a, b, pA, pB, /*this.vectProds[i],*/ ua, ub)) {
         return true;
       }
     }
@@ -326,15 +319,15 @@ public final class Polygon {
    * @return
    */
   private static boolean intersectPointInPolygonSegment(
-      final CooXYZ a, final CooXYZ b, final CooXYZ pA, final CooXYZ pB, final Vect3D paCrossProdPb,
+      final CooXYZ a, final CooXYZ b, final CooXYZ pA, final CooXYZ pB, /*final Vect3D paCrossProdPb,*/
       final double aDotProdEdgeN, final double bDotProdEdgeN) {
-    final Vect3D intersect = normalizedIntersectPoint(a, b, paCrossProdPb, aDotProdEdgeN, bDotProdEdgeN);
+    final Vect3D intersect = normalizedIntersectPoint(a, b, /*paCrossProdPb,*/ aDotProdEdgeN, bDotProdEdgeN);
     final double papb = pA.scalarProd(pB);
     return abs(pA.scalarProd(intersect)) > papb && abs(pB.scalarProd(intersect)) > papb;
   }
   
   private static Vect3D normalizedIntersectPoint(
-      final CooXYZ a, final CooXYZ b, final Vect3D paCrossProdPb,
+      final CooXYZ a, final CooXYZ b, /*final Vect3D paCrossProdPb,*/
       final double aDotProdEdgeN, final double bDotProdEdgeN) {
     // We note u = a x b
     // Intersection vector i defined by

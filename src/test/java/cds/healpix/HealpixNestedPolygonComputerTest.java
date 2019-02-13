@@ -17,6 +17,8 @@
 
 package cds.healpix;
 
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 import cds.healpix.Healpix;
@@ -46,7 +48,7 @@ public final class HealpixNestedPolygonComputerTest {
   
  // draw polygon(14:22:24.12,+14:09:33.6, 13:20:19.08,+02:01:08.1, 11:49:48.33,-09:43:32.6, 10:47:20.93,-14:52:07.9, 08:38:06.57,-22:06:58.9, 06:47:36.01,-28:17:21.6, 04:46:52.23,-28:35:23.0, 02:29:06.86,-28:41:31.0, 02:29:06.86,-28:41:31.0, 02:21:35.03,-28:35:48.2, 00:47:33.31,-27:09:20.3, 23:07:46.45,-23:37:28.5, 21:05:45.41,-16:48:35.8, 20:25:57.20,-07:49:42.6, 20:20:40.15,+08:08:01.7, 20:58:04.57,+09:53:53.4, 22:07:00.01,+02:23:27.2, 00:50:43.94,-03:13:59.3, 03:07:48.93,-04:19:24.9, 04:53:03.08,-02:07:36.7, 04:53:03.08,-02:07:36.7, 04:59:46.12,-01:25:20.7, 06:41:11.36,+04:06:05.7, 06:41:11.36,+04:06:05.7, 08:43:58.98,+11:21:41.1, 08:43:58.98,+11:21:41.1, 10:34:29.93,+18:55:07.2, 10:34:29.93,+18:55:07.2, 10:43:50.34,+19:37:25.6, 13:00:45.39,+23:04:32.7, 13:00:45.39,+23:04:32.7, 14:22:00.57,+23:01:24.1, 14:41:59.11,+18:57:44.5)
 
-  @Test
+ /* @Test
   public void polygonTest1() {
     final String[] verticesSexa = new String[]{
         "12:09:52.27,+88:48:06.3", 
@@ -89,7 +91,6 @@ public final class HealpixNestedPolygonComputerTest {
   @Test
   public void polygonTest2() {
     final String[] verticesDec = new String[]{
-        //"287.18290328,-02.26765169",
         "287.18290328,-02.26765169",
         "287.19157232,-02.27546342",
         "287.18274564,-02.27946381",
@@ -117,6 +118,171 @@ public final class HealpixNestedPolygonComputerTest {
     while (it.hasNext()) {
       System.out.println(it.next());
     }
+  }*/
+  
+  
+  @Test
+  public void polyonTest3() {
+    final int depth = 3;
+    final String[] verticesDec = new String[]{
+        "0.0, 0.0",
+        "0.0, 0.5",
+        "0.25, 0.25"
+    };
+    final long[] expected = new long[]{304, 305, 306, 307, 308, 310, 313, 316};
+
+    HealpixNested hn = Healpix.getNested(depth);
+    HealpixNestedPolygonComputer pc = hn.newPolygonComputer();
+    final double[][] vertices = new double[verticesDec.length][2];
+    for (int i = 0; i < verticesDec.length; i++) {
+      final String[] lonlatDec = verticesDec[i].split(",");
+      vertices[i][0] = Double.parseDouble(lonlatDec[0]);
+      vertices[i][1] = Double.parseDouble(lonlatDec[1]);
+    }
+    
+    final HealpixNestedBMOC bmoc = pc.overlappingCells(vertices);
+    assertEquals(expected.length, bmoc.computeDeepSize());
+    FlatHashIterator it = bmoc.flatHashIterator();
+    for (int i = 0; it.hasNext(); i++) {
+      assertEquals(expected[i], it.next());
+    }
+    
+    /*System.out.println("MOC VIEW:");
+    for (CurrentValueAccessor curr : bmoc) {
+      System.out.println(curr);
+    }
+    System.out.println("FLAT VIEW");
+    final FlatHashIterator it = bmoc.flatHashIterator();
+    while (it.hasNext()) {
+      System.out.println(it.next());
+    }*/
+  }
+  
+  
+  @Test
+  public void polyonTest4() {
+    // Test special points
+    // Aladin: draw polygon(65.11781779000003, 85.012424, 89.70533626000001, 87.06130188, 60.23667431000001, 85.609882)
+    // - input data
+    final int depth = 6;
+    final double[][] vertices = deg2rad(new double[][]{
+      {65.11781779000003, 85.012424}, 
+      {89.70533626000001, 87.06130188}, 
+      {60.23667431000001, 85.609882}
+    });
+    final long[] expected = new long[]{4062, 4063, 4084, 4085};
+    // - generic algo
+    HealpixNested hn = Healpix.getNested(depth);
+    HealpixNestedPolygonComputer pc = hn.newPolygonComputer();
+    HealpixNestedBMOC bmoc = pc.overlappingCells(vertices);
+    assertEquals(expected.length, bmoc.computeDeepSize());
+    FlatHashIterator it = bmoc.flatHashIterator();
+    for (int i = 0; it.hasNext(); i++) {
+      assertEquals(expected[i], it.next());
+    }
+  }
+  
+  @Test
+  public void polyonTest5() {
+    // Aladin: draw polygon(359.70533626,+87.06130188, 330.23667431,+85.60988200, 335.11781779,+85.01242400)
+    // Test special points
+    // - input data
+    final int depth = 6;
+    final double[][] vertices = deg2rad(new double[][]{
+      {359.70533626, 87.06130188}, 
+      {330.23667431, 85.60988200},
+      {335.11781779, 85.01242400}
+    });
+    final long[] expected = new long[]{16350, 16351, 16372, 16373};
+    // - generic algo
+    HealpixNested hn = Healpix.getNested(depth);
+    HealpixNestedPolygonComputer pc = hn.newPolygonComputer();
+    HealpixNestedBMOC bmoc = pc.overlappingCells(vertices);
+    assertEquals(expected.length, bmoc.computeDeepSize());
+    FlatHashIterator it = bmoc.flatHashIterator();
+    for (int i = 0; it.hasNext(); i++) {
+      assertEquals(expected[i], it.next());
+    }
+  }
+  
+  @Test
+  public void polyonTest6() {
+    // Aladin:  draw polygon(224.86211710,+78.10924662, 176.91129363 +83.92878811, 135.81578643,+78.24840426, 200.73574863,+73.58038790)
+    // Test special points
+    // - input data
+    final int depth = 3;
+    final double[][] vertices = deg2rad(new double[][]{
+      {224.86211710, 78.10924662},
+      {176.91129363, 83.92878811},
+      {135.81578643, 78.24840426},
+      {200.73574863, 73.58038790}
+    });
+    final long[] expected = new long[]{119, 125, 127, 187, 188, 190, 191};
+    // - generic algo
+    HealpixNested hn = Healpix.getNested(depth);
+    HealpixNestedPolygonComputer pc = hn.newPolygonComputer();
+    HealpixNestedBMOC bmoc = pc.overlappingCells(vertices);
+    assertEquals(expected.length, bmoc.computeDeepSize());
+    FlatHashIterator it = bmoc.flatHashIterator();
+    for (int i = 0; it.hasNext(); i++) {
+      assertEquals(expected[i], it.next());
+    }
+  }
+  
+  @Test
+  public void polyonTest7() {
+    // Aladin: draw polygon(359.70533626,-87.06130188, 330.23667431,-85.60988200, 335.11781779,-85.01242400)
+    // Test special points
+    // - input data
+    final int depth = 6;
+    final double[][] vertices = deg2rad(new double[][]{
+      {359.70533626, -87.06130188}, 
+      {330.23667431, -85.60988200}, 
+      {335.11781779, -85.01242400}
+    });
+    final long[] expected = new long[]{45061, 45063, 45072, 45074};
+    // - generic algo
+    HealpixNested hn = Healpix.getNested(depth);
+    HealpixNestedPolygonComputer pc = hn.newPolygonComputer();
+    HealpixNestedBMOC bmoc = pc.overlappingCells(vertices);
+    assertEquals(expected.length, bmoc.computeDeepSize());
+    FlatHashIterator it = bmoc.flatHashIterator();
+    for (int i = 0; it.hasNext(); i++) {
+      assertEquals(expected[i], it.next());
+    }
+  }
+  
+  @Test
+  public void polyonTest8() {
+    // In Aladin: draw polygon(180.08758393,-41.43289179, 191.00310758,-29.99207687, 181.59160475,-34.21976170)
+    // Test special points
+    // - input data
+    final int depth = 3;
+    final double[][] vertices = deg2rad(new double[][]{
+      {180.08758393,-41.43289179},
+      {191.00310758,-29.99207687},
+      {181.59160475,-34.219761700}
+    });
+    final long[] expected = new long[]{384, 385, 682, 683};
+    // - generic algo
+    HealpixNested hn = Healpix.getNested(depth);
+    HealpixNestedPolygonComputer pc = hn.newPolygonComputer();
+    HealpixNestedBMOC bmoc = pc.overlappingCells(vertices);
+    assertEquals(expected.length, bmoc.computeDeepSize());
+    FlatHashIterator it = bmoc.flatHashIterator();
+    for (int i = 0; it.hasNext(); i++) {
+      assertEquals(expected[i], it.next());
+    }
+  }
+  
+  private static final double[][] deg2rad(final double[][] vertices) {
+    for (int i = 0; i < vertices.length; i++) {
+      final double[] coos = vertices[i];
+      for (int j = 0; j < coos.length; j++) {
+        coos[j] = Math.toRadians(coos[j]);
+      }
+    }
+    return vertices;
   }
   
 }

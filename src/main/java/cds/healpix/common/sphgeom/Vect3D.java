@@ -28,7 +28,7 @@ import static cds.healpix.common.math.Math.atan2;
  * @author F.-X. Pineau
  *
  */
-final class Vect3D {
+public final class Vect3D {
     
     /** X coordinate. */
     private final double x;

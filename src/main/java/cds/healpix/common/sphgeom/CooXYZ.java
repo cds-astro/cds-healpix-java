@@ -74,6 +74,10 @@ public class CooXYZ {
     this.lat = atan2(this.z, sqrt(this.x * this.x + this.y * this.y));
   }
 
+  public CooXYZ(final Vect3D v) {
+    this(v.x(), v.y(), v.z());
+  }
+  
   public static CooXYZ toEquaCooXYZ(final CooXYZ pos) {
     return new CooXYZ(pos.lon(), pos.lat());
   }
@@ -196,7 +200,8 @@ public class CooXYZ {
   }
   @Override
   public String toString() {
-    return "lonDeg: " + Math.toDegrees(lon) + "; latDeg: " + Math.toDegrees(lat) + "; " +  x + "," + y + "," + z;
+    // return "lonDeg: " + Math.toDegrees(lon) + "; latDeg: " + Math.toDegrees(lat) + "; " +  x + "," + y + "," + z;
+    return "lon: " + lon + "; lat: " + lat + "; " +  x + "," + y + "," + z;
   }
 
   /**

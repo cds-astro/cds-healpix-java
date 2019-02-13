@@ -208,8 +208,11 @@ public class NestedConeTest {
     
     // draw circle(13.158329,-72.80028,5.64323)
     // draw moc 3/ 514 515 520 521 522
+    // draw moc 3/ 514 515 520 521 522 708 709
+    // draw moc 3/ 514 520 521 522 523 544
     coneTest(lon, lat, rad, order, new long[]{514, 515, 520, 521, 522, 708, 709});
-
+    // 128
+    // draw moc 2/ 129 130 131 136 137 176 177 180
   }
   
   @Test
@@ -1141,10 +1144,7 @@ public class NestedConeTest {
     double rad = 14.93;
     int order = 3;
     
-    // draw circle(36.80105218,+56.78028536, 14.93)
-    
-    // We miss 26L, 27L, 30L => SE special point in the NORTH POLAR CAP
-    
+    // draw circle(36.80105218,+56.78028536, 14.93)    
     coneTest(lon, lat, rad, order, new long[]{26L, 27L, 30L, 37L, 38L, 39L, 44L, 45L, 46L, 47L, 48L,
         49L, 50L, 51L, 52L, 54L, 56L, 57L, 58L,
         59L, 60L});

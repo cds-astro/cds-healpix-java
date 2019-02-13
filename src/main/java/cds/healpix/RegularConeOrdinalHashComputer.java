@@ -197,7 +197,7 @@ final class RegularConeOrdinalHashComputer implements ConeOrdinalHashComputer {
       double zDxDyEq1 = NewtonMethod.newtonSolveNorthPolarCapZone(
           zStart, true, coneCenterLonModHalfPi,
           sinConeCenterLat, twoSineOfHalfConeRadius, true, relativePrecision, nIterMax);
-      // Remark: z can't be near from 1 since: distace min to pole = radius, and radius not small 
+      // Remark: z can't be near from 1 since: distance min to pole = radius, and radius not small 
       double latRad = asin(zDxDyEq1);
       double deltaLon = angDistComputer.coneDeltaLon(squareOfsinOfHalfR, cosConeCenterLat,
           latRad - coneCenterLatRad, zDxDyEq1);

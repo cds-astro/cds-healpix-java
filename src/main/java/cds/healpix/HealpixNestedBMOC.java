@@ -179,16 +179,25 @@ public final class HealpixNestedBMOC implements Iterable<HealpixNestedBMOC.Curre
     }
     final long[] mocNew = new long[this.to];
     int iNew = 0;
-    long prevHashAtNewDepth = -1, currHashAtNewDepth;
+    long prevHashAtNewDepth = -1L, currHashAtNewDepth;
     for (int i = 0; i < this.to; i++) {
       final long raw = this.cells[i];
       final int depth = getDepth(raw, this.depthMax);
       if (depth <= newDepth) {
-        mocNew[iNew++] = raw;
-      } else if (prevHashAtNewDepth != 
-          (currHashAtNewDepth = getHashFromDepthDiff(raw, this.depthMax - depth) >> (depth - newDepth))) {
+        if (prevHashAtNewDepth != -1) {
+          mocNew[iNew++] = (prevHashAtNewDepth << 2) | 2L;
+          prevHashAtNewDepth = -1L;
+        }
+        final int twice_delta_depth = (this.depthMax - depth) << 1;
+        mocNew[iNew++] = (raw >> twice_delta_depth) | (raw & 1L);
+      } else {
+        currHashAtNewDepth = getHashFromDepthDiff(raw, this.depthMax - depth);
+        if (prevHashAtNewDepth == -1L) {
+          prevHashAtNewDepth = currHashAtNewDepth;
+        } else if (prevHashAtNewDepth != currHashAtNewDepth) {
           mocNew[iNew++] = (prevHashAtNewDepth << 2) | 2L; // sentinel bit + flag = 0
           prevHashAtNewDepth = currHashAtNewDepth;
+        }
       }
     }
     return new HealpixNestedBMOC(newDepth, Arrays.copyOf(mocNew, iNew));

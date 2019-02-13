@@ -9,6 +9,11 @@ For informations on HEALPix in general, see:
 - The [Wikipedia page](https://en.wikipedia.org/wiki/HEALPix)
 - The two main related papers: [Gorsky (2005)](http://adsabs.harvard.edu/abs/2005ApJ...622..759G) and [Calabretta (2007)](http://adsabs.harvard.edu/abs/2007MNRAS.381..865C)
 
+Related project
+---------------
+
+See a much cleaner version of the code ported in Rust [here](https://github.com/cds-astro/cds-healpix-rust) and the project to use the Rust code from Python [here](https://github.com/cds-astro/cds-healpix-python/). 
+
 License
 -------
 

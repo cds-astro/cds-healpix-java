@@ -195,7 +195,7 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
     // and the serie 1/2 + 1/4 + ... = 1
     // ~= nRing * (2 + 1 + 1) = 4  * nRing
     // Constant should be 4, we use 6 to be conservative
-    return 8 * (nRings + nRingOtherSideOfThePole);
+    return 6 * (nRings + nRingOtherSideOfThePole);
   }
   
   
@@ -244,13 +244,13 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
     final long centerHash = this.hComputerStartingDepth.hash(coneCenterLonRad, coneCenterLatRad);
     assert -HALF_PI <= coneCenterLatRad && coneCenterLatRad <= HALF_PI;
 
-    // Count the number of rings in the other sie of a pole (if the cone contain a pole),
+    // Count the number of rings in the other side of a pole (if the cone contain a pole),
     // the smallest possible ring index...
     int nRingsOtherSideOfPole = 0;
     this.smallestCornerRingIndex = -1;  
     double latMax = coneCenterLatRad + this.rRad;
     if (latMax > HALF_PI) {
-      nRingsOtherSideOfPole = ringIndex(this.deltaDepthMax, this.hComputerDepthMax.hash(coneCenterLonRad + PI, HALF_PI - latMax)) + 1;
+      nRingsOtherSideOfPole = ringIndex(this.deltaDepthMax, this.hComputerDepthMax.hash(coneCenterLonRad + PI, PI - latMax)) + 1;
       latMax = HALF_PI;
     } else {
       this.smallestCornerRingIndex // min = -1 = North polevpComputers
@@ -262,7 +262,7 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
     int largestCornerRingIndex = nIsolatRings;
     double latMin = coneCenterLatRad - this.rRad;
     if (latMin < -HALF_PI) {
-      nRingsOtherSideOfPole = largestCornerRingIndex - ringIndex(this.deltaDepthMax, this.hComputerDepthMax.hash(coneCenterLonRad + PI, -HALF_PI - latMin));
+      nRingsOtherSideOfPole = largestCornerRingIndex - ringIndex(this.deltaDepthMax, this.hComputerDepthMax.hash(coneCenterLonRad + PI, -PI - latMin));
       latMin = -HALF_PI;
     } else {
       largestCornerRingIndex = Math.min(largestCornerRingIndex, ringIndex(this.deltaDepthMax, this.hComputerDepthMax.hash(coneCenterLonRad, latMin)) + 1); 

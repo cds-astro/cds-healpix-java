@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+// import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -787,6 +787,7 @@ public class HealpixNestedUltraCompactMOCTest {
   }
   
   
+  /* TEST REMOVED TO STAY COMPATIBLE WITH JAVA 6
   @Test
   public void test5() throws IOException {
     final String file = "src/test/resources/moc.tyc2.11.ascii.v2.txt";
@@ -839,7 +840,7 @@ public class HealpixNestedUltraCompactMOCTest {
     
     // decompress: GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(bytes));
     
-  }
+  }*/
   
   public static byte[] gzipCompress(final String str) throws IOException {
     if ((str == null) || (str.length() == 0)) {

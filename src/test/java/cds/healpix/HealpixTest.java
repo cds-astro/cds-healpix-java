@@ -32,14 +32,14 @@ import static cds.healpix.common.math.Math.toRadians;
 import static cds.healpix.VerticesAndPathComputer.ALL_CARDINAL_POINTS;
 import static org.junit.Assert.*;
 
-import java.io.File;
+import java.util.List;
+import java.util.ArrayList;
+/*import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.Locale;*/
 
 public final class HealpixTest {
 
@@ -289,6 +289,7 @@ public final class HealpixTest {
         slat1 * slat2 + clat1 * clat2 * cDeltaLon);
   }
 
+  /* TEST REMOVED TO BE COMPATIBLE WITH JAVA 6
   @Test
   public void testProj() throws IOException {
     // Build points
@@ -316,7 +317,7 @@ public final class HealpixTest {
     byte[] f1 = Files.readAllBytes(new File("target/test-results/healpix.proj.actual.csv").toPath());
     byte[] f2 = Files.readAllBytes(new File("src/test/resources/healpix.proj.expected.csv").toPath());
     assertTrue(Arrays.equals(f1,  f2));
-  }
+  }*/
 
   @Test
   public void uniqTest() {

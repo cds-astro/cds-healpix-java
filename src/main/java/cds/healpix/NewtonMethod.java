@@ -491,7 +491,7 @@ private static CooXYZ arcSpecialPointInPcSameQuarter(CooXYZ p1, CooXYZ p2, doubl
     nIter += 1;
   }
   // Return result if seems correct
-  if (Double.isFinite(z) && z > TRANSITION_Z && ((z1 < z && z < z2) || (z2 < z && z < z1))) {
+  if (/*Double.isFinite(z)*/isFinite(z) && z > TRANSITION_Z && ((z1 < z && z < z2) || (z2 < z && z < z1))) {
     if (spc) {
       final Vect3D v = intersectSmallCircle(p1, p2, -z);
       return new CooXYZ(v);
@@ -823,8 +823,10 @@ public static Vect3D intersectSmallCircle(CooXYZ p1, CooXYZ p2, double z) {
     return x * x;
   }
 
-
-
+  // COPIED To STAY COMPATIBLE WITH JAVA 6
+  public static boolean isFinite(double d) {
+    return Math.abs(d) <= Double.MAX_VALUE;
+  }
 
 
 

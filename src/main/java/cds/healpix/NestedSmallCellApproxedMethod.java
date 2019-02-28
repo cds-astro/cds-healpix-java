@@ -249,10 +249,11 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     // Count the number of rings in the other side of a pole (if the cone contains a pole),
     // the smallest possible ring index...
     int nRingsOtherSideOfPole = 0;
-    int smallestCornerRingIndex = -1;  
+    int smallestCornerRingIndex = -1;
+    assert this.rRad < PI;
     double latMax = coneCenterLatRad + this.rRad;
     if (latMax > HALF_PI) {
-      nRingsOtherSideOfPole = ringIndex(this.deltaDepthMax, this.hComputerDeeperDepth.hash(coneCenterLonRad + PI, HALF_PI - latMax)) + 1;
+      nRingsOtherSideOfPole = ringIndex(this.deltaDepthMax, this.hComputerDeeperDepth.hash(coneCenterLonRad + PI, PI - latMax)) + 1;
       latMax = HALF_PI;
     } else {
       smallestCornerRingIndex // min = -1 = North polevpComputers
@@ -263,7 +264,7 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     int largestCornerRingIndex = Healpix.nIsolatitudeRings(this.deeperDepth);
     double latMin = coneCenterLatRad - this.rRad;
     if (latMin < -HALF_PI) {
-      nRingsOtherSideOfPole = largestCornerRingIndex - ringIndex(this.deltaDepthMax, this.hComputerDeeperDepth.hash(coneCenterLonRad + PI, -HALF_PI - latMin));
+      nRingsOtherSideOfPole = largestCornerRingIndex - ringIndex(this.deltaDepthMax, this.hComputerDeeperDepth.hash(coneCenterLonRad + PI, -PI - latMin));
       latMin = -HALF_PI;
     } else {
       largestCornerRingIndex = Math.min(largestCornerRingIndex, ringIndex(this.deltaDepthMax, this.hComputerDeeperDepth.hash(coneCenterLonRad, latMin)) + 1); 
@@ -294,7 +295,7 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     // and the serie 1/2 + 1/4 + ... = 1
     // ~= nRing * (2 + 1 + 1) = 4  * nRing
     // Constant should be 4, we use 8 to be conservative
-    return 8 * (nRings + nRingOtherSideOfThePole);
+    return 6 * (nRings + nRingOtherSideOfThePole);
   }
   
   

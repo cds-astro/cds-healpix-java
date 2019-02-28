@@ -1,4 +1,13 @@
 
+v0.21 (2019-02-28)
+=================
+
+### Bug correction
+
+* Fix the computation of the number of rings when a cone contains a pole.
+* Remove dependencies to Java 7 (nio.Files, Double.isFinite).
+
+
 v0.2 (2019-02-13)
 =================
 

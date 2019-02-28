@@ -24,6 +24,7 @@ Warning
 -------
 
 The libray in still in the testing phase, especially for the exact cell-in-cone function.
+Logical operations on BMOC are not yet debugged (they already are in the Rust project). 
 
 Install
 -------

@@ -117,7 +117,8 @@ public class HealpixCLI {
     }
   }
 
-  private static final void exec(final Deque<String> stack) {
+  /* REMOVED TO STAY COMPATIBLE WITH Java6
+   private static final void exec(final Deque<String> stack) {
     final String action = stack.pop();
     switch (action) {
     case "help": case "-h": case "-help": case "--help":
@@ -174,6 +175,54 @@ public class HealpixCLI {
     case "":
       break;
     default:
+      throw new IllegalArgumentException("Unknown action \"" + action + "\"");
+    }
+  }*/
+  
+  private static final void exec(final Deque<String> stack) {
+    final String action = stack.pop();
+    if (action == "help" || action == "-h" || action == "-help" || action == "--help") {
+      printUsage();
+    } else if (action == "quit" || action == "exit") {
+      System.exit(0);
+    } else if (action == "hash") {
+      HealpixNested hn = Healpix.getNested(popDepth(stack));
+      long cellNumber = hn.hash(popRA(stack), popDec(stack));
+      System.out.println(cellNumber);
+    } else if (action == "center") {
+      HealpixNested hn = Healpix.getNested(popDepth(stack));
+      double[] centerCoos = hn.center(popHash(stack));
+      double raDeg  = Math.toDegrees(centerCoos[LON_INDEX]);
+      double decDeg = Math.toDegrees(centerCoos[LAT_INDEX]);
+      System.out.println(raDeg + " " + decDeg);
+    } else if (action == "vertices") {
+      HealpixNested hn = Healpix.getNested(popDepth(stack));
+      EnumMap<Cardinal, double[]> vertices = hn.vertices(popHash(stack), ALL_CARDINAL_POINTS);
+      for (final Map.Entry<Cardinal, double[]> e : vertices.entrySet()) {
+        final Cardinal c = e.getKey();
+        final double[] coos = e.getValue();
+        double raDeg  = Math.toDegrees(coos[LON_INDEX]);
+        double decDeg = Math.toDegrees(coos[LAT_INDEX]);
+        System.out.println(c + ": " + raDeg + " " + decDeg);
+      }
+    } else if (action == "neigh") {
+      HealpixNested hn = Healpix.getNested(popDepth(stack));
+      NeighbourList neigList = hn.neighbours(popHash(stack));
+      for (int i = 0; i < neigList.size(); i++) {
+        System.out.println(neigList.getDirection(i) + ": " + neigList.get(i));
+      }
+    } else if (action == "cone") {
+      HealpixNested hn = Healpix.getNested(popDepth(stack));
+      double coneCenterRa  = popRA(stack);
+      double coneCenterDec = popDec(stack);
+      HealpixNestedFixedRadiusConeComputer cc = hn.newConeComputer(popRadius(stack));
+      HealpixNestedBMOC bmoc = cc.overlappingCells(coneCenterRa, coneCenterDec);
+      for (HealpixNestedBMOC.CurrentValueAccessor cell : bmoc) {
+        String isFull = cell.isFull() ? "(f)" : "(p)";
+        System.out.println(cell.getDepth()+ "/" + cell.getHash() + isFull);
+      }
+    } else if (action ==  "") {
+    } else {
       throw new IllegalArgumentException("Unknown action \"" + action + "\"");
     }
   }

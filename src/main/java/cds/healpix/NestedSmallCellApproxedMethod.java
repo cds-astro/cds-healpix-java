@@ -115,7 +115,7 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
   }
   
   
-  //Because we do not want HealpixNestedLonLatComputer to publicly implement SettableHashParts
+  // Because we do not want HealpixNestedLonLatComputer to publicly implement SettableHashParts
   private final SettableHashParts hashPartsProxy = new SettableHashParts() {
     @Override public int baseCellHash() { return baseCellHash; }
     @Override public int iInBaseCell()  { return iInBaseCell; }

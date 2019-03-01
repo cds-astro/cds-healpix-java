@@ -842,6 +842,7 @@ public class HealpixNestedUltraCompactMOCTest {
     
   }*/
   
+  
   public static byte[] gzipCompress(final String str) throws IOException {
     if ((str == null) || (str.length() == 0)) {
       return null;

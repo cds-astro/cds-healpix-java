@@ -45,7 +45,15 @@ public class HealpixNestedUltraCompactMOC {
     }
     
     private byte[] toByteArray() {
-      return Arrays.copyOf(this.bs.toByteArray(), (int) ((i + 7) / 8));
+      // Replace to stay compatible with Java6 
+      // return Arrays.copyOf(this.bs.toByteArray(), (int) ((i + 7) / 8));
+      byte[] bytes = new byte[(int) ((i + 7) / 8)];
+      for (int i = 0; i < this.i; i++) {
+        if (this.bs.get(i)) {
+          bytes[bytes.length - i / 8 - 1] |= 1 << (i & 7);
+        }
+      }
+      return bytes;
     }
   }
   
@@ -132,9 +140,17 @@ public class HealpixNestedUltraCompactMOC {
     }
     return bits.toByteArray();
   }
+ 
+  private static final BitSet bitSetFromBytes(byte[] compressedMoc) {
+    final BitSet bs = new BitSet(8 * compressedMoc.length);
+    for (int i = 0; i < bs.size(); i++) {
+      bs.set(i,((compressedMoc[i / 8] & (1 << (i & 7))) != 0));
+    }
+    return bs;
+  }
   
   public static HealpixNestedBMOC decompress(int depthMax, byte[] compressedMoc) {
-    final BitSet bs = BitSet.valueOf(compressedMoc);
+    final BitSet bs = bitSetFromBytes(compressedMoc); // BitSet.valueOf(compressedMoc); CHANGED TO BE COMPATIBLE WITH JAVA6
     final List<Long> res = new ArrayList<Long>(compressedMoc.length);
     int i = 0;
     int depth = 0;
@@ -179,7 +195,8 @@ public class HealpixNestedUltraCompactMOC {
   }
   
   
-  /*public static String compressB64(byte[] bytes) {
+  /* REMOVED To STAY COMPATIBLE WITH JAVA6
+  public static String compressB64(byte[] bytes) {
     return Base64.getEncoder().encodeToString(bytes);
   }
   

@@ -499,7 +499,12 @@ public final class Healpix implements Projection {
     }
   }
 
-  static void checkLatitude(final double latRad) {
+
+  /**
+   * Throws an IllegalArgumentException if the given latitude is not in [-pi/2, pi/2].
+   * @param latRad latittude, in radians
+   */
+  public static void checkLatitude(final double latRad) {
     if (latRad < -HALF_PI || HALF_PI < latRad) {
       throw new IllegalArgumentException("Wrong latitude. Expected: in [-pi/2, pi/2]. Actual: " + latRad);
     }

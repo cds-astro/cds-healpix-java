@@ -22,6 +22,10 @@ import static cds.healpix.common.math.Math.atan2;
  * 
  * 
  * 
+ * FOR THE MOC: compute one value of circumcircle per order (like in the RUST lib)
+ * => 2 ellipses per order (with +r_circul and -r_cirum)
+ * => and use the RUST cone approx method, but for the elliptivcal cone :)
+ * 
  * @author F.-X. Pineau
  *
  */
@@ -50,6 +54,7 @@ public class EllipticalCone {
   r31, r32, r33;
 
   private double sina, sinb;
+  private double cosPA, sinPA;
   private double sigX2, sigY2, rho;
   private double oneOver1minRho2, twiceRhoOverSigXSigY;
 
@@ -99,6 +104,19 @@ public class EllipticalCone {
   }
   
   /**
+   * Returns {@code true} if the given cone is fully inside the elliptical cone.
+   * @param lonRad longitude of the center of the cone, in radians
+   * @param latRad latittude of the center of the cone, in radians
+   * @param rRad cone radius, in radians
+   * @return {@code true} if the given cone is fully inside the elliptical cone.
+   */
+  public boolean containsCone(final double lonRad, final double latRad, final double rRad) {
+    final double[] projXY = new double[2]; 
+    this.proj(lonRad, latRad, projXY);
+    return squaredMahalanobisDistance(projXY[0], projXY[1], -rRad) <= 1;
+  }
+  
+  /**
    * Returns the coordinates (lonRad, latRad) of points which are on the path along the ellipse edge
    * on the unit sphere. 
    * @param halfNumberOfPoints half the wanted number of points in the path
@@ -137,15 +155,25 @@ public class EllipticalCone {
   }
   
   private double squaredMahalanobisDistance(final double x, final double y, final double r) {
-    final double r2 = r * r;
-    final double newSigX2 = this.sigX2 + r2;
-    final double newSigY2 = this.sigY2 + r2;
-    final double oneOverDet = 1 / (newSigX2 * newSigY2 - this.rho * this.rho * this.sigX2 * this.sigY2);
-    return oneOverDet * (
-           (x * x) * newSigY2 
-        - twiceRhoOverSigXSigY * x * y
-        +  (y * y) * newSigX2
-        );
+    if (r < 0 && (r > this.a || r > this.b)) {
+      return 0;
+    }
+    double sinar = sin(this.a + r);
+    double sinbr = sin(this.b + r);
+    final double sa2 = sinar * sinar;
+    final double sb2 = sinbr * sinbr;
+    final double cpa2 = this.cosPA * this.cosPA;
+    final double spa2 = this.sinPA * this.sinPA;
+    double sigX2b = sa2 * spa2 + sb2 * cpa2;
+    double sigY2b = sa2 * cpa2 + sb2 * spa2;
+    double rhob = this.cosPA * this.sinPA * (sa2 - sb2);
+    final double oneOver1minRho2b = 1 / (1 - rhob * rhob);
+    final double twiceRhoOverSigXSigYb = 2 * rhob / sqrt(sigX2b * sigY2b);
+    return oneOver1minRho2b * (
+        (x * x) / sigX2b
+     - twiceRhoOverSigXSigYb * x * y
+     +  (y * y) / sigY2b
+    );
   }
   
   private void setProjCenter(final double lon, final double lat) {
@@ -171,18 +199,18 @@ public class EllipticalCone {
     final double sa2 = this.sina * this.sina;
     this.sinb = sin(b);
     final double sb2 = this.sinb * this.sinb;
-    final double cpa = cos(pa);
-    final double spa = sin(pa);
-    final double cpa2 = cpa * cpa;
-    final double spa2 = spa * spa;
+    this.cosPA = cos(pa);
+    this.sinPA =  sin(pa);
+    final double cpa2 = this.cosPA * this.cosPA;
+    final double spa2 = this.sinPA * this.sinPA;
     this.sigX2 = sa2 * spa2 + sb2 * cpa2;
     this.sigY2 = sa2 * cpa2 + sb2 * spa2;
-    this.rho = cpa * spa * (sa2 - sb2);
+    this.rho = this.cosPA * this.sinPA * (sa2 - sb2);
     this.oneOver1minRho2 = 1 / (1 - this.rho * this.rho);
     this.twiceRhoOverSigXSigY = 2 * this.rho / sqrt(this.sigX2 * this.sigY2);
     
-    this.a11 = spa; this.a12 = -cpa;    
-    this.a21 = cpa; this.a22 = spa;
+    this.a11 = this.sinPA; this.a12 = -this.cosPA;    
+    this.a21 = this.cosPA; this.a22 =  this.sinPA;
   }
 
   private boolean proj(final double lon, final double lat, final double[] resultXY) {

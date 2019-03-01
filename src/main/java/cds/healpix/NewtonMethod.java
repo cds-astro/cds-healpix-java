@@ -430,7 +430,7 @@ private static CooXYZ arcSpecialPointInPcSameQuarter(CooXYZ p1, CooXYZ p2, doubl
     p1 = p2;
     p2 = tmp;
   }
-  assert p1.lon() < p2.lon() : p1.lon() + " " + p2.lon();
+  assert p1.lon() <= p2.lon() : p1.lon() + " " + p2.lon();
   final int p1DivHalfPi = (int) (p1.lon() / HALF_PI);
   double p2ModHalfPi = p2.lon() % HALF_PI;
   if (p2ModHalfPi == 0) {

@@ -20,6 +20,9 @@ package cds.healpix.common.sphgeom;
 import cds.healpix.Healpix;
 
 import static cds.healpix.common.math.Math.PI;
+import static cds.healpix.common.math.Math.HALF_PI;
+import static cds.healpix.common.math.Math.TWO_PI;
+import static cds.healpix.common.math.Math.abs;
 import static cds.healpix.common.math.Math.asin;
 import static cds.healpix.common.math.Math.atan2;
 import static cds.healpix.common.math.Math.cos;
@@ -55,13 +58,20 @@ public class CooXYZ {
   private final double z;
 
   public CooXYZ(final double lonRad, final double latRad) {
-    this.lon = lonRad;
-    this.lat = latRad;
     // equa coo to xyz
-    final double cosDec = cos(this.lat);
-    this.x = cosDec * cos(this.lon);
-    this.y = cosDec * sin(this.lon);
-    this.z = sin(this.lat);
+    final double cosDec = cos(latRad);
+    this.x = cosDec * cos(lonRad);
+    this.y = cosDec * sin(lonRad);
+    this.z = sin(latRad);
+    // Ensure that -pi.2 <= lat <= pi/2 and 0 <= lon < 2*PI
+    if (abs(latRad) > HALF_PI || lonRad < 0 || lonRad >= TWO_PI) {
+      final double tmp = atan2(this.y, this.x);
+      this.lon = tmp < 0 ? 2 * PI + tmp : tmp;
+      this.lat = atan2(this.z, sqrt(this.x * this.x + this.y * this.y));
+    } else {
+      this.lon = lonRad;
+      this.lat = latRad;
+    }
   }
 
   public CooXYZ(final double x, final double y, final double z) {

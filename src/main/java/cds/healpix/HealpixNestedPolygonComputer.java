@@ -127,6 +127,7 @@ public final class HealpixNestedPolygonComputer {
     final Polygon poly = new Polygon(polyVertices);
     final Cone boundingCone = CooXYZ.boundingCone(polyVertices); // replca CooXYZ.mec()
     int startingDepth = /*boundingCone == null ? -1 :*/ getBestStartingDepth(boundingCone.radiusRad());
+    startingDepth = Math.min(startingDepth, this.depthMax);
     // Compute smaller depth cells hashs
     if (startingDepth == -1) {
       neigs.clear();

@@ -616,6 +616,19 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
   }
   
   /**
+   * Simple ellipse search, but at the cost of approximations (=> false positive).
+   * The smallest the ratio between the HEALPix (deeper) cells area over the elliptical cone area
+   * , the more accurate the result is.  
+   * @param aRad semi-major axis of the elliptical cone, in radians
+   * @param bRad semi-minor axis of the elliptical cone, in radians
+   * @param paRad position angle (using as North the point lon=0, lat = pi/2)) of the elliptical cone, in radians
+   * @return an object allowing to perform fixed elliptical cone search queries.
+   */
+  public NestedEllipticalConeComputerApprox newEllipticalConeComputer(double aRad, double bRad, double paRad) {
+   return new NestedEllipticalConeComputerApprox(aRad, bRad, paRad, this); 
+  }
+  
+  /**
    * Returns the ring representation if the given nested hash.
    * @param nestedHash an HEALPix cell nested hash.
    * @return the ring representation if the given nested hash.

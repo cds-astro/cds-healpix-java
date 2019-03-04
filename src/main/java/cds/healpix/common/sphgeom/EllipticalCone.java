@@ -78,6 +78,22 @@ public class EllipticalCone {
     this.setEllipseParams(aRad, bRad, posAngRad);
   }
 
+  public double getA() {
+    return this.a;
+  }
+  
+  public double getB() {
+    return this.b;
+  }
+  
+  public double getSinA() {
+    return this.sina;
+  }
+  
+  public double getSinB() {
+    return this.sinb;
+  }
+  
   /**
    * Returns {@code true} if the given point on the unit sphere is inside the elliptical cone.
    * @param lonRad longitude of the points, in radians
@@ -113,7 +129,8 @@ public class EllipticalCone {
   public boolean containsCone(final double lonRad, final double latRad, final double rRad) {
     final double[] projXY = new double[2]; 
     this.proj(lonRad, latRad, projXY);
-    return squaredMahalanobisDistance(projXY[0], projXY[1], -rRad) <= 1;
+    double d = squaredMahalanobisDistance(projXY[0], projXY[1], -rRad);
+    return d == d && d <= 1;
   }
   
   /**
@@ -155,8 +172,8 @@ public class EllipticalCone {
   }
   
   private double squaredMahalanobisDistance(final double x, final double y, final double r) {
-    if (r < 0 && (r > this.a || r > this.b)) {
-      return 0;
+    if (r < 0 && (-r > this.a || -r > this.b)) {
+      return Double.NaN;
     }
     double sinar = sin(this.a + r);
     double sinbr = sin(this.b + r);
@@ -176,7 +193,7 @@ public class EllipticalCone {
     );
   }
   
-  private void setProjCenter(final double lon, final double lat) {
+  public void setProjCenter(final double lon, final double lat) {
     checkLatitude(lat);
     this.lon = lon;
     this.lat = lat;

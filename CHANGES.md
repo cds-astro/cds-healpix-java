@@ -1,6 +1,18 @@
 
+v0.22 (2019-03-04)
+==================
+
+### Bug correction
+
+* Now supports longitude lower than 0 or higher than twice PI in polygone vertices
+
+### Added
+
+* Add support for elliptical cone
+
+
 v0.21 (2019-02-28)
-=================
+==================
 
 ### Bug correction
 

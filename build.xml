@@ -123,6 +123,15 @@
     </javac>
   </target>
 
+  <target name="compile.java6" depends="clean.classes">
+    <echo>Compile from "${src}" to "${classes}"...</echo>
+    <mkdir dir="${lib}"/>
+    <mkdir dir="${classes}"/>
+    <javac fork="true" debug="on" srcdir="${src}" destdir="${classes}" encoding="UTF-8" source="1.6" target="1.6" bootclasspath="extra/rt_1.6_openjdk.jar">
+<compilerarg line="-encoding utf-8"/>      <classpath refid="libs"/>
+    </javac>
+  </target>
+
   <target name="tcompile">
     <echo>Compile from "${tsrc}" to "${tclasses}"...</echo>
     <mkdir dir="${tclasses}"/>

@@ -5,6 +5,7 @@ toAladin.bash
 
 # target repository
 /target/
+/extra/
 
 GIT_NOTICE.txt
 *.swp

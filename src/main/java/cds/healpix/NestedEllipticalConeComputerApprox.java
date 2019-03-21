@@ -137,7 +137,6 @@ public class NestedEllipticalConeComputerApprox {
       if (depth == this.deepHpx.depth) {
         if (mode.isOk(this.ellipse, vpc, hash, cellCenterLon, cellCenterLat)) { 
           moc[mocLength++] = buildValue(depth, hash, false, this.deepHpx.depth);
-          // System.out.println("add depth: " + depth + "; hash: " + hash);
         }
       } else {
         hash <<= 2;

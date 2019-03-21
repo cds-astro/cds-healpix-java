@@ -21,6 +21,7 @@ public class NestedEllipticalConeComputerApproxTest {
     final double lonRad = Math.toRadians(36.80105218);
     final double latRad = Math.toRadians(56.78028536);
     final int depth = 3;
+    // draw circle(36.80105218, 56.78028536, 14.93)
     final long[] expectedRes = new long[]{27L, 30L, 39L, 43L, 44L, 45L, 46L, 47L, 48L, 49L, 50L, 
         51L, 52L, 54L, 56L, 57L};
     

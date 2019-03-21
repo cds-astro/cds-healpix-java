@@ -634,7 +634,7 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
    * @return the ring representation if the given nested hash.
    */
   public long toRing(final long nestedHash) {
-   final HashParts hparts = decodeRegularRing(nestedHash);
+   final HashParts hparts = decodeRegularHash(nestedHash);
    return regularRingEncode(hparts.baseCellHash(), hparts.iInBaseCell(), hparts.jInBaseCell());
   }
 

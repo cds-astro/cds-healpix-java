@@ -1,4 +1,15 @@
 
+v0.23 (2019-03-21)
+==================
+
+### Changes
+
+* Change the code of elleiptical cone (still to be tested, I am wainting for an implementation in Aladin!)
+
+### Bug correction
+
+* Fix a trivial bug on method toRing
+
 v0.22 (2019-03-04)
 ==================
 

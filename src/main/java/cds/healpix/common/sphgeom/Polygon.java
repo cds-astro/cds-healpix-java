@@ -236,13 +236,42 @@ public final class Polygon {
    * longitude range
    */
   private static boolean isInLonRange(final CooXYZ p, final CooXYZ v1, final CooXYZ v2) {
-    // Case do not cross lon == 0
-    //    0 < v2.lon - v1.lon <= PI && p > v1.lon && p < v2.lon
-    // || 0 < v1.lon - v2.lon <= PI && p > v2.lon && p < v1.lon
-    // Cross lon == 0
-    // || v2.lon - v1.lon > PI && (p < v1.lon || p > v2.lon)
-    // || v1.lon - v2.lon > PI && (p < v2.lon || p > v1.lon)
-    return (abs(v2.lon() - v1.lon()) > PI) ^ (v2.lon() > p.lon() != v1.lon() > p.lon());
+ // First version of the code: 
+    //   ((v2.lon() - v1.lon()).abs() > PI) != ((v2.lon() > p.lon()) != (v1.lon() > p.lon()))
+    // 
+    // Lets note 
+    //   - lonA = v1.lon()
+    //   - lonB = v2.lon()
+    //   - lon0 = coo.lon()
+    // When (lonB - lonA).abs() <= PI 
+    //   => lonB > lon0 != lonA > lon0  like in PNPOLY
+    //   A    B    lonA <= lon0 && lon0 < lonB
+    // --[++++[--
+    //   B    A    lonB <= lon0 && lon0 < lonA
+    //
+    // But when (lonB - lonA).abs() > PI, then the test should be 
+    //  =>   lonA >= lon0 == lonB >= lon0 
+    // <=> !(lonA >= lon0 != lonB >= lon0)
+    //    A  |  B    (lon0 < lonB) || (lonA <= lon0)
+    //  --[++|++[--
+    //    B  |  A    (lon0 < lonA) || (lonB <= lon0)
+    //
+    // Instead of lonA > lon0 == lonB > lon0,
+    //     i.e. !(lonA > lon0 != lonB > lon0).
+    //    A  |  B    (lon0 <= lonB) || (lonA < lon0)
+    //  --]++|++]--
+    //    B  |  A    (lon0 <= lonA) || (lonB < lon0)
+    //
+    // So the previous code was bugged in this very specific case: 
+    // - `lon0` has the same value as a vertex being part of:
+    // - one segment that do not cross RA=0
+    //   - plus one segment crossing RA=0.
+    //   - the point have an odd number of intersections with the polygon 
+    //     (since it will be counted 0 or 2 times instead of 1).
+    final double dlon = v2.lon() - v1.lon();
+    return dlon < 0.0 ?
+      (dlon >= -PI) == (v2.lon() <= p.lon() && p.lon() < v1.lon()) :
+      (dlon <=  PI) == (v1.lon() <= p.lon() && p.lon() < v2.lon());
   }
   /**
    * Returns {@code true} if the line at constant (x, y) and decreasing z going from the given point

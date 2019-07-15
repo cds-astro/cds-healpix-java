@@ -181,21 +181,23 @@ public class HealpixCLI {
   
   private static final void exec(final Deque<String> stack) {
     final String action = stack.pop();
-    if (action == "help" || action == "-h" || action == "-help" || action == "--help") {
+    System.out.println("action: " + action);
+    if (   action.equals("help")  || action.equals("-h") 
+        || action.equals("-help") || action.equals("--help")) {
       printUsage();
-    } else if (action == "quit" || action == "exit") {
+    } else if (action.equals("quit") || action.equals("exit")) {
       System.exit(0);
-    } else if (action == "hash") {
+    } else if (action.equals("hash")) {
       HealpixNested hn = Healpix.getNested(popDepth(stack));
       long cellNumber = hn.hash(popRA(stack), popDec(stack));
       System.out.println(cellNumber);
-    } else if (action == "center") {
+    } else if (action.equals("center")) {
       HealpixNested hn = Healpix.getNested(popDepth(stack));
       double[] centerCoos = hn.center(popHash(stack));
       double raDeg  = Math.toDegrees(centerCoos[LON_INDEX]);
       double decDeg = Math.toDegrees(centerCoos[LAT_INDEX]);
       System.out.println(raDeg + " " + decDeg);
-    } else if (action == "vertices") {
+    } else if (action.equals("vertices")) {
       HealpixNested hn = Healpix.getNested(popDepth(stack));
       EnumMap<Cardinal, double[]> vertices = hn.vertices(popHash(stack), ALL_CARDINAL_POINTS);
       for (final Map.Entry<Cardinal, double[]> e : vertices.entrySet()) {
@@ -205,13 +207,13 @@ public class HealpixCLI {
         double decDeg = Math.toDegrees(coos[LAT_INDEX]);
         System.out.println(c + ": " + raDeg + " " + decDeg);
       }
-    } else if (action == "neigh") {
+    } else if (action.equals("neigh")) {
       HealpixNested hn = Healpix.getNested(popDepth(stack));
       NeighbourList neigList = hn.neighbours(popHash(stack));
       for (int i = 0; i < neigList.size(); i++) {
         System.out.println(neigList.getDirection(i) + ": " + neigList.get(i));
       }
-    } else if (action == "cone") {
+    } else if (action.equals("cone")) {
       HealpixNested hn = Healpix.getNested(popDepth(stack));
       double coneCenterRa  = popRA(stack);
       double coneCenterDec = popDec(stack);
@@ -221,7 +223,7 @@ public class HealpixCLI {
         String isFull = cell.isFull() ? "(f)" : "(p)";
         System.out.println(cell.getDepth()+ "/" + cell.getHash() + isFull);
       }
-    } else if (action ==  "") {
+    } else if (action.equals("")) {
     } else {
       throw new IllegalArgumentException("Unknown action \"" + action + "\"");
     }

@@ -13,7 +13,7 @@ import static cds.healpix.CompassPoint.MainWind.*;
 
 
 /**
- *  WARNING: no tested yet!
+ *  WARNING: not tested yet!
  *  
  * @author F.-X. Pineau
  *

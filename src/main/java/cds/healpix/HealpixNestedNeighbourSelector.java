@@ -590,7 +590,7 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
       // We could have avoided array copies here!!
       result.put(sortedInternalEdge(hash, toEdgeDeltaDepth, direction.toOrdinal()));
     } else {
-      throw new IllegalArgumentException("Main wind " + direction + " is neither ordinal not cradinal.");
+      throw new IllegalArgumentException("Main wind " + direction + " is neither ordinal not cardinal.");
     }
   }
   

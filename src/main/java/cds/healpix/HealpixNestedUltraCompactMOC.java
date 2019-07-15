@@ -142,8 +142,9 @@ public class HealpixNestedUltraCompactMOC {
   }
  
   private static final BitSet bitSetFromBytes(byte[] compressedMoc) {
+    final int size = 8 * compressedMoc.length;
     final BitSet bs = new BitSet(8 * compressedMoc.length);
-    for (int i = 0; i < bs.size(); i++) {
+    for (int i = 0; i < size; i++) {
       bs.set(i,((compressedMoc[i / 8] & (1 << (i & 7))) != 0));
     }
     return bs;

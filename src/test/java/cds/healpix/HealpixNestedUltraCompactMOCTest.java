@@ -59,18 +59,18 @@ public class HealpixNestedUltraCompactMOCTest {
     int order = 3;
     HealpixNestedBMOC bmoc = coneTest(lon, lat, rad, order); //, new long[]{63, 127, 191, 255});
 
-    System.out.println("bmoc: ");
+    System.out.println("T1 bmoc: ");
     for(final Iterator<CurrentValueAccessor> it = bmoc.iterator(); it.hasNext(); ) {
       final CurrentValueAccessor c = it.next();
       System.out.println(" - d: " + c.getDepth() + "; h: " + c.getHash() + "; bits: " + Long.toBinaryString(c.getHash()));
     }
     
     byte[] bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
-    System.out.println("nBytes: " + bytes.length);
+    System.out.println("T1 nBytes: " + bytes.length);
     // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
     
     bmoc = HealpixNestedUltraCompactMOC.decompress(3, bytes);
-    System.out.println("bmoc: ");
+    System.out.println("T1 bmoc: ");
     for(final Iterator<CurrentValueAccessor> it = bmoc.iterator(); it.hasNext(); ) {
       final CurrentValueAccessor c = it.next();
       System.out.println(" - d: " + c.getDepth() + "; h: " + c.getHash());
@@ -98,19 +98,19 @@ public class HealpixNestedUltraCompactMOCTest {
     };
     HealpixNestedBMOC bmoc = HealpixNestedBMOC.createUnsafe(order, mocCells);
     
-    System.out.println("bmoc: ");
+    System.out.println("T3 bmoc: ");
     for(final Iterator<CurrentValueAccessor> it = bmoc.iterator(); it.hasNext(); ) {
       final CurrentValueAccessor c = it.next();
       System.out.println(" - d: " + c.getDepth() + "; h: " + c.getHash() + "; bits: " + Long.toBinaryString(c.getHash()));
     }
     
-    System.out.println("bmoc size: " + bmoc.size());
+    System.out.println("T3 bmoc size: " + bmoc.size());
     
     byte[] bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
     // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
     
     bmoc = HealpixNestedUltraCompactMOC.decompress(order, bytes);
-    System.out.println("bmoc size: " + bmoc.size());
+    System.out.println("T3 bmoc size: " + bmoc.size());
     
     bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
     // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
@@ -125,13 +125,13 @@ public class HealpixNestedUltraCompactMOCTest {
     int order = 18;
     
     HealpixNestedBMOC bmoc = coneTest(lon, lat, rad, order);
-    System.out.println("bmoc size: " + bmoc.size());
+    System.out.println("T2 bmoc size: " + bmoc.size());
     
     byte[] bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
     // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));
     
     bmoc = HealpixNestedUltraCompactMOC.decompress(order, bytes);
-    System.out.println("bmoc size: " + bmoc.size());
+    System.out.println("T2 bmoc size: " + bmoc.size());
     
     bytes = HealpixNestedUltraCompactMOC.compress(bmoc);
     // System.out.println(HealpixNestedUltraCompactMOC.compressB64(bytes));

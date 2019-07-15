@@ -47,12 +47,16 @@ public class HealpixNestedUltraCompactMOC {
     private byte[] toByteArray() {
       // Replace to stay compatible with Java6 
       // return Arrays.copyOf(this.bs.toByteArray(), (int) ((i + 7) / 8));
-      byte[] bytes = new byte[(int) ((i + 7) / 8)];
+      byte[] bytes = new byte[(int) ((this.i + 7) / 8)];
       for (int i = 0; i < this.i; i++) {
         if (this.bs.get(i)) {
-          bytes[bytes.length - i / 8 - 1] |= 1 << (i & 7);
+          // bytes[bytes.length - i / 8 - 1] |= 1 << (i & 7);
+          bytes[i / 8] |= 1 << (i & 7);
         }
       }
+      /*if (!Arrays.equals(bytes, Arrays.copyOf(this.bs.toByteArray(), (int) ((this.i + 7) / 8)))) {
+        throw new Error("Oups!");
+      }*/
       return bytes;
     }
   }
@@ -88,7 +92,7 @@ public class HealpixNestedUltraCompactMOC {
     }
     // middle, go up and down
     for (curr = it.next(), currDepth = curr.getDepth(), currHash = curr.getHash()
-        ; it.hasNext()
+        ;
         ; hash = currHash, depth = currDepth,
          curr = it.next(), currDepth = curr.getDepth(), currHash = curr.getHash()) {
       // go up (if needed)!
@@ -125,6 +129,7 @@ public class HealpixNestedUltraCompactMOC {
         bits.add(false);
         bits.add(false);
       }
+      if (!it.hasNext()) break;
     }
     // end, go up
     // - go up to depth 0
@@ -145,13 +150,17 @@ public class HealpixNestedUltraCompactMOC {
     final int size = 8 * compressedMoc.length;
     final BitSet bs = new BitSet(8 * compressedMoc.length);
     for (int i = 0; i < size; i++) {
-      bs.set(i,((compressedMoc[i / 8] & (1 << (i & 7))) != 0));
+      bs.set(i, (compressedMoc[i / 8] & (1 << (i & 7))) != 0);
     }
     return bs;
   }
   
   public static HealpixNestedBMOC decompress(int depthMax, byte[] compressedMoc) {
-    final BitSet bs = bitSetFromBytes(compressedMoc); // BitSet.valueOf(compressedMoc); CHANGED TO BE COMPATIBLE WITH JAVA6
+    final BitSet bs = bitSetFromBytes(compressedMoc); 
+    /*final BitSet bs1 = BitSet.valueOf(compressedMoc); // CHANGED TO BE COMPATIBLE WITH JAVA6
+    if (!bs.equals(bs1)) {
+      throw new Error("Oups!!");
+    }*/
     final List<Long> res = new ArrayList<Long>(compressedMoc.length);
     int i = 0;
     int depth = 0;

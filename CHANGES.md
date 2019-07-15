@@ -1,10 +1,24 @@
 
+v0.24 (2019-07-15)
+=================
+
+### Bug correction
+
+* Fix the CLI code (see closed Issue on Github)
+* Fix ultra compressed BMOC
+
+### WARNING
+
+* Method "externalEdges" probably bugged: compare restuls with Rust!!
+* BMOC logical operation are probably bugged: compare results with Rust!!
+
+
 v0.23 (2019-03-21)
 ==================
 
 ### Changes
 
-* Change the code of elleiptical cone (still to be tested, I am wainting for an implementation in Aladin!)
+* Change the code of elliptical cone (still to be tested, I am wainting for an implementation in Aladin!)
 
 ### Bug correction
 

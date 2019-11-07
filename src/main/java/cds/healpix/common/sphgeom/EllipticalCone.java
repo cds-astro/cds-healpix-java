@@ -5,6 +5,7 @@ import static cds.healpix.Healpix.checkLatitude;
 import static cds.healpix.common.math.Math.cos;
 import static cds.healpix.common.math.Math.sin;
 import static cds.healpix.common.math.Math.sqrt;
+
 import static cds.healpix.common.math.Math.abs;
 import static cds.healpix.common.math.Math.atan2;
 
@@ -22,7 +23,8 @@ import static cds.healpix.common.math.Math.HALF_PI;
  *  - sig_y^2 = sin^2(a)cos^2(PA) + sin^(b)sin^2(PA)
  *  - p* sig_x * sigy = cos(PA)sin(PA)(sin^2(a) - sin^2(b)) 
  * 
- * 
+ * We also recall than, for a point P and the focii F0 and F1:
+ * PF0 + PF1 = 2a
  * 
  * FOR THE MOC: compute one value of circumcircle per order (like in the RUST lib)
  * => 2 ellipses per order (with +r_circul and -r_cirum)
@@ -61,8 +63,7 @@ public class EllipticalCone {
   private double oneOver1minRho2, twiceRhoOverSigXSigY;
 
   /** Component of the 2x2 rotation matrix transforming a point in the ellipse canonical frame
-   * (in which rho = 0) to the ellipse frame rotated by the position angle. 
-   * 
+   * (in which rho = 0) to the ellipse frame rotated by the position angle.
    */
   private double 
   a11, a12,
@@ -80,6 +81,7 @@ public class EllipticalCone {
 
   public EllipticalCone(final double lonRad, final double latRad, 
       final double aRad, final double bRad, final double posAngRad) {
+    // System.out.println("ra: " + Math.toDegrees(lonRad) + "; dec: " + Math.toDegrees(latRad));
     this.setProjCenter(lonRad, latRad);
     this.setEllipseParams(aRad, bRad, posAngRad);
   }
@@ -101,23 +103,39 @@ public class EllipticalCone {
   }
   
   private final double distanceToF0(double x, double y, double z) {
-    final double dotProd = (x * xF0) + (y * yF0) + (z * zF0);
-    final double vpx = y * zF0 - z * yF0;
-    final double vpy = z * xF0 - x * zF0;
-    final double vpz = x * yF0 - y * xF0;
-    final double vecProdNorm = sqrt(vpx * vpx + vpy * vpy + vpz * vpz);
-    return Math.atan2(vecProdNorm, dotProd);
+    return angularDistance(x, y, z, xF0, yF0, zF0);
   }
   
   private final double distanceToF1(double x, double y, double z) {
-    final double dotProd = (x * xF1) + (y * yF1) + (z * zF1);
-    final double vpx = y * zF1 - z * yF1;
-    final double vpy = z * xF1 - x * zF1;
-    final double vpz = x * yF1 - y * xF1;
-    final double vecProdNorm = sqrt(vpx * vpx + vpy * vpy + vpz * vpz);
+    return angularDistance(x, y, z, xF1, yF1, zF1);
+  }
+  
+  private final double angularDistance(
+      double xA, double yA, double zA,
+      double xB, double yB, double zB) {
+    // We could have remove SQRT (since srat(1) = 1), not important since it is in an assert.
+    assert abs(1 - sqrt(xA * xA + yA * yA + zA * zA)) < EPSILON : "A: sqrt(x^2 + y^2 + z^2): " + sqrt(xA * xA + yA * yA + zA * zA);
+    assert abs(1 - sqrt(xB * xB + yB * yB + zB * zB)) < EPSILON : "B: sqrt(x^2 + y^2 + z^2): " + sqrt(xB * xB + yB * yB + zB * zB);
+    // Compute cos(d)
+    final double dotProd = (xA * xB) + (yA * yB) + (zA * zB);
+    // Compute sin(d)
+    final double vpx = yA * zB - zA * yB;
+    final double vpy = zA * xB - xA * zB;
+    final double vpz = xA * yB - yA * xB;
+    final double vecProdNorm = sqrt(vpx * vpx + vpy * vpy + vpz * vpz); // = sin(d)
     return Math.atan2(vecProdNorm, dotProd);
   }
   
+  private double halfSumOfDistanceToFocii(final double lonRad, final double latRad) {
+    checkLatitude(latRad);
+    // Transforms LonLat into a 3d vector
+    double z = cos(latRad);
+    final double x = z * cos(lonRad);
+    final double y = z * sin(lonRad);
+    z = sin(latRad);
+    // Compute sum of distance to focii
+    return (distanceToF0(x, y, z) + distanceToF1(x, y, z)) / 2;
+  }
   
   /**
    * Returns {@code true} if the given point on the unit sphere is inside the elliptical cone.
@@ -126,8 +144,9 @@ public class EllipticalCone {
    * @return {@code true} if the given point on the unit sphere is inside the elliptical cone.
    */
   public boolean contains(final double lonRad, final double latRad) {
-    final double[] projXY = new double[2]; 
-    return this.proj(lonRad, latRad, projXY) ? squaredMahalanobisDistance(projXY[0], projXY[1]) <= 1 : false;
+    return halfSumOfDistanceToFocii(lonRad, latRad) <= a;
+    /*final double[] projXY = new double[2]; 
+    return this.proj(lonRad, latRad, projXY) ? squaredMahalanobisDistance(projXY[0], projXY[1]) <= 1 : false;*/
   }
   
   /**squaredMahalanobisDistance
@@ -138,15 +157,7 @@ public class EllipticalCone {
    * @return {@code true} if the given cone overlap the elliptical cone.
    */
   public boolean overlapCone(final double lonRad, final double latRad, final double rRad) {
-    final double sinLon = sin(lonRad);
-    final double cosLon = cos(lonRad);
-    final double sinLat = sin(latRad);
-    final double cosLat = cos(latRad);
-    final double x = cosLat * cosLon;
-    final double y = cosLat * sinLon;
-    final double z = sinLat;
-    final double d  = 0.5 * (distanceToF0(x, y, z) + distanceToF1(x, y, z));
-    return d <= this.a + rRad;
+    return halfSumOfDistanceToFocii(lonRad, latRad) <= this.a + rRad;
     /*final double[] projXY = new double[2];
     if (this.proj(lonRad, latRad, projXY)) {
       if (this.a + rRad > HALF_PI) {
@@ -172,7 +183,9 @@ public class EllipticalCone {
    * @return {@code true} if the given cone is fully inside the elliptical cone.
    */
   public boolean containsCone(final double lonRad, final double latRad, final double rRad) {
-    if (rRad > this.b) {
+    // Fast rejection test before complete computation
+    return rRad > this.b ? false : halfSumOfDistanceToFocii(lonRad, latRad) <= this.a - rRad;
+    /*if (rRad > this.b) {
       return false;
     }
     final double[] projXY = new double[2]; 
@@ -198,7 +211,7 @@ public class EllipticalCone {
       return d == d && d <= 1;
     } else {
       return false;
-    }  
+    }*/  
   }
   
   /**
@@ -270,6 +283,7 @@ public class EllipticalCone {
     checkLatitude(lat);
     this.lon = lon;
     this.lat = lat;
+    // System.out.println("ra: " + Math.toDegrees(this.lon) + "; dec: " + Math.toDegrees(this.lat));
     final double ca = cos(lon); // ca stands for cos(alpha)
     final double sa = sin(lon); // sa stands for sin(alpha)
     final double cd = cos(lat); // cd stands for cos(delta)
@@ -281,6 +295,9 @@ public class EllipticalCone {
 
   private void setEllipseParams(final double a, final double b, final double pa) {
     assert a > 0 && b > 0;
+    if (a < b) {
+      throw new IllegalArgumentException("In ellipse a ("+ a + ") must be >= to b (" + b + ")!");
+    }
     this.a = a;
     this.b = b;
     this.pa = pa;
@@ -302,13 +319,45 @@ public class EllipticalCone {
     this.a21 = this.cosPA; this.a22 =  this.sinPA;
     
     // Compute foci coordinates.
-    // cos(b) = cos(g)cos(a)
-    // => sin(g) = sqrt(1-cos^2(g)) = sqrt(1 - (cos(b)/cos(a))^2)
+    // cos(a) = cos(g)cos(b)
+    // => sin(g) = sqrt(1-cos^2(g)) = sqrt(1 - (cos(a)/cos(b))^2)
     // = x=+-sin(g) y=0 in the canonical frame (frame in which the major axis is the x-axis)
-    double sing = cos(b) / cos(a);
-    sing = sqrt( - sing * sing);
-    final double[] f1 = deproj(rotateEllipse(new double[]{sing, 0}));
-    final double[] f2 = deproj(rotateEllipse(new double[]{-sing, 0}));
+    double cosb = cos(b);
+    double cosg = cos(a) / cosb;
+    // Do this for small angles: more precise than sqrt(1 - sin^2)
+    // sing = sqrt(1 - cosg^2) = sqrt((cob^2 - cosa^2) / cosb^2) = sqrt(sina^2 - sinb^2) / cosb
+    //      = sqrt( (sina + sinb) * (sina - sinb) ) / cosb
+    double sing = sqrt((sina + sinb) * (sina - sinb)) / cosb;
+    // F0 in the local frame
+    //   (y, z) = rotateEllipse(new double[]{sing, 0}
+    //   x = sqrt(1 - (y^2 + z^2) = cosg
+    this.xF0 = cosg;
+    this.yF0 = sing * sinPA;
+    this.zF0 = sing * cosPA;
+    // F1 in the local frame
+    //   (y, z) = rotateEllipse(new double[]{-sing, 0}
+    //   x = sqrt(1 - (y^2 + z^2) = cosg
+    this.xF1 = cosg;
+    this.yF1 = -this.yF0;
+    this.zF1 = -this.zF0;
+    
+    final double[] f0 = globlaXYZFromLocalXYZ(this.xF0, this.yF0, this.zF0);
+    final double[] f1 = globlaXYZFromLocalXYZ(this.xF1, this.yF1, this.zF1);
+    
+    this.xF0 = f0[0];
+    this.yF0 = f0[1];
+    this.zF0 = f0[2];
+    
+    this.xF1 = f1[0];
+    this.yF1 = f1[1];
+    this.zF1 = f1[2];
+  
+    final double[] lonlat = new double[2];
+    // System.out.println("ra: " + Math.toDegrees(lon) + "; dec: " + Math.toDegrees(lat));
+    setLonLatFromXYZ(lonlat, xF0, yF0, zF0);
+    // System.out.println("F0_ra: " + Math.toDegrees(lonlat[0]) + "; F0_dec: " + Math.toDegrees(lonlat[1]));
+    setLonLatFromXYZ(lonlat, xF1, yF1, zF1);
+    // System.out.println("F1_ra: " + Math.toDegrees(lonlat[0]) + "; F1_dec: " + Math.toDegrees(lonlat[1]));
   }
 
   private boolean proj(final double lon, final double lat, final double[] resultXY) {
@@ -364,6 +413,16 @@ public class EllipticalCone {
     return xy2lonlat;
   }
 
+  
+  private final double[] globlaXYZFromLocalXYZ(final double x, final double y, final double z) {
+    // Rotate the vector to the global frame (using the transpose of R)
+    return new double[]{
+        this.r11 * x + this.r21 * y + this.r31 * z,
+        this.r12 * x + this.r22 * y + this.r32 * z,
+        this.r13 * x + this.r23 * y + this.r33 * z
+    };
+  }
+  
   /**
    * To be called at the end of the {@link #deproj(XY, SetableLonLat)}
    * method when local coordinates (x, y, z) have been computed.

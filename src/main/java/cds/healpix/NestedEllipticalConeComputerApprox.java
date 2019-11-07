@@ -14,23 +14,26 @@ import cds.healpix.common.sphgeom.EllipticalCone;
 
 
 public class NestedEllipticalConeComputerApprox {
-  
+
   private static final EnumSet<Cardinal> ALL_CARDINALS = EnumSet.allOf(Cardinal.class);
   private static final double SQRT3 = Math.sqrt(3);
-  
+
   private final int startDepth;
   private final HealpixNested startHpx; 
   private final HealpixNested deepHpx;
   private final VerticesAndPathComputer[] hcc;
-  
-  private final EllipticalCone ellipse;
+
+  private final double aRad;
+  private final double bRad;
+  private final double paRad;
   private final double sinasinb;
+  private EllipticalCone ellipse;
   
   private final NeighbourSelector neigSelector;
   private final FlatHashList neigList;
-  
+
   private final int deltaDepthMax;
-  
+
   public static enum Mode {
     OVERLAPPING_CELLS() {
       @Override
@@ -64,7 +67,7 @@ public class NestedEllipticalConeComputerApprox {
     public abstract boolean isOk(EllipticalCone ellipse, VerticesAndPathComputer vpc,
         long hash, final double cellCenterLon, final double cellCenterLat);
   }
-  
+
   /**
    * 
    * @param aRad elliptical cone major axis
@@ -73,6 +76,9 @@ public class NestedEllipticalConeComputerApprox {
   public NestedEllipticalConeComputerApprox(final double aRad, final double bRad, final double posAngRad,
       final HealpixNested deepHpx) {
     this.deepHpx = deepHpx;
+    this.aRad = aRad;
+    this.bRad = bRad;
+    this.paRad = posAngRad;
     this.ellipse = new EllipticalCone(0, 0, aRad, bRad, posAngRad);
     this.sinasinb = this.ellipse.getSinA() * this.ellipse.getSinB();
     final int optimalStartingDepth = Math.min(this.deepHpx.depth, getBestStartingDepth(aRad));
@@ -88,16 +94,17 @@ public class NestedEllipticalConeComputerApprox {
       this.deltaDepthMax = this.deepHpx.depth - this.startDepth;
     }
     this.neigList = new FlatHashList(-1, 9); // We don't care about the depth, internal usage only
-    
+
     this.hcc = new VerticesAndPathComputer[this.deltaDepthMax + 1];
     for (int i = 0; i <= this.deltaDepthMax; i++) {
       this.hcc[i] = Healpix.getNested(this.startDepth + i).newVerticesAndPathComputer();
-  }
+    }
   }
 
   public HealpixNestedBMOC overlapping(double ellipseCenterLonRad, double ellipseCenterLatRad,
       final Mode mode) {
-    this.ellipse.setProjCenter(ellipseCenterLonRad, ellipseCenterLatRad);
+    //this.ellipse.setProjCenter(ellipseCenterLonRad, ellipseCenterLatRad);
+    this.ellipse = new EllipticalCone(ellipseCenterLonRad, ellipseCenterLatRad, aRad, bRad, paRad);
     // Store required space in the MOC
     final long[] mocElems = new long[this.nMocCellInAreaUpperBound()];
     int mocSize = 0;
@@ -117,11 +124,11 @@ public class NestedEllipticalConeComputerApprox {
     }
     return HealpixNestedBMOC.createPacking(this.deepHpx.depth, mocElems, mocSize);
   }
-  
+
   private final int buildMocRecursively(final long[] moc, int mocLength, int deltaDepth, long hash,
       final Mode mode) {
     final int depth = this.startDepth + deltaDepth;
-// System.out.println("depth: " + depth);
+    // System.out.println("depth: " + depth);
     assert this.hcc[deltaDepth].depth() == depth : this.hcc[deltaDepth].depth() + " != " + depth;
     final VerticesAndPathComputer vpc = this.hcc[deltaDepth];
     final double[] center = vpc.center(hash);
@@ -132,7 +139,7 @@ public class NestedEllipticalConeComputerApprox {
     if (this.ellipse.containsCone(cellCenterLon, cellCenterLat, rCircumCircle)) {
       // we could have called ellipse.contains on the 4 cell vertices (more precise but time consuming)
       moc[mocLength++] = buildValue(depth, hash, true, this.deepHpx.depth);
-      System.out.println("add depth: " + depth + "; hash: " + hash + "; circumDeg: " + Math.toDegrees(rCircumCircle));
+      // System.out.println("add depth: " + depth + "; hash: " + hash + "; circumDeg: " + Math.toDegrees(rCircumCircle));
     } else if (this.ellipse.overlapCone(cellCenterLon, cellCenterLat, rCircumCircle)) {
       if (depth == this.deepHpx.depth) {
         if (mode.isOk(this.ellipse, vpc, hash, cellCenterLon, cellCenterLat)) { 
@@ -149,7 +156,7 @@ public class NestedEllipticalConeComputerApprox {
     } // else cell fully out of the cone
     return mocLength;
   }
-  
+
   private int nMocCellInAreaUpperBound() {
     // cell_area = 4 * pi / ncell = 4 * pi / (3 * 4 * nside^2) = pi / (3 * nside^2) =  pi * r^2
     // cell_radius = r = 1 / (sqrt(3) * nside)

@@ -187,15 +187,15 @@ final class NestedSmallCell implements HealpixNestedFixedRadiusConeComputer {
 
   protected static final int nElemMax(final int nRings, final int nRingOtherSideOfThePole) {
     //   nRing * 2      (smallest cells at the extremity of each ring)
-    // + nRing / 2 * 2  (cells of depth deppestDepth - 1 a the extremity of each ring)
+    // + nRing / 2 * 2  (cells of depth deepestDepth - 1 a the extremity of each ring)
     // + nRing / 4 * 2
     // + ...
     // + nRing / (2^DeltaDepth) * 2
     // = nRing * (2 + 1 + 1/2 + 1/4 + ...)
     // and the serie 1/2 + 1/4 + ... = 1
     // ~= nRing * (2 + 1 + 1) = 4  * nRing
-    // Constant should be 4, we use 6 to be conservative
-    return 6 * (nRings + nRingOtherSideOfThePole);
+    // Constant should be around 4, we use 8 to be conservative
+    return 8 * (nRings + nRingOtherSideOfThePole);
   }
   
   

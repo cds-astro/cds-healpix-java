@@ -1164,12 +1164,25 @@ public class NestedConeTest {
     
     // draw circle(160.771389, -64.3813, 0.8962)
     coneTest(lon, -lat, rad, order, new long[]{37228L, 37229L, 37230L, 37231L, 37240L, 37242L, 37316L, 37317L});
-    
   }
   
   
+  @Test
+  public void testCone12() {
+    double lon = 210.89895009;
+    double lat = 54.29995006;
+    double rad = 6.9444; //Math.toDegrees(0.1212026445754942);
+    int order = 8; // new long[]{167L, 172L, 173L, 178L, 179L, 184L, 185L}
+    
+    // draw circle(210.89895009, 54.29995006, 6.9444)
+    coneTest(lon, lat, rad, order, null /*new long[]{7477L, 7479L, 7498L, 7499L, 7520L, 7521L, 7522L, 7523L}*/);
+    
+    // draw circle(160.771389, -64.3813, 0.8962)
+    // coneTest(lon, -lat, rad, order, new long[]{37228L, 37229L, 37230L, 37231L, 37240L, 37242L, 37316L, 37317L});
+  }
+  
   public static void main(String[] args) {
-    new NestedConeTest().testCone9();
+    new NestedConeTest().testCone12();
   }
   
 }

@@ -22,19 +22,19 @@ public class NestedEllipticalConeComputerApproxTest {
     final double latRad = Math.toRadians(56.78028536);
     final int depth = 3;
     // draw circle(36.80105218, 56.78028536, 14.93)
-    final long[] expectedRes = new long[]{27L, 30L, 39L, 43L, 44L, 45L, 46L, 47L, 48L, 49L, 50L, 
-        51L, 52L, 54L, 56L, 57L};
+    final long[] expectedRes = new long[]{27L, 30L, 37L, 38L, 39L, 41L, 43L, 44L, 45L, 46L, 47L, 48L, 49L, 50L, 
+        51L, 52L, 54L, 56L, 57L, 58L, 60L};
     
     final NestedEllipticalConeComputerApprox cp = new NestedEllipticalConeComputerApprox(
         aRad, bRad,paRad, Healpix.getNested(depth));
     final HealpixNestedBMOC bmoc = cp.overlapping(lonRad, latRad, Mode.OVERLAPPING_CELLS);
     int i = 0;
-    //toAladinDraw(depth, bmoc);
+    toAladinDraw(depth, bmoc);
     for (final HealpixNestedBMOC.CurrentValueAccessor cell : bmoc) {
       // System.out.println(cell);
       assertEquals(expectedRes[i++], cell.getHash());
     }
-    //assertEquals(expectedRes.length, i);
+    assertEquals(expectedRes.length, i);
   }
   
   

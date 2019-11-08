@@ -543,6 +543,14 @@ public final class HealpixNestedBMOC implements Iterable<HealpixNestedBMOC.Curre
   }
   
   /**
+   * An Iterator over hash Ranges at order 29.
+   * @return an Iterator over hash Ranges at order 29.
+   */
+  public Iterator<Range> rangeIterator() {
+    return new ToRangeItDecorator(this.iterator());
+  }
+  
+  /**
    * Returns an iterator on all the cells in the BMOC at the maximum depth.
    * @return an iterator on all the cells in the BMOC at the maximum depth.
    */

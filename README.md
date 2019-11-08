@@ -23,8 +23,27 @@ See the license [file](LICENSE.md).
 Warning
 -------
 
-The libray in still in the testing phase, especially for the exact cell-in-cone function.
-Logical operations on BMOC are not yet debugged (they already are in the Rust project). 
+- The libray in still in the testing phase, especially for the exact cell-in-cone function.
+- Logical operations on BMOC are not yet debugged (they already are in the Rust project).
+- The *external edge* method is not yet debuuged (it is in the Rust project) 
+- The bilinear interpolation has not been tested yet (it has been tested in the Rust project)
+- ... 
+
+ToDo
+----
+
+- [x] Implement exact cone solution
+- [x] Implement exact polygon solution
+- [ ] Add tests from the Rust code into the Java code
+- [x] Debug approximate elliptical cone
+- [ ] Debug BMOC logical operation (see Rust code)
+- [ ] Debug *external edge* method (see Rust code)
+- [ ] Test bilinear interpolation (see Rust code)
+- [ ] Add RING scheme? (see Rust code)
+- [ ] Compressed MOCs: test M.Rein. solution
+- [ ] Clean the code!!
+- ...
+
 
 Install
 -------

@@ -1,6 +1,23 @@
 
+v0.25 (2019-11-08)
+==================
+
+### Added
+
+* Add Decorator to transform a BMOC iterator into a Range iterator (to be tested with Aladin!)
+
+### Changes
+
+* Use a correct and more robust algo for elliptical cones
+
+### Bug correction
+
+* Fix test error due to elliptical cone
+* Fix cone search error (not enought space allocated)
+
+
 v0.24 (2019-07-15)
-=================
+==================
 
 ### Bug correction
 

@@ -43,7 +43,7 @@ public final class HasckerDelightTestPerf {
     l2 = System.nanoTime();
     System.out.println("HalfClassic: " + s1 + " in " + (l2 - l1) / 1000000.0 + " ms");
     
-    assertEquals(s1, s2);
+    assertEquals(s1, s2, 1e-15);
     
     l1 = System.nanoTime();
     s1 = halfOfBits(data);
@@ -55,7 +55,7 @@ public final class HasckerDelightTestPerf {
     l2 = System.nanoTime();
     System.out.println("HalfClassic: " + s1 + " in " + (l2 - l1) / 1000000.0 + " ms");
     
-    assertEquals(s1, s2);
+    assertEquals(s1, s2, 1e-15);
   }
   
   private static double halfOfClassic(final double[] values) {
@@ -75,7 +75,7 @@ public final class HasckerDelightTestPerf {
   }
   
   @Test
-  public void testPerf(final String[] args) {
+  public void testPerf() {
     // Same exec time: smart compilo ;)
     System.out.println("Check that performances are the same (smart compilo ;) ):");
     halfOfTest(60000000);

@@ -146,7 +146,7 @@
   <!-- EXEC TESTS -->
 
   <target name="test" depends="compile,tcompile">
-  <junit fork="true">
+  <junit haltonfailure="true" fork="true">
     <classpath>
       <pathelement location="${classes}" />
       <pathelement location="${tclasses}" />

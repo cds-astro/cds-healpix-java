@@ -319,8 +319,14 @@ public final class Polygon {
   
   private static boolean segmentsAreOverlappingInLon(
       final CooXYZ a, final CooXYZ b, final CooXYZ pA, final CooXYZ pB) {
-    return (pB.lon() - pA.lon() > PI)
-        ^ (a.lon() <= pB.lon() && b.lon() >= pA.lon() && (b.lon() - a.lon()) <= PI);
+    // return (pB.lon() - pA.lon() > PI)
+    //    ^ (a.lon() <= pB.lon() && b.lon() >= pA.lon() && (b.lon() - a.lon()) <= PI);
+    final boolean b1 = b.lon() - a.lon() <= PI;
+    final boolean b2 = pB.lon() - pA.lon() <= PI;
+    return b1 ? b2 ? pB.lon() >= a.lon() && pA.lon() <= b.lon()
+	           : pB.lon() <= b.lon() || pA.lon() >= a.lon()
+	      : b2 ? pB.lon() >= b.lon() || pA.lon() <= a.lon()
+	           : true;
   }
   
   /**

@@ -77,6 +77,37 @@ final class BaseHashNorthPolarCap extends BaseHash {
   }
   
   @Override
+  MainWind getEdgeCellDirectionFromNeighbour(MainWind innerDirection, MainWind neighbourDirection) {
+    switch(neighbourDirection) {
+      case C: new IllegalArgumentException("No neighbour in direction " + neighbourDirection);
+      case E:
+        switch(innerDirection){
+          case N: case NE: return MainWind.N;
+          case E: new IllegalArgumentException("No neighbour in direction " + neighbourDirection);
+          case S: case SE: return neighbourDirection.getOppositeDirection();
+          default: assert(false);
+        }
+      case W:
+        switch(innerDirection){
+          case N: case NW: return MainWind.N;
+          case W: new IllegalArgumentException("No neighbour in direction " + neighbourDirection);
+          case S: case SW: return neighbourDirection.getOppositeDirection();
+          default: assert(false);
+        }
+      case NE: return MainWind.NW;
+      case NW: return MainWind.NE;
+      case N:
+        switch(innerDirection){
+          case N: return MainWind.N;
+          case E: case NE: return MainWind.W;
+          case W: case NW: return MainWind.E;
+          default: assert(false);
+        }
+      default: return neighbourDirection.getOppositeDirection();
+    }
+  }
+  
+  @Override
   int pickRightIndexOnNeighbourSouthToEastAxis(MainWind neighbourDirection,
       int iAxisSE, int iAxisSW, int nsideMinus1) {
     return neighbourDirection.pickRightIntValue(

@@ -59,6 +59,37 @@ final class BaseHashSouthPolarCap extends BaseHash {
   }
   
   @Override
+  MainWind getEdgeCellDirectionFromNeighbour(MainWind innerDirection, MainWind neighbourDirection) {
+    switch(neighbourDirection) {
+      case C: new IllegalArgumentException("No neighbour in direction " + neighbourDirection);
+      case E:
+        switch(innerDirection){
+          case S: case SE: return MainWind.S;
+          case E: new IllegalArgumentException("No neighbour in direction " + neighbourDirection);
+          case N: case NE: return neighbourDirection.getOppositeDirection();
+          default: assert(false);
+        }
+      case W:
+        switch(innerDirection){
+          case S: case SW: return MainWind.S;
+          case W: new IllegalArgumentException("No neighbour in direction " + neighbourDirection);
+          case N: case NW: return neighbourDirection.getOppositeDirection();
+          default: assert(false);
+        }
+      case SE: return MainWind.SW;
+      case SW: return MainWind.SE;
+      case S:
+        switch(innerDirection){
+          case S: return MainWind.S;
+          case E: case SE: return MainWind.W;
+          case W: case SW: return MainWind.E;
+          default: assert(false);
+        }
+      default: return neighbourDirection.getOppositeDirection();
+    }
+  }
+  
+  @Override
   protected void fillNeighbours(int d0h, int[] neighbours) {
     assert 8 <= d0h && d0h < 12;
     final int hModulo4 = d0h & 3;

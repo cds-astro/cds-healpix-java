@@ -834,6 +834,7 @@ public final class Healpix implements Projection {
    *   <li>33: the 2 bits coding depth 3</li> 
    *   <li>...</li> 
    * </ul>
+   * WARNING: this is not compliant with the IVOA definition!!
    * @param depth the depth of the wanted unique hash
    * @param hash the hash we want the unique representation
    * @return the unique representation of the given hash at the given depth.
@@ -855,6 +856,7 @@ public final class Healpix implements Projection {
   /**
    * Extract the hash from the the unique representation of the hash.
    * See {@link #uniq(int, long)} to know more about the uniq encoding.
+   * WARNING: this is not compliant with the IVOA definition!!
    * @param uniqedHash the uniq nested hash value we want to extract the hash value
    * @return the hash from the the unique representation of the hash.
    */

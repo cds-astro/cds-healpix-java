@@ -373,6 +373,8 @@ public final class CompassPoint {
       this.index = computeIndex(this.iSE, this.iSW);
       this.offsetSE = this.iSE - 1;
       this.offsetSW = this.iSW - 1;
+      this.ordinal = ordinal;
+      this.cardinal = cardinal;
     }
     private void setOppositeDirection(final MainWind oppositeDirection) {
       this.oppositeDirection = oppositeDirection;

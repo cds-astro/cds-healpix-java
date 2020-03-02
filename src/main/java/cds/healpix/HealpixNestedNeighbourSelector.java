@@ -368,7 +368,7 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     hash <<= (deltaDepth << 1);
     final int nSide = 1 << deltaDepth; // 2^deltaDepth
     for (int x = 0; x < nSide; x++) {
-      result.hList[x] = hash | this.fc.i02hash(x);
+      result.hList[x] = hash | Healpix.getNested(deltaDepth).fc.i02hash(x);
     }
     result.size = nSide;
   }
@@ -385,9 +385,9 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
       final FlatHashList result) {
     hash <<= (deltaDepth << 1);
     final int nSide = 1 << deltaDepth; // 2^deltaDepth
-    final long x = (nSide - 1) << 32;
+    final int x = Math.max(0, nSide - 1);
     for (int y = 0; y < nSide; y++) {
-      result.hList[y] = hash | this.fc.xy2hash(x >> 32, y /*y | x*/);
+      result.hList[y] = hash | Healpix.getNested(deltaDepth).fc.ij2hash(x, y);
     }
     result.size = nSide;
   }
@@ -405,9 +405,9 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
       final FlatHashList result) {
     hash <<= (deltaDepth << 1);
     final int nSide = 1 << deltaDepth; // 2^deltaDepth
-    final long y = (nSide - 1) << 32;
+    final int y = Math.max(0, nSide - 1);
     for (int x = 0; x < nSide; x++) {
-      result.hList[x] = hash | this.fc.xy2hash(x, y >> 32/*y | x*/);
+      result.hList[x] = hash | Healpix.getNested(deltaDepth).fc.ij2hash(x, y);
     }
     result.size = nSide;
   }
@@ -425,7 +425,7 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
     hash <<= (deltaDepth << 1);
     final int nSide = 1 << deltaDepth; // 2^deltaDepth
     for (int y = 0; y < nSide; y++) {
-      result.hList[y] = hash | this.fc.i02hash(y);
+      result.hList[y] = hash | (Healpix.getNested(deltaDepth).fc.i02hash(y) << 1);
     }
     result.size = nSide;
   }
@@ -574,12 +574,12 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
   @Override
   public long internalCornerE(long hash, int toEdgeDeltaDepth) {
     hash <<= (toEdgeDeltaDepth << 1);
-    return hash | yMask(toEdgeDeltaDepth);
+    return hash | xMask(toEdgeDeltaDepth);
   }
   @Override
   public long internalCornerW(long hash, int toEdgeDeltaDepth) {
     hash <<= (toEdgeDeltaDepth << 1);
-    return hash | xMask(toEdgeDeltaDepth);
+    return hash | yMask(toEdgeDeltaDepth);
   }
   
   void appendSortedInternalEdgeElement(final long hash, final int toEdgeDeltaDepth,
@@ -634,8 +634,16 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
       for(int i = 0; i < neihbours.size(); i++) {
         final long neigHash = neihbours.get(i);
         final MainWind neigDirection = neihbours.getDirection(i);
-        appendSortedInternalEdgeElement(neigHash, toEdgeDeltaDepth,
-            baseHash.getDirectionFromNeighbour(neigDirection), result);
+        final MainWind dirFromNeig;
+        if (hashParts.baseCellHash() == neigHash >> (this.hn.depth << 1)) {
+          dirFromNeig = neigDirection.getOppositeDirection();
+        } else if (this.hn.depth == 0) {
+          dirFromNeig = baseHash.getDirectionFromNeighbour(neigDirection);
+        } else {
+          dirFromNeig = baseHash.getEdgeCellDirectionFromNeighbour(
+              directionInBaseCellBorder(hBits.iInD0hBits, hBits.jInD0hBits), neigDirection);
+        }
+        appendSortedInternalEdgeElement(neigHash, toEdgeDeltaDepth, dirFromNeig, result);
       }
     } else {
       // Easy: always use opposite direction
@@ -653,6 +661,22 @@ final class HealpixNestedNeighbourSelector implements NeighbourSelector {
   }
 
   // UTILIY METHODS
+
+  private MainWind directionInBaseCellBorder(long iInD0hBits, long jInD0hBits) {
+    int i = 1, j = 1;
+    if (iInD0hBits == 0L) {
+      i = 0;
+    } else if (iInD0hBits == this.hn.xMask) {
+      i = 2;
+    }
+    if (jInD0hBits == 0L) {
+      j = 0;
+    } else if (jInD0hBits == this.hn.yMask) {
+      j = 2;
+    }
+    return MainWind.getFromCoo(i, j);
+  }
+  
   
   private static long xMask(final int depth) {
     return 0x5555555555555555L >>> (64 - (depth << 1));

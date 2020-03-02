@@ -56,6 +56,14 @@ abstract class BaseHash {
   abstract MainWind getDirectionFromNeighbour(MainWind neighbourMainWind);
   
   /**
+   * Returns the direction of a cell on the inner edge of the given base cell from its neighbour 
+   * located at the given direction in a different base cell.
+   * @param neighbourMainWind
+   * @return the direction of this base cell from its neighbour located at the given  direction.
+   */
+  abstract MainWind getEdgeCellDirectionFromNeighbour(MainWind innerDirection, MainWind neighbourDirection);
+  
+  /**
    * Method used when looking for neighbours of hashes which are on the border (including corners)
    * of a base hash. 
    * @param neighbourDirection direction of the neighbour base cell

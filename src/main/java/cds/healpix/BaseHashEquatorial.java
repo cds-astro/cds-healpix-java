@@ -57,6 +57,12 @@ final class BaseHashEquatorial extends BaseHash {
   }
   
   @Override
+  MainWind getEdgeCellDirectionFromNeighbour(MainWind innerDirection, MainWind neighbourDirection) {
+    return neighbourDirection.getOppositeDirection();
+  }
+  
+  
+  @Override
   int pickRightIndexOnNeighbourSouthToEastAxis(MainWind neighbourDirection,
       int iAxisSE, int iAxisSW, int nsideMinus1) {
     return neighbourDirection.pickRightIntValue(

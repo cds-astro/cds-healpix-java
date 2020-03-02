@@ -164,5 +164,45 @@ public class HealpixNestedNeighbourSelectorTest {
     neig.arraycopy(0, a, 0, neig.size());
     assert Arrays.equals(a, expected);
   }
+  
+  @Test
+  public void externalEdgeTest1() {
+    byte depth = 1;
+    long hash = 10;
+    int delta_depth = 2;
+    final FlatHashList actualRes = Healpix.getNested(depth).sortedExternalEdges(hash, delta_depth);
+    final long[] expectedRes = new long[]{85, 87, 93, 95, 117, 138, 139, 142, 143, 154, 176, 178, 
+        184, 186, 415, 437, 439, 445, 447};
+    checkEquals(actualRes, expectedRes);
+  }
+  
+  @Test
+  public void externalEdgeTest2() {
+    byte depth = 1;
+    long hash = 11;
+    int delta_depth = 2;
+    final FlatHashList actualRes = Healpix.getNested(depth).sortedExternalEdges(hash, delta_depth);
+    final long[] expectedRes = new long[]{63, 95, 117, 119, 125, 127, 143, 154, 155, 158, 159, 165, 
+        167, 173, 175, 239, 250, 251, 254, 255};
+    checkEquals(actualRes, expectedRes);
+  }
 
+  @Test
+  public void externalEdgeTest3() {
+    byte depth = 0;
+    long hash = 0;
+    int delta_depth = 2;
+    final FlatHashList actualRes = Healpix.getNested(depth).sortedExternalEdges(hash, delta_depth);
+    final long[] expectedRes = new long[]{26, 27, 30, 31, 47, 53, 55, 61, 63, 69, 71, 77, 79, 90, 
+        91, 94, 95, 143};
+    checkEquals(actualRes, expectedRes);
+  }
+
+  private void checkEquals(FlatHashList neig, long[] expected) {
+    neig.sortByHashAsc();
+    final long[] a = new long[neig.size()];
+    neig.arraycopy(0, a, 0, neig.size());
+    assert Arrays.equals(a, expected) : "Array: " + Arrays.toString(a);
+  }
+  
 }

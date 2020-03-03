@@ -61,7 +61,12 @@ public final class HackersDelight {
     return (x & --x) == 0;
   }
 
-  public long flp2(long x) {
+  /**
+   * Round down to the next power of 2 (see HD Fig. 3-1).
+   * @param x
+   * @return round down to the next power of 2
+   */
+  public static long flp2(long x) {
     x |= x >>> 1;
     x |= x >>> 2;
     x |= x >>> 4;

@@ -198,11 +198,26 @@ public class HealpixNestedNeighbourSelectorTest {
     checkEquals(actualRes, expectedRes);
   }
 
-  private void checkEquals(FlatHashList neig, long[] expected) {
+  @Test
+  public static void externalEdgeTest4() {
+    byte depth = 3;
+    long hash = 1;
+    int delta_depth = 5;
+    final FlatHashList actualRes = Healpix.getNested(depth).sortedExternalEdges(hash, delta_depth);
+    final long[] expectedRes = new long[]{};
+    System.out.println("Result: " + actualRes.toString());
+    checkEquals(actualRes, expectedRes);
+  }
+
+  private static final void checkEquals(FlatHashList neig, long[] expected) {
     neig.sortByHashAsc();
     final long[] a = new long[neig.size()];
     neig.arraycopy(0, a, 0, neig.size());
     assert Arrays.equals(a, expected) : "Array: " + Arrays.toString(a);
   }
   
+  public static final void main(String[] args) {
+    externalEdgeTest4();
+  } 
+
 }

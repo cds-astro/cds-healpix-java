@@ -199,16 +199,45 @@ public class HealpixNestedNeighbourSelectorTest {
   }
 
   @Test
-  public static void externalEdgeTest4() {
+  public void externalEdgeTest4() {
     byte depth = 3;
-    long hash = 1;
+    long hash = 0;
     int delta_depth = 5;
     final FlatHashList actualRes = Healpix.getNested(depth).sortedExternalEdges(hash, delta_depth);
-    final long[] expectedRes = new long[]{};
-    System.out.println("Result: " + actualRes.toString());
+    final long[] expectedRes = new long[]{1024, 1026, 1032, 1034, 1056, 1058, 1064, 1066, 1152, 
+        1154, 1160, 1162, 1184, 1186, 1192, 1194, 1536, 1538, 1544, 1546, 1568, 1570, 1576, 1578,
+        1664, 1666, 1672, 1674, 1696, 1698, 1704, 1706, 2048, 2049, 2052, 2053, 2064, 2065, 2068,
+        2069, 2112, 2113, 2116, 2117, 2128, 2129, 2132, 2133, 2304, 2305, 2308, 2309, 2320, 2321,
+        2324, 2325, 2368, 2369, 2372, 2373, 2384, 2385, 2388, 2389, 3072, 283989, 283991, 283997,
+        283999, 284021, 284023, 284029, 284031, 284117, 284119, 284125, 284127, 284149, 284151, 
+        284157, 284159, 284501, 284503, 284509, 284511, 284533, 284535, 284541, 284543, 284629, 
+        284631, 284637, 284639, 284661, 284663, 284669, 284671, 286037, 371370, 371371, 371374, 
+        371375, 371386, 371387, 371390, 371391, 371434, 371435, 371438, 371439, 371450, 371451, 
+        371454, 371455, 371626, 371627, 371630, 371631, 371642, 371643, 371646, 371647, 371690, 
+        371691, 371694, 371695, 371706, 371707, 371710, 371711, 372394, 589823};
     checkEquals(actualRes, expectedRes);
   }
 
+  
+  @Test
+  public void unsortedExternalEdgeTest4() {
+    byte depth = 3;
+    long hash = 1;
+    int delta_depth = 5;
+    final FlatHashList actualRes = Healpix.getNested(depth).externalEdges(hash, delta_depth);
+    final long[] expectedRes = new long[]{341, 343, 349, 351, 373, 375, 381, 383, 469, 471, 477, 
+        479, 501, 503, 509, 511, 853, 855, 861, 863, 885, 887, 893, 895, 981, 983, 989, 991, 1013, 
+        1015, 1021, 1023, 2389, 3072, 3073, 3076, 3077, 3088, 3089, 3092, 3093, 3136, 3137, 3140, 
+        3141, 3152, 3153, 3156, 3157, 3328, 3329, 3332, 3333, 3344, 3345, 3348, 3349, 3392, 3393, 
+        3396, 3397, 3408, 3409, 3412, 3413, 4096, 4098, 4104, 4106, 4128, 4130, 4136, 4138, 4224, 
+        4226, 4232, 4234, 4256, 4258, 4264, 4266, 4608, 4610, 4616, 4618, 4640, 4642, 4648, 4650, 
+        4736, 4738, 4744, 4746, 4768, 4770, 4776, 4778, 6144, 371711, 372394, 372395, 372398, 
+        372399, 372410, 372411, 372414, 372415, 372458, 372459, 372462, 372463, 372474, 372475, 
+        372478, 372479, 372650, 372651, 372654, 372655, 372666, 372667, 372670, 372671, 372714, 
+        372715, 372718, 372719, 372730, 372731, 372734, 372735, 375466};
+    checkEquals(actualRes, expectedRes);
+  }
+  
   private static final void checkEquals(FlatHashList neig, long[] expected) {
     neig.sortByHashAsc();
     final long[] a = new long[neig.size()];
@@ -217,7 +246,9 @@ public class HealpixNestedNeighbourSelectorTest {
   }
   
   public static final void main(String[] args) {
-    externalEdgeTest4();
+    final HealpixNestedNeighbourSelectorTest t = new HealpixNestedNeighbourSelectorTest();
+    t.externalEdgeTest4();
+    t.unsortedExternalEdgeTest4();
   } 
 
 }

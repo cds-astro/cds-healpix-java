@@ -29,9 +29,9 @@ public class Range {
     do {
       long len = h - l;
       assert len > 0;
-      int ddMaxFromLen = 63 - Long.numberOfLeadingZeros(len);
+      int ddMaxFromLen = (63 - Long.numberOfLeadingZeros(len)) >> 1;
       int ddMaxFromLow = Long.numberOfTrailingZeros(l) >> 1;
-      int dd = Math.max(29, Math.min(ddMaxFromLen, ddMaxFromLow));
+      int dd = Math.min(29, Math.min(ddMaxFromLen, ddMaxFromLow));
       int twiceDd = dd << 1;
       sink.push(29 - dd, l >> twiceDd);
       l += 1 << twiceDd;

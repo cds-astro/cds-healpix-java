@@ -38,7 +38,9 @@ public class Range {
   }
   
   /**
-   * Same as {@code toCells} but with additional informations which are
+   * Same as {@code toCells} but with additional informations which are (see parameter list).
+   * This version may have better performances since a large part of the cells in a MOC are
+   * at the deepest MOC order.
    * @param sink
    * @param depthMax the depth of the lower possible cell order in the Range (i.e. the MOC order)
    * @param twiceDD {@code (29 - depthMax) << 1}, provided not ot have to recompute it
@@ -53,6 +55,7 @@ public class Range {
       long len = h - l;
       assert len > 0;
       if (len == rangeLenMin || (l & mask) != 0L) {
+        // A range of 1 cell at depthMax
         sink.push(depthMax, l >> twiceDD);
         l += rangeLenMin;
       } else {

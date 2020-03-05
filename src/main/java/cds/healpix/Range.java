@@ -20,7 +20,6 @@ public class Range {
   /**
    * Transforms this range in a list of cells that are added to the given {@code sink}.
    * IMPORTANT: the order in which the cells are added follows the natural Z-order curve order!
-   *  
    * @param sink
    */
   public void toCells(final CellSink sink) {
@@ -34,8 +33,36 @@ public class Range {
       int dd = Math.min(29, Math.min(ddMaxFromLen, ddMaxFromLow));
       int twiceDd = dd << 1;
       sink.push(29 - dd, l >> twiceDd);
-      l += 1 << twiceDd;
+      l += 1L << twiceDd;
     } while (l < h);
   }
   
+  /**
+   * Same as {@code toCells} but with additional informations which are
+   * @param sink
+   * @param depthMax the depth of the lower possible cell order in the Range (i.e. the MOC order)
+   * @param twiceDD {@code (29 - depthMax) << 1}, provided not ot have to recompute it
+   * @param rangeLenMin {@code 1L << twiceDD}, provided not to have to recompute it
+   * @param mask {@code 3L << twiceDD}, provided not to have to recompute it
+   */
+  public void toCellsWithKnowledge(final CellSink sink,
+      int depthMax, int twiceDD, long rangeLenMin, long mask) {
+    long l = this.from;
+    long h = this.to;
+    do {
+      long len = h - l;
+      assert len > 0;
+      if (len == rangeLenMin || (l & mask) != 0L) {
+        sink.push(depthMax, l >> twiceDD);
+        l += rangeLenMin;
+      } else {
+        int ddMaxFromLen = (63 - Long.numberOfLeadingZeros(len)) >> 1;
+        int ddMaxFromLow = Long.numberOfTrailingZeros(l) >> 1;
+        int dd = Math.min(29, Math.min(ddMaxFromLen, ddMaxFromLow));
+        int twiceDd = dd << 1;
+        sink.push(29 - dd, l >> twiceDd);
+        l += 1L << twiceDd; 
+      }
+    } while (l < h);
+  }
 }

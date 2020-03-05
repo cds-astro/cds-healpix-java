@@ -238,6 +238,69 @@ public class HealpixNestedNeighbourSelectorTest {
     checkEquals(actualRes, expectedRes);
   }
   
+  
+  @Test
+  public void externalEdgeBaseCellsTest() {
+    byte depth = 0;
+    int delta_depth = 2;
+    // base cell 0
+    FlatHashList actualRes = Healpix.getNested(0).sortedExternalEdges(0, delta_depth);
+    long[] expectedRes = new long[]{26, 27, 30, 31, 47, 53, 55, 61, 63, 69, 71, 77, 79, 90, 91, 94, 95, 143};
+    checkEquals(actualRes, expectedRes);
+    // base cell 1
+    actualRes = Healpix.getNested(0).sortedExternalEdges(1, delta_depth);
+    expectedRes = new long[]{5, 7, 13, 15, 42, 43, 46, 47, 63, 85, 87, 93, 95, 106, 107, 110, 111, 159};
+    checkEquals(actualRes, expectedRes);
+    // base cell 2
+    actualRes = Healpix.getNested(0).sortedExternalEdges(2, delta_depth);
+    expectedRes = new long[]{15, 21, 23, 29, 31, 58, 59, 62, 63, 101, 103, 109, 111, 122, 123, 126, 127, 175};
+    checkEquals(actualRes, expectedRes);
+    // base cell 3
+    actualRes = Healpix.getNested(0).sortedExternalEdges(3, delta_depth);
+    expectedRes = new long[]{10, 11, 14, 15, 31, 37, 39, 45, 47, 74, 75, 78, 79, 117, 119, 125, 127, 191};
+    checkEquals(actualRes, expectedRes);
+    // base cell 4
+    actualRes = Healpix.getNested(0).sortedExternalEdges(4, delta_depth);
+    expectedRes = new long[]{0, 2, 8, 10, 48, 49, 52, 53, 90, 117, 138, 139, 142, 143, 181, 183, 189, 191};
+    checkEquals(actualRes, expectedRes);
+    // base cell 5
+    actualRes = Healpix.getNested(0).sortedExternalEdges(5, delta_depth);
+    expectedRes = new long[]{0, 1, 4, 5, 16, 18, 24, 26, 69, 106, 133, 135, 141, 143, 154, 155, 158, 159};
+    checkEquals(actualRes, expectedRes);
+    // base cell 6
+    actualRes = Healpix.getNested(0).sortedExternalEdges(6, delta_depth);
+    expectedRes = new long[]{16, 17, 20, 21, 32, 34, 40, 42, 85, 122, 149, 151, 157, 159, 170, 171, 174, 175};
+    checkEquals(actualRes, expectedRes);
+    // base cell 7
+    actualRes = Healpix.getNested(0).sortedExternalEdges(7, delta_depth);
+    expectedRes = new long[]{32, 33, 36, 37, 48, 50, 56, 58, 74, 101, 165, 167, 173, 175, 186, 187, 190, 191};
+    checkEquals(actualRes, expectedRes);
+    // base cell 8
+    actualRes = Healpix.getNested(0).sortedExternalEdges(8, delta_depth);
+    expectedRes = new long[]{0, 64, 65, 68, 69, 80, 82, 88, 90, 144, 146, 152, 154, 160, 176, 177, 180, 181};
+    checkEquals(actualRes, expectedRes);
+    // base cell 9
+    actualRes = Healpix.getNested(0).sortedExternalEdges(9, delta_depth);
+    expectedRes = new long[]{16, 80, 81, 84, 85, 96, 98, 104, 106, 128, 129, 132, 133, 160, 162, 168, 170, 176};
+    checkEquals(actualRes, expectedRes);
+    // base cell 10
+    actualRes = Healpix.getNested(0).sortedExternalEdges(10, delta_depth);
+    expectedRes = new long[]{32, 96, 97, 100, 101, 112, 114, 120, 122, 128, 144, 145, 148, 149, 176, 178, 184, 186};
+    checkEquals(actualRes, expectedRes);
+    // base cell 11
+    actualRes = Healpix.getNested(0).sortedExternalEdges(11, delta_depth);
+    expectedRes = new long[]{48, 64, 66, 72, 74, 112, 113, 116, 117, 128, 130, 136, 138, 144, 160, 161, 164, 165};
+    checkEquals(actualRes, expectedRes);
+    
+    
+    /*for (int h = 0; h < 12; h++) {
+      actualRes = Healpix.getNested(depth).sortedExternalEdges(h, delta_depth);
+      System.out.println("h: " + h + "; neigs: " + actualRes);
+      toAladinDraw(depth + delta_depth, actualRes);
+      System.out.println("\n---------");
+    }*/
+  }
+  
   private static final void checkEquals(FlatHashList neig, long[] expected) {
     neig.sortByHashAsc();
     final long[] a = new long[neig.size()];
@@ -245,10 +308,21 @@ public class HealpixNestedNeighbourSelectorTest {
     assert Arrays.equals(a, expected) : "Array: " + Arrays.toString(a);
   }
   
+  private void toAladinDraw(final int depth, FlatHashList list) {
+    // NOT STANDARD (SINCE WE DO NOT USE INTERVALS!!)
+    System.out.format("draw moc %d/", depth);
+    FlatHashIterator it = list.iterator();
+    for (int i = 0; it.hasNext(); i++) {
+      System.out.format("%d,", it.next());
+    }
+  }
+  
   public static final void main(String[] args) {
     final HealpixNestedNeighbourSelectorTest t = new HealpixNestedNeighbourSelectorTest();
     t.externalEdgeTest4();
     t.unsortedExternalEdgeTest4();
+    
+    
   } 
 
 }

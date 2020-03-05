@@ -37,7 +37,7 @@ ToDo
 - [ ] Add tests from the Rust code into the Java code
 - [x] Debug approximate elliptical cone
 - [ ] Debug BMOC logical operation (see Rust code)
-- [ ] Debug *external edge* method (see Rust code)
+- [x] Debug *external edge* method (see Rust code)
 - [ ] Test bilinear interpolation (see Rust code)
 - [ ] Add RING scheme? (see Rust code)
 - [ ] Compressed MOCs: test M.Rein. solution

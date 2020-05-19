@@ -388,11 +388,11 @@ final class NewtonMethod {
         }
         // Second quarter [(p1.lon % PI/2) * PI/2, p1.lon]
         assert(lon1DivHalfPi < 3);
-        int n1Y = lon1DivHalfPi & 1;
-        final Vect3D n1 = new Vect3D(n1Y ^ 1, n1Y, 0.0);
+        int n1X = lon1DivHalfPi & 1;
+        final Vect3D n1 = new Vect3D(n1X , n1X ^ 1, 0.0);
         CooXYZ intersect1 = new CooXYZ(intersectPointPc(p1, p2, p2p1N, n1));
-        assert(p1.lon() < intersect1.lon());
-        resZ1 = arcSpecialPointInPcSameQuarter(p1, intersect1, zEpsMax, nIterMax);
+        assert intersect1.lon() < p1.lon() : "p1.lon: " + p1.lon() + " vs " + intersect1.lon() + " :int.lon and p2.lon: " + p2.lon();
+        resZ1 = arcSpecialPointInPcSameQuarter(intersect1, p1, zEpsMax, nIterMax);
       } else {
         Vect3D p1p2N = crossProd(p1, p2).normalized();
         if (p1.lon() % HALF_PI > 0) { // First quarter, [p1.lon, ((p1.lon % PI/2) + 1) * PI/2]

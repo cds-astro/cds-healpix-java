@@ -97,8 +97,8 @@ final class HealpixNestedHashComputer implements HashComputer {
   }
 
   private void discretize() {
-    xInt = floorLongP(x);    assert 0 <= xInt && xInt <= 5 * h.nside : xInt + " <= " + 4 * h.nside;
-    yInt = floorLongP(y);    assert 0 <= yInt && yInt <= 5 * h.nside : yInt + " <= " + 4 * h.nside;
+    xInt = floorLongP(x);    assert 0 <= xInt && xInt <= 5L * h.nside : xInt + " <= " + 4L * h.nside;
+    yInt = floorLongP(y);    assert 0 <= yInt && yInt <= 5L * h.nside : yInt + " <= " + 4L * h.nside;
   }
 
   private void computeBaseCellCoos() {

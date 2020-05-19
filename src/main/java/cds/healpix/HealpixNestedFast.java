@@ -514,21 +514,21 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
     final int hInD0h = iInD0h + jInD0h - this.modNsideMask;
     // Compute coordinates of the base pixel in the projection plane
     final int d0hBy4Quotient = d0h >> 2;
-        final int d0hMod4 = d0h & 3;
-        final int hD0h = 1 - d0hBy4Quotient;
-        // +1 if the base cell is not equatorial
-        int lD0h = (d0hMod4 << 1) | (hD0h & 1);
-        // Compute let's go
-        double lonC = lInD0h * this.oneOverNside;
-        double latC = hInD0h * this.oneOverNside;
-        // Let's go
-        if ((d0h < 4 && hInD0h > 0) || (d0h > 7 && hInD0h < 0)) { // Polar cap
-          pathAlongCellSidePolarCap(lonC, latC, lD0h, fromVertex, toVertex,
-              isToVertexIncluded, nSegments, pathPoints, fromPathPointsIndex);
-        } else { // Equatorial zone
-          pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, fromVertex, toVertex,
-              isToVertexIncluded, nSegments, pathPoints, fromPathPointsIndex);
-        }
+    final int d0hMod4 = d0h & 3;
+    final int hD0h = 1 - d0hBy4Quotient;
+    // +1 if the base cell is not equatorial
+    int lD0h = (d0hMod4 << 1) | (hD0h & 1);
+    // Compute let's go
+    double lonC = lInD0h * this.oneOverNside;
+    double latC = hInD0h * this.oneOverNside;
+    // Let's go
+    if ((d0h < 4 && hInD0h > 0) || (d0h > 7 && hInD0h < 0)) { // Polar cap
+      pathAlongCellSidePolarCap(lonC, latC, lD0h, fromVertex, toVertex,
+        isToVertexIncluded, nSegments, pathPoints, fromPathPointsIndex);
+    } else { // Equatorial zone
+      pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, fromVertex, toVertex,
+          isToVertexIncluded, nSegments, pathPoints, fromPathPointsIndex);
+    }
   }
 
   private void pathAlongCellSidePolarCap(final double lonC, final double latC, final int lD0h,
@@ -542,13 +542,12 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
     // Compute stepX and stepY
     final double stepX = (toVertex.timeXOffset(this.oneOverNside) - fromOffsetX) / nSegments;
     final double stepY = (toVertex.timeYOffset(this.oneOverNside) - fromOffsetY) / nSegments;
+    final long signLat = toBits(latC) & SIGN_BIT_MASK_L; // All points of the path are in the same hemisphere,
     for (int i = 0; i < resultSize; i++) {
       final double[] pathPoint = new double[2];
       double lon = lonC + fromOffsetX + i * stepX;
       double lat = latC + fromOffsetY + i * stepY;
-      long signLat = toBits(lat);
-      lat = fromBits(signLat & BUT_SIGN_BIT_MASK_L);
-      signLat &= SIGN_BIT_MASK_L;
+      lat = fromBits(toBits(lat) & BUT_SIGN_BIT_MASK_L);
       lat = 1 - lat;
       lon /= lat;
       lat = fromBits(signLat | toBits(2 * acos(lat * ONE_OVER_SQRT6) - HALF_PI));

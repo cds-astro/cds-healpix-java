@@ -42,6 +42,7 @@ public class NestedConeTest {
     System.out.println(cc.getClass().getName());
     
     final HealpixNestedBMOC moc = cc.overlappingCells(coneCenterLonRad, coneCenterLatRad);
+    System.out.println("Moc size: " + moc.size());
     int i = 0;
     if (expectedRes != null) {
       for (final HealpixNestedBMOC.CurrentValueAccessor cell : moc) {
@@ -1181,8 +1182,18 @@ public class NestedConeTest {
     // coneTest(lon, -lat, rad, order, new long[]{37228L, 37229L, 37230L, 37231L, 37240L, 37242L, 37316L, 37317L});
   }
   
+  @Test
+  public void testCone13() {
+	double lon = Math.toDegrees(4.646003386280478);
+	double lat = Math.toDegrees(-0.41602905223485265);
+	double rad = Math.toDegrees(0.9886484667476922);
+	int order = 6;
+	coneTest(lon, lat, rad, order, null);
+  }
+  
+  
   public static void main(String[] args) {
-    new NestedConeTest().testCone12();
+    new NestedConeTest().testCone13();
   }
   
 }

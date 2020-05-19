@@ -192,7 +192,11 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     coneCenterLonRad = normalizeLon(coneCenterLonRad);
     assert 0 <= coneCenterLonRad && coneCenterLonRad <= TWO_PI;
     // Store required space in the MOC
-    final long[] mocElems = new long[mocSizeUpperLimit(coneCenterLonRad, coneCenterLatRad)];
+    // - I new it was dangerous an hoped that enough space was always reserved
+    // - In an ideal word, i would have used an ArraysList with an initial capacity
+    // - I really expect collections on primitive types to be available in Java!!
+    // - At next error, I will make the effort to create a growing object!!
+    final long[] mocElems = new long[nMocCellInConeUpperBound()];
     int mocSize = 0;
     if (this.startingDepth == -1) {
       for (int h = 0; h < 12; h++) {
@@ -245,34 +249,15 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     return mocLength;
   }
   
-  private final int mocSizeUpperLimit(final double coneCenterLonRad, final double coneCenterLatRad) {
-    // Count the number of rings in the other side of a pole (if the cone contains a pole),
-    // the smallest possible ring index...
-    int nRingsOtherSideOfPole = 0;
-    int smallestCornerRingIndex = -1;
-    assert this.rRad < PI;
-    double latMax = coneCenterLatRad + this.rRad;
-    if (latMax > HALF_PI) {
-      nRingsOtherSideOfPole = ringIndex(this.deltaDepthMax, this.hComputerDeeperDepth.hash(coneCenterLonRad + PI, PI - latMax)) + 1;
-      latMax = HALF_PI;
-    } else {
-      smallestCornerRingIndex // min = -1 = North polevpComputers
-      = Math.max(smallestCornerRingIndex,
-          ringIndex(this.deltaDepthMax, this.hComputerDeeperDepth.hash(coneCenterLonRad, latMax)) - 1);
-    }
-    // ... and the largest possible ring index
-    int largestCornerRingIndex = Healpix.nIsolatitudeRings(this.deeperDepth);
-    double latMin = coneCenterLatRad - this.rRad;
-    if (latMin < -HALF_PI) {
-      nRingsOtherSideOfPole = largestCornerRingIndex - ringIndex(this.deltaDepthMax, this.hComputerDeeperDepth.hash(coneCenterLonRad + PI, -PI - latMin));
-      latMin = -HALF_PI;
-    } else {
-      largestCornerRingIndex = Math.min(largestCornerRingIndex, ringIndex(this.deltaDepthMax, this.hComputerDeeperDepth.hash(coneCenterLonRad, latMin)) + 1); 
-    }
-    // Deduce the number of rings...
-    final int nRings = largestCornerRingIndex - smallestCornerRingIndex + 1;
-    // ... and the upper limit on the MOC size
-    return nElemMax(nRings, nRingsOtherSideOfPole);
+  private final int nMocCellInConeUpperBound() {
+    final double twiceSqrt3 = 2 * 1.73205080756887729352;
+    // cell_area = 4 * pi / ncell = 4 * pi / (3 * 4 * nside^2) = pi / (3 * nside^2) =  pi * r^2
+    // cell_radius = r = 1 / (sqrt(3) * nside)
+    // As a very simple and naive rule, we take 6x the number of cells needed to cover
+    // the cone external annulus
+    // Annulus area = 4 pi ((R + r)^2 - R^2) = 4 pi (r^2 + 2rR)
+    // N cells = 4 pi (r^2 + 2rR) / 4 pi r^2 = 1 + 2 R/r = 1 + 2 * sqrt(3) * nside * R
+    return 6 * (1 +  (int) (this.hnDeeperDepth.nside * twiceSqrt3 * this.rRad + 0.99));
   }
   
   private static final boolean isCellFullyInCone(final double coneRadius,
@@ -283,19 +268,6 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
   private static final boolean isCellOverlapingCone(final double coneRadius,
       final double cellCircumCircleRadius, final double coneCenterToCellCenterDistance) {
    return coneCenterToCellCenterDistance < coneRadius + cellCircumCircleRadius; 
-  }
-  
-  private static final int nElemMax(final int nRings, final int nRingOtherSideOfThePole) {
-    //   nRing * 2      (smallest cells at the extremity of each ring)
-    // + nRing / 2 * 2  (cells of depth deppestDepth - 1 a thte extremity of each ring)
-    // + nRing / 4 * 2
-    // + ...
-    // + nRing / DeltaDepth * 2
-    // = nRing * (2 + 1 + 1/2 + 1/4 + ...)
-    // and the serie 1/2 + 1/4 + ... = 1
-    // ~= nRing * (2 + 1 + 1) = 4  * nRing
-    // Constant should be 4, we use 8 to be conservative
-    return 6 * (nRings + nRingOtherSideOfThePole);
   }
   
   

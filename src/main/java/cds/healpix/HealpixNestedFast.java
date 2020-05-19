@@ -17,7 +17,6 @@
 
 package cds.healpix;
 
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
@@ -161,17 +160,17 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
     // We change the algo with respect to the cleaner code in HealpixNestedHashComputer.
     // The reasons are:
     // - see class Javadoc (for performances: we introduce redundancy, inline all method calls, ...)
-    // - as we introduce redondancy, we do not have to keep the projection code separated
+    // - as we introduce redundancy, we do not have to keep the projection code separated
     //   - it allows to perform the computations in the 2 canonical base cells (NPC: 0; EQR: 4),
     //     with the y-origin of the Collignon projection set to 0 (instead of 1), and only then 
     //     we consider the base cell number
     // - thus we also removed the base cell lookup table:
-    //   - it saves CPU cache utilisation and lookup
+    //   - it saves CPU cache
     //   - but it introduces 'if' conditions that we tried to avoid: effect should be limited since 
-    //     few risks of branche miss-predictions, except in South/North polar caps (effect should be
-    //     negligeable, except if input positions are random and more or less uniformly distributed
+    //     few risks of branch miss-predictions, except in South/North polar caps (effect should be
+    //     negligible, except if input positions are random and more or less uniformly distributed
     //     in South and North polar caps).
-    // - See HealpixNestedHashComputer code (with matrix lookup) for a completly branch free version
+    // - See HealpixNestedHashComputer code (with matrix lookup) for a completely branch free version
     //   (except for the Cylindrical/Collignon test).
     checkLatitude(latRad);
     final double absLon = fromBits(toBits(lonRad) & BUT_SIGN_BIT_MASK_L);  assert  0 <= absLon && absLon <= 10 * TWO_PI : absLon; // 10 is arbitrary
@@ -181,6 +180,10 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
     double x = FOUR_OVER_PI * absLon, y;
     int xfloor = ((int) x);
     x -= (xfloor | 1);                                                     assert -1 <= x && x <= 1;
+    if (lonRad < 0) { // We expect lonRad to be >= 0, so we should rarely enter here
+      x = -x;         // (thus few risks of branch miss-prediction)
+      xfloor = 7 - (xfloor & 7);
+    }
     long d0h;
     int i, j;
     if (absLat <= TRANSITION_LATITUDE) { // Equatorial region (Cylindrical projection)

@@ -25,7 +25,7 @@ import static cds.healpix.common.math.HackersDelight.floorLongP;
  * This class simply prevents the creation of intermediary objects.
  * It must be used if you plan to call many times the {@link HealpixNested#hash(LonLat)} method.
  * WARNING: this class is not thread safe. Ask for one object of the type by thread in a
- * multi-thread environment.
+ * multithreaded environment.
  *
  * @author F.-X. Pineau
  *

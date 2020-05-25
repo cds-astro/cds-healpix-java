@@ -424,7 +424,7 @@ public final class HealpixNestedBMOC implements Iterable<HealpixNestedBMOC.Curre
    * @param hash  hash for which we want the status
    * @return the status of the given hash at the given depth
    */
-  public Status statut(int depth, long hash) {
+  public Status status(int depth, long hash) {
     checkDepth(depth);
     // assert cells are sorted!!!
     long h = buildValue(depth, hash, false, this.depthMax);

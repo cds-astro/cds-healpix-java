@@ -81,7 +81,7 @@ public final class HealpixNestedFixedRadiusCone4XMatch {
   }
   
   /**
-   * Fill the given array with the cells overallping the cone of given center
+   * Fill the given array with the cells overlapping the cone of given center
    * (may include false positive). We assume that the size of a cell at the depth of the returned
    * hashs is large compared to the cone radius.
    * @param coneCenterLonRad longitude of the center of the cone, in radians

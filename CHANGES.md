@@ -1,4 +1,19 @@
 
+v0.26 (2020-05-29)
+==================
+
+## Added
+
+* Method transforming a range into a list of cells of various depth
+
+## Bug correction
+
+* Fix internal/external edges (now used in Aladin)
+* Fix bug on "toRange" method
+* Fix assertion (long value instead of int, done by Mark Taylor)
+* Increase MOC size in ConeSearch
+* Fix a minor issue in query polygon
+
 v0.25 (2019-11-08)
 ==================
 

@@ -51,6 +51,7 @@ public class NestedConeTest {
       }
       assertEquals(expectedRes.length, i);
     } else {
+      /* Decomment to add test (after visual inspection)
       for (final HealpixNestedBMOC.CurrentValueAccessor cell : moc) {
         System.out.println(cell);
       }
@@ -65,6 +66,7 @@ public class NestedConeTest {
         }
       }
       System.out.println(strBuild.substring(0, strBuild.length() - 2) + "}");
+      */
     }
   }
   
@@ -89,11 +91,12 @@ public class NestedConeTest {
       }
       assertEquals(expectedRes.length, i);
     } else {
+      /* Decomment to add test (after visual inspection)
       for (final HealpixNestedBMOC.CurrentValueAccessor cell : moc) {
         System.out.println(cell);
         // if (cell.getHash() == 373286564231L) System.out.println("COUCOU");
       }
-      
+      */
     }
   }
 

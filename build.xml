@@ -78,6 +78,8 @@
   <target name="make.build" description="Compile main classes, to test if the soft compiles" depends="clean.classes,compile"/>
 
   <target name="make.test" description="Compile all classes (main an test), and run tests" depends="clean.classes,clean.tests,test"/>
+  
+  <target name="make.bench" description="Compile all classes (main an test), and run benches" depends="clean.classes,clean.tests,bench"/>
 
   <target name="make.jar" description="Compile main classes and create both the jar and the fatjar" depends="make.build,jars"/>
 
@@ -159,15 +161,36 @@
     </classpath>
     <batchtest>
      <fileset dir="${tsrc}">
-       <include name="**/*Test*" />
+	<include name="**/*Test*" />
+        <exclude name="**/*TestPerf*"/>
      </fileset>
     </batchtest>
     <formatter type="brief" usefile="false"/>
   </junit>
   </target>
 
+  <target name="bench" depends="compile,tcompile">
+  <junit haltonfailure="true" fork="true">
+    <classpath>
+      <pathelement location="${classes}" />
+      <pathelement location="${tclasses}" />
+      <fileset dir="${lib}/">
+        <include name="**/*.jar" />
+      </fileset>
+      <fileset dir="${tlib}/">
+        <include name="**/*.jar" />
+      </fileset>
+    </classpath>
+    <batchtest>
+     <fileset dir="${tsrc}">
+        <include name="**/*TestPerf*"/>
+     </fileset>
+    </batchtest>
+    <formatter type="brief" usefile="false"/>
+  </junit>
+  </target>
 
-  <!-- BUILD DOC -->
+   <!-- BUILD DOC -->
 
   <target name="doc">
     <echo>Create JavaDoc from "${src}" to "${doc}"...</echo>

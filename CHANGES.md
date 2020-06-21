@@ -1,4 +1,12 @@
 
+v0.27 (2020-06-05)
+==================
+
+### Changes
+
+* Separate tests from benches  (add `make.bench` target in the build.xml)
+
+
 v0.26 (2020-05-29)
 ==================
 

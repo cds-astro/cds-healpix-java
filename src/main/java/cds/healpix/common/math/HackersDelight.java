@@ -63,7 +63,7 @@ public final class HackersDelight {
 
   /**
    * Round down to the next power of 2 (see HD Fig. 3-1).
-   * @param x
+   * @param x the argument
    * @return round down to the next power of 2
    */
   public static long flp2(long x) {

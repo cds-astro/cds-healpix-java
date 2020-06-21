@@ -70,8 +70,10 @@ public class NestedEllipticalConeComputerApprox {
 
   /**
    * 
-   * @param aRad elliptical cone major axis
-   * @param hDeepestCells 
+   * @param aRad elliptical cone semi-major axis
+   * @param bRad elliptical cone semi-minor axis
+   * @param posAngRad position angle (east-of-north), in radians
+   * @param deepHpx deeper depth healpix nested object
    */
   public NestedEllipticalConeComputerApprox(final double aRad, final double bRad, final double posAngRad,
       final HealpixNested deepHpx) {

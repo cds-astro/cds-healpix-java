@@ -52,6 +52,9 @@ import static cds.healpix.common.math.Math.FOUR_OVER_PI;
  * The constructor is {@code protected}. to get an instance, see the {@link Healpix#getNested(int)}
  * or {@link Healpix#getNested(int, FillingCurve2DType)}.
  *
+ * WARNING: As pointed out by Mark Taylor, to use the methods of the {@link HashComputer} and {@link VerticesAndPathComputer}
+ * interfaces, you **MUST** be sure that no other  code running on the same JVM can call those methods a the same time. 
+ * Else, you should use {@link #newHashComputer()} and {@link #newVerticesAndPathComputer}.
  * @author F.-X. Pineau
  *
  */
@@ -295,6 +298,8 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
    * This method is **not** thread safe. For better performances, use one {@link HashComputer} created by
    * {@link #newHashComputer()} per thread.
    * WARNING: this method IS NOT thread safe. In multi-threaded environments, use the method
+   * EXTRA WARNING: As pointed out by Mark Taylor, to use this method you **MUST** be sure that no other
+   * code running on the same JVM can call it a the same time. Else, use {@link #newHashComputer()}.
    * {@link #newHashComputer()} to create a {@link HashComputer} for each thread.
    * @param lonRad longitude (in radians) of the the coordinate we want the HEALPix hash value.
    * @param latRad latitude (in radians) of the coordinate we want the HEALPix hash value.
@@ -616,7 +621,7 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
   }
   
   /**
-   * Simple ellipse search, but at the cost of approximations (=> false positive).
+   * Simple ellipse search, but at the cost of approximations (leading to false positive).
    * The smallest the ratio between the HEALPix (deeper) cells area over the elliptical cone area
    * , the more accurate the result is.  
    * @param aRad semi-major axis of the elliptical cone, in radians

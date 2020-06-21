@@ -27,8 +27,8 @@ import static cds.healpix.common.math.Math.HALF_PI;
  * PF0 + PF1 = 2a
  * 
  * FOR THE MOC: compute one value of circumcircle per order (like in the RUST lib)
- * => 2 ellipses per order (with +r_circul and -r_cirum)
- * => and use the RUST cone approx method, but for the elliptivcal cone :)
+ * - 2 ellipses per order (with +r_circul and -r_cirum)
+ * - and use the RUST cone approx method, but for the elliptivcal cone :)
  * 
  * @author F.-X. Pineau
  *

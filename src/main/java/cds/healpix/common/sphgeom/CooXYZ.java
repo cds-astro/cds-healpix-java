@@ -38,7 +38,7 @@ import java.util.Random;
  * To solve the Minimum Enclosing Cone (MEC) problem, we use the same algorithm as in 
  * Berg et al. (2008) "Computational Geometry - Algorithms and Applications, 3rd Ed.pdf", 
  * see §4.7, p. 86-89 (), which principle is general and works well in the sphere 
- * as cited in Barequet & Elber (2005) "Optimal bounding cones of vectors in three dimensions"
+ * as cited in Barequet &amp; Elber (2005) "Optimal bounding cones of vectors in three dimensions"
  * (https://www.sciencedirect.com/science/article/pii/S0020019004002911?via%3Dihub).
  * It uses LP (linear programming) and performs in O(n), n being the number of points we
  * want the smallest enclosing cone.
@@ -217,8 +217,8 @@ public class CooXYZ {
   /**
    * Returns a bounding cone (not the smallest one, for the samllest one, {@link #mec}).
    * In the worst case, the bounding cone has a radius ~= 2x the MEC radius.
-   * @param p
-   * @return
+   * @param p input points on the sphere
+   * @return a cone containing all the points given in input (not the smallest one)
    */
   public static Cone boundingCone(final CooXYZ... p) {
     // Comppute center
@@ -288,7 +288,7 @@ public class CooXYZ {
    * smallest possible radius.
    * WARNING: the algorithm used here is not made to work with nonreflex cones 
    * (i.e. if the points are distributed is more than an hemisphere).
-   * For our purpose, we stop the algo AND RETURN NULL if we detect a radius > 7 rad ( i.e. ~97 deg) 
+   * For our purpose, we stop the algo AND RETURN NULL if we detect a radius &gt; 7 rad ( i.e. ~97 deg) 
    * since below this value, the cell-in-cone or cell-in-polygone algorithm will test the 12
    * healpix base cells.
    * @param p list of the points we look for the minimum enclising cone

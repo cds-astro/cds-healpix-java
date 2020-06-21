@@ -12,10 +12,11 @@ import cds.healpix.HealpixNestedBMOC.CurrentValueAccessor;
 /**
  * 
  * The idea is to use an implicit datastructure, encoding the natural tree traversal on bits with:
- * - 0 bit  => cell not in the MOC, go to the next sibling cell or go up if all siblings already explored
- * - 1 bit  => cell contains information, go deeper
- * - 0000 bits => parent cell is in the MOC, no need to go deeper (ony for cells of depth < depthMax)
- * 
+ * - 0 bit: cell not in the MOC, go to the next sibling cell or go up if all siblings already explored
+ * - 1 bit: cell contains information, go deeper
+ * - 0000 bits: parent cell is in the MOC, no need to go deeper (ony for cells of depth &lt; depthMax)
+ * (DISCLAIMER: for a more recent and slightly more compact version, see the CDS HEALPix Rust)
+ *
  * @author F.-X. Pineau
  *
  */

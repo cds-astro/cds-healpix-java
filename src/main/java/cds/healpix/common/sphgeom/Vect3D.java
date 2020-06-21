@@ -53,8 +53,8 @@ public final class Vect3D {
      
     /**
      * Constructor from the spherical coordinates on the unit sphere.
-     * @param lonRad
-     * @param latRad
+     * @param lonRad longitude, in radians
+     * @param latRad latitude, in radians
      */
     public Vect3D(final double lonRad, final double latRad) {
         final double cosDec = Math.cos(latRad);

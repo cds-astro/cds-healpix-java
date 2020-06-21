@@ -20,7 +20,7 @@ public class Range {
   /**
    * Transforms this range in a list of cells that are added to the given {@code sink}.
    * IMPORTANT: the order in which the cells are added follows the natural Z-order curve order!
-   * @param sink
+   * @param sink object receiving each cell
    */
   public void toCells(final CellSink sink) {
     long l = this.from;
@@ -41,7 +41,7 @@ public class Range {
    * Same as {@code toCells} but with additional informations which are (see parameter list).
    * This version may have better performances since a large part of the cells in a MOC are
    * at the deepest MOC order.
-   * @param sink
+   * @param sink object receiving each cell
    * @param depthMax the depth of the lower possible cell order in the Range (i.e. the MOC order)
    * @param twiceDD {@code (29 - depthMax) << 1}, provided not ot have to recompute it
    * @param rangeLenMin {@code 1L << twiceDD}, provided not to have to recompute it

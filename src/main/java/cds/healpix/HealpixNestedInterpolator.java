@@ -362,8 +362,8 @@ class HealpixNestedInterpolator implements Interpolator {
     // to avoid a floor on both positive and negative values (to avoid a branch)
     y += 8;
     // Scale (multiply by nside/2) so that base-resolution cells are of size nside x nside
-    x = h.timeHalfNsideP(x);
-    y = h.timeHalfNsideP(y);
+    x = h.timeHalfNside(x);
+    y = h.timeHalfNside(y);
     assert 0 <= x && x <= (5+1e-15) * h.nside : x;
     assert 0 <= y && y <= (5+1e-15) * h.nside : y;
   }

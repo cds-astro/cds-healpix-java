@@ -60,29 +60,6 @@ import static cds.healpix.common.math.Math.FOUR_OVER_PI;
  */
 public final class HealpixNested implements HashComputer, VerticesAndPathComputer, NeighbourSelector {
 
-  /** Lookup table to find the base-cell identifier from the rotated and shifted projection.
-   *  Tests show better performances with respect to:
-   *   j = 4 - (j + i);
-   *   i = ((i - (j >>> 63)) & 3) + (++j << 2)
-   * But it may depends on the hardware and on the cache occupation.
-   */
-  /*static final byte[][] D0C_LOOKUP = new byte[][] {
-    {-1, -1, -1,  8,  4}, //   ----> y-axis 
-    {-1, -1,  9,  5,  0}, //  |
-    {-1, 10,  6,  1},     //  |
-    {11,  7,  2},         //  v
-    { 4,  3,},            // x-axis
-  };*/
-  
-  /** Lookup tables to retrieve the bits of the base (depth=0) cell at all possible depth. */
-  // private static final long[][][] D0C_BITS_LUPTS = new long[30][][];
-  
-  /** Lookup table to retrieve the bits of the base (depth=0) cell at the object depth .
-   *  We modified {@link #D0C_LOOKUP} to take into account cases of lat = +-90 deg 
-   *  and equatorial/polar caps limit.
-   * */
-  // final long[][] d0cBitsLUPT;
-  
   final int depth;
 
   final long nHash;
@@ -153,122 +130,7 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
     this.neigSelector = new HealpixNestedNeighbourSelector(this);
   }
 
-  /*private static long[][] getD0cBitsLookupTable(final int depth) {
-    long[][] ref = D0C_BITS_LUPTS[depth];
-    if (ref == null) {
-      synchronized(D0C_BITS_LUPTS) {
-        ref = D0C_BITS_LUPTS[depth];
-        if (ref == null) {
-          ref = buildLookUpTable(depth);
-          D0C_BITS_LUPTS[depth] = ref;
-        }
-      }
-    }
-    return ref;
-  }*/
-  
-  /*private static long[][] buildLookUpTable(int depth) {
-    final int twiceDepth = depth << 1;
-    long xMask = 0;
-    long yMask = 0;
-    long xyMask = 0;
-    if (depth > 0) {
-      xyMask = (1L << twiceDepth) - 1;
-      xMask = 0x5555555555555555L >>> (64 - twiceDepth); // ...0101
-      yMask = xMask << 1;                                // ...1010
-    }
-    final long nill = -1L;
-    final long bc00 =  0L << twiceDepth;
-    final long bc01 =  1L << twiceDepth;
-    final long bc02 =  2L << twiceDepth;
-    final long bc03 =  3L << twiceDepth;
-    final long bc04 =  4L << twiceDepth;
-    final long bc05 =  5L << twiceDepth;
-    final long bc06 =  6L << twiceDepth;
-    final long bc07 =  7L << twiceDepth;
-    final long bc08 =  8L << twiceDepth;
-    final long bc09 =  9L << twiceDepth;
-    final long bc10 = 10L << twiceDepth;
-    final long bc11 = 11L << twiceDepth;
-    final long mg0y = (0L << twiceDepth) | yMask;
-    final long mg1y = (1L << twiceDepth) | yMask;
-    final long mg2y = (2L << twiceDepth) | yMask;
-    final long mg3y = (3L << twiceDepth) | yMask;
-    final long m0xy = (0L << twiceDepth) | xyMask;
-    final long m1xy = (1L << twiceDepth) | xyMask;
-    final long m2xy = (2L << twiceDepth) | xyMask;
-    final long m3xy = (3L << twiceDepth) | xyMask;
-    return new long[][] {
-      {nill, nill, nill, bc08, bc04},       //   ----> y-axis 
-      {nill, nill, bc09, bc05, bc00, mg0y}, //  |
-      {nill, bc10, bc06, bc01, mg1y, m0xy}, //  |
-      {bc11, bc07, bc02, mg2y, m1xy},       //  v
-      {bc04, bc03, mg3y, m2xy},             // x-axis
-      {nill, mg0y, m3xy}
-    };
-  }*/
-
-  /*
-   * Project the given position on the unit sphere onto an Euclidean two-dimensional plane using
-   * the HEALPix projection of center (0, 0) and parameters H=4 anf K=3 (see Calabrett2007).
-   * The scale of the projection with respect to the canonical projection is 4*nside/pi so that
-   * the coordinates of each pixel center are integers.
-   * @param lonlat position on the unit sphere to be projected.
-   * @return the projected coordinates, X in [-4*nside, 4*nside] and Y in [-2*nside, 2*nside],
-   *         so that each pixel center and vertices have integer coordinates. 
-   */
-  /*public XY project(final LonLat lonlat) {
-    final SettableXY result = new SettableXYImpl();
-    this.project(lonlat, result);
-    return result;
-  }*/
-
-  /*
-   * Same function as {@link #proj(LonLat)} but avoiding the instantiation of the {@link XY}
-   * object. One possible use is for example to create one {@link SetableXY} object by thread and to
-   * compute successive projections (in a given thread) by reusing the {@link SetableXY} object.
-   * @param lonlat position on the unit sphere to be projected.
-   * @param result projected coordinates onto the Euclidean plane.
-   */
- /* public void project(final LonLat lonlat, final SettableXY result) {
-    if (Healpix.isInEquatorialRegion(lonlat)) {
-      this.projectInCylindricalEquaArea(lonlat, result);
-    } else {
-      this.projectInCollignon(lonlat, result);
-    }
-  }
-
-  private void projectInCylindricalEquaArea(final LonLat lonlat, final SettableXY result) {
-    Healpix.projCylindricalEquaAreaNoScale(lonlat, result);
-    result.setX(result.x() * this.xScale);
-    result.setY(result.y() * this.yScaleCEA);
-  }
-
-  private void projectInCollignon(final LonLat lonlat, final SettableXY result) {
-    Healpix.projCollignonNoScale(lonlat, result);
-    result.setX(result.x() * this.xScale);
-    result.setY(result.y() * this.yScaleCOL);
-  }*/
-
-
-  /*
-   * Perform the inverse operation of the projection, {@see #proj(LonLat)}.
-   * @param xy x must be in [-4*nside, 4*nside] and y must be in [-2*nside, 2*nside]
-   * @return x must be in [-4*nside, 4*nside] and y must be in [-2*nside, 2*nside]
-   */
-  /*public LonLat deProject(final XY xy) {
-    return Healpix.deproj(xy.x() * this.scaleInv, xy.y() * this.scaleInv);
-  }*/
-
-  /*
-   * Perform the inverse operation of the projection, {@see #proj(LonLat)}.
-   * @param xy x must be in [-4*nside, 4*nside] and y must be in [-2*nside, 2*nside]
-   * @param result the result of the deprojection
-   */
-  /*public void deProject(final XY xy, final SettableLonLat result) {
-    Healpix.deproj(xy.x() * this.scaleInv, xy.y() * this.scaleInv, result);
-  }*/
-
+ 
 
   @Override 
   public int depth() {
@@ -819,10 +681,40 @@ public final class HealpixNested implements HashComputer, VerticesAndPathCompute
   }
 
   
-  double timeHalfNsideP(double v) {
-    assert v >= 0;
+  /* Test performed on https://www.jdoodle.com/online-java-compiler/ 
+   * to ensure the code behave as expected.
+   
+   public class Main
+  {
+    public static void main(String[] args) {
+      System.out.println("Hello World");
+      double a = 0.0001;
+      double b = -0.0001;
+      System.out.println("Val: " + (int) a);
+      System.out.println("Val: " + (int) b);
+      System.out.println("A: " + timeHalfNside(a));
+      System.out.println("B: " + timeHalfNside(b));
+    }
+    
+    
+    public static double timeHalfNside(double v) {
+        long halfNside4IEEEdouble = 2L << 52;
+        return fromBits(toBits(v) + halfNside4IEEEdouble);
+      }
+      
+    public static long toBits(final double x) {
+      return Double.doubleToRawLongBits(x);
+    }
+    
+    public static double fromBits(final long doubleBits) {
+      return Double.longBitsToDouble(doubleBits);
+    }
+  }*/
+  
+  double timeHalfNside(double v) {
     return fromBits(toBits(v) + this.halfNside4IEEEdouble);
   }
+  
   /*private double divideByNsideP(double v) {
     assert v >= 0;
     return fromBits(toBits(v) - this.nside4IEEEdouble);

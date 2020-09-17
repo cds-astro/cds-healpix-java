@@ -1194,9 +1194,18 @@ public class NestedConeTest {
 	coneTest(lon, lat, rad, order, null);
   }
   
+  @Test
+  public void testCone14() {
+    HealpixNestedBMOC bmoc = cds.healpix.Healpix.getNested(11)
+        .newConeComputerApprox(5./3600.)
+        .overlappingCells(0.5*Math.PI, -1.1617);
+    System.out.println("Moc size: " + bmoc.size()); 
+  }
+  
+  
   
   public static void main(String[] args) {
-    new NestedConeTest().testCone13();
+    new NestedConeTest().testCone14();
   }
   
 }

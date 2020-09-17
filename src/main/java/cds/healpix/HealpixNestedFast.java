@@ -212,6 +212,11 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
       // Rotation of 45 and scale by sqrt(2) * nside / 2
       i = ((int) fromBits(this.halfNside4IEEEdouble + toBits(x + y)));     assert 0 <= i && i < nside;
       j = ((int) fromBits(this.halfNside4IEEEdouble + toBits(y - x)));     assert 0 <= j && j < nside;
+      // Here, why don't we try to detect case i or j = NSIDE in the north polar cap?
+      // Simply because we get i or j = NSIDE only if x+y or x-y = 2 
+      // But: x + y = (xp * y + y) = y * (1 + xp) and
+      //      x can't be > 1 (since we removed its floor, i.e. it is not the result of a * or /)
+      //      y = 1 only at the pole and we check the numerical accuracy in this case (SQRT6 * ...)
       if (signLat == 0L) { // North polar cap
         xfloor = i;
         i = this.nsideRemainderMask - j;                                   assert 0 <= i && i < nside;

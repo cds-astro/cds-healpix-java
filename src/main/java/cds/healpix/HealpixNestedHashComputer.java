@@ -170,7 +170,7 @@ final class HealpixNestedHashComputer implements HashComputer {
   // I (am supposed to have) improved the numerical precision working on (x, y, z) float inputs
   // and then re-adapted the code for (lon, lat) double inputs.
   // The corner cases are not present in HealpixNestedFast since we do not use the global 
-  // projection but deal with polars caps and he eaquatorial region independently.
+  // projection but deal with polars caps and the eaquatorial region independently.
   
   /*private final HealpixProjector proj = new HealpixProjector();
   private double[] xy = new double[2];  // Result of the HEALPix projection

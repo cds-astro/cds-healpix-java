@@ -55,5 +55,20 @@ public final class HealpixNestedFastTest {
       assertEquals(h, h2);
     }
   }
+  
+  @Test
+  public void testCornerCase(){
+    final int depth = 11;
+    final double lon = 0.5 * Math.PI;
+    final double lat = -1.1617;
+    
+    final HealpixNestedFast hnf = Healpix.getNestedFast(depth);
+    System.out.println("ra dec:" + Math.toDegrees(lon) + " " + Math.toDegrees(lat));
+    System.out.println(hnf.hash(lon, lat));
+    
+    final HealpixNested hn = Healpix.getNested(depth);
+    System.out.println(hn.hash(lon, lat));
+    
+  }
 
 }

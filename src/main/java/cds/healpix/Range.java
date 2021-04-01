@@ -1,7 +1,7 @@
 package cds.healpix;
 
 /**
- * Defines an Hash Range at the deeper depth (i.e. 29).
+ * Defines an Hash Range at the deeper depth.
  * @author F.-X. Pineau
  *
  */
@@ -18,7 +18,7 @@ public class Range {
   }
   
   /**
-   * Transforms this range in a list of cells that are added to the given {@code sink}.
+   * Transforms this range in a list of HEALPix cells that are added to the given {@code sink}.
    * IMPORTANT: the order in which the cells are added follows the natural Z-order curve order!
    * @param sink object receiving each cell
    */
@@ -36,6 +36,30 @@ public class Range {
       l += 1L << twiceDd;
     } while (l < h);
   }
+  
+  /**
+   * Transforms this range in a list of cells that are added to the given {@code sink}.
+   * IMPORTANT: the order in which the cells are added follows the natural Z-order curve order!
+   * @param dim the z-order curve dimension (2 for HEALPix, 1 for time, ...)
+   * @param sink object receiving each cell
+   */
+  public void toCellsGeneralized(final int dim, final int absoluteDepthMax, final CellSink sink) {
+	assert dim > 0;
+    long l = this.from;
+    long h = this.to;
+    int shift = (dim - 1);
+    do {
+      long len = h - l;
+      assert len > 0;
+      int ddMaxFromLen = (63 - Long.numberOfLeadingZeros(len)) >> shift;
+      int ddMaxFromLow = Long.numberOfTrailingZeros(l) >> shift;
+      int dd = Math.min(absoluteDepthMax, Math.min(ddMaxFromLen, ddMaxFromLow));
+      int ddShift = dd << shift;
+      sink.push(absoluteDepthMax - dd, l >> ddShift);
+      l += 1L << ddShift;
+    } while (l < h);
+  }
+  
   
   /**
    * Same as {@code toCells} but with additional informations which are (see parameter list).

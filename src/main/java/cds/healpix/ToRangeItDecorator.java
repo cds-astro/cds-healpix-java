@@ -4,6 +4,11 @@ import java.util.Iterator;
 
 import cds.healpix.HealpixNestedBMOC.CurrentValueAccessor;
 
+/**
+ * WARNING: this is so far dim = 2 specific!
+ * @author F.-X Pineau
+ *
+ */
 public class ToRangeItDecorator implements Iterator<Range> {
   
   private final Iterator<CurrentValueAccessor> it;

@@ -41,6 +41,7 @@ public class Range {
    * Transforms this range in a list of cells that are added to the given {@code sink}.
    * IMPORTANT: the order in which the cells are added follows the natural Z-order curve order!
    * @param dim the z-order curve dimension (2 for HEALPix, 1 for time, ...)
+   * @param absoluteDepthMax max depth (29 for HEALPIX, ...)
    * @param sink object receiving each cell
    */
   public void toCellsGeneralized(final int dim, final int absoluteDepthMax, final CellSink sink) {

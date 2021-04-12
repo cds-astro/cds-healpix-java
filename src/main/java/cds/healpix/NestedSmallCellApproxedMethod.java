@@ -196,6 +196,7 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     // - In an ideal word, i would have used an ArraysList with an initial capacity
     // - I really expect collections on primitive types to be available in Java!!
     // - At next error, I will make the effort to create a growing object!!
+    // System.out.println("moc size max allowed: " + nMocCellInConeUpperBound());
     final long[] mocElems = new long[nMocCellInConeUpperBound()];
     int mocSize = 0;
     if (this.startingDepth == -1) {
@@ -250,14 +251,23 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
   }
   
   private final int nMocCellInConeUpperBound() {
-    final double twiceSqrt3 = 2 * 1.73205080756887729352;
+	// OLD UPPER BOUND: fails in rare circumstances, e.g. depth = 14, radius = 0.001, alpha = 0.002 ,delta = -1.3;
     // cell_area = 4 * pi / ncell = 4 * pi / (3 * 4 * nside^2) = pi / (3 * nside^2) =  pi * r^2
     // cell_radius = r = 1 / (sqrt(3) * nside)
     // As a very simple and naive rule, we take 6x the number of cells needed to cover
     // the cone external annulus
     // Annulus area = 4 pi ((R + r)^2 - R^2) = 4 pi (r^2 + 2rR)
     // N cells = 4 pi (r^2 + 2rR) / 4 pi r^2 = 1 + 2 R/r = 1 + 2 * sqrt(3) * nside * R
-    return 6 * (1 +  (int) (this.hnDeeperDepth.nside * twiceSqrt3 * this.rRad + 0.99));
+    // final double twiceSqrt3 = 2 * 1.73205080756887729352;
+	// return 6 * (1 +  (int) (this.hnDeeperDepth.nside * twiceSqrt3 * this.rRad + 0.99));
+    
+	// NEW UPPER BOUND: supposedly more robust (and faster to compute)
+    // At lower resolution depth, max 9 cells (partially) overlapped:
+    // => grid nside max = 3 * (2^DeltaDepth)
+    // Worst case, for each nside max row (or col) at depth max: 
+    // - 2 (both sides) x (1 cell overllapping externaly + 1 cell overlapping internally + 1 no-fusioned internall cell)
+    // - x2 to be conservative
+    return 12  << deltaDepthMax;
   }
   
   private static final boolean isCellFullyInCone(final double coneRadius,

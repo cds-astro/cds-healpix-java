@@ -26,6 +26,7 @@ import static cds.healpix.common.math.Math.PI;
 import static cds.healpix.common.math.Math.TWO_PI;
 import static cds.healpix.common.math.Math.cos;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 
 import cds.healpix.CompassPoint.Cardinal;
@@ -115,6 +116,25 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
   }
   
   
+  private class GrowableLongArray {
+	private long[] array;
+	private int cursor;
+	private GrowableLongArray(int capacity) {
+	  this.array = new long[capacity];
+	  this.cursor = 0;
+	}
+	private final void add(long value) {
+	  if (this.cursor == this.array.length) {
+		// On purpose spurious message (may be better to use an external logger).
+		System.out.println("WARNING: Had to grow moc size! Find a better estimate!");
+		// New size = 1.5 * old size
+		this.array = Arrays.copyOf(this.array, this.array.length + (this.array.length >> 1));
+	  }
+	  this.array[this.cursor++] = value;
+    }
+  }
+  
+
   // Because we do not want HealpixNestedLonLatComputer to publicly implement SettableHashParts
   private final SettableHashParts hashPartsProxy = new SettableHashParts() {
     @Override public int baseCellHash() { return baseCellHash; }
@@ -197,11 +217,11 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     // - I really expect collections on primitive types to be available in Java!!
     // - At next error, I will make the effort to create a growing object!!
     // System.out.println("moc size max allowed: " + nMocCellInConeUpperBound());
-    final long[] mocElems = new long[nMocCellInConeUpperBound()];
+    final GrowableLongArray mocElems = new GrowableLongArray(nMocCellInConeUpperBound());
     int mocSize = 0;
     if (this.startingDepth == -1) {
       for (int h = 0; h < 12; h++) {
-        mocSize = buildMocRecursively(mocElems, mocSize, 1, h, coneCenterLonRad, coneCenterLatRad, cosConeCenterLat, mode);
+        buildMocRecursively(mocElems, 1, h, coneCenterLonRad, coneCenterLatRad, cosConeCenterLat, mode);
       }
     } else {
       // Compute hash of the cell containing the cone center
@@ -213,13 +233,13 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
       this.neigList.sortByHashAsc();
 
       for (int i = 0; i < this.neigList.size(); i++) {
-        mocSize = buildMocRecursively(mocElems, mocSize, 0, this.neigList.get(i), coneCenterLonRad, coneCenterLatRad, cosConeCenterLat, mode);
+        buildMocRecursively(mocElems, 0, this.neigList.get(i), coneCenterLonRad, coneCenterLatRad, cosConeCenterLat, mode);
       }
     }
-    return HealpixNestedBMOC.createPacking(this.deeperDepth, mocElems, mocSize);
+    return HealpixNestedBMOC.createPacking(this.deeperDepth, mocElems.array, mocElems.cursor);
   }
   
-  private final int buildMocRecursively(final long[] moc, int mocLength, int deltaDepth, long hash,
+  private final GrowableLongArray buildMocRecursively(final GrowableLongArray moc, int deltaDepth, long hash,
       final double coneCenterLon, final double coneCenterLat, final double cosCenterLat, final Mode mode) {
     final int depth = this.startingDepth + deltaDepth;
     assert this.hcc[deltaDepth].depth() == depth;
@@ -232,22 +252,24 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     final double rCircumCircle = Healpix.getLargestCenterToCellVertexDistance(
         cellCenterLon, cellCenterLat, depth);
     if (isCellFullyInCone(rRad, rCircumCircle, dConeCell)) {
-      moc[mocLength++] = buildValue(this.startingDepth + deltaDepth, hash, true, this.deeperDepth);
+    	// moc[mocLength++] = buildValue(this.startingDepth + deltaDepth, hash, true, this.deeperDepth);
+    	moc.add(buildValue(this.startingDepth + deltaDepth, hash, true, this.deeperDepth));
     } else if (isCellOverlapingCone(rRad, rCircumCircle, dConeCell)) {
       if (deltaDepth == this.deltaDepthMax) {
         if (mode.isOk(dConeCell, this.rRad, vpc, hash, coneCenterLon, coneCenterLat, cosCenterLat, this.angDistComputer)) { 
-          moc[mocLength++] = buildValue(this.deeperDepth, hash, false, this.deeperDepth);
+          // moc[mocLength++] = buildValue(this.deeperDepth, hash, false, this.deeperDepth);
+        	moc.add(buildValue(this.startingDepth + deltaDepth, hash, true, this.deeperDepth));
         }
       } else {
         hash <<= 2;
         deltaDepth++;
-        mocLength = buildMocRecursively(moc, mocLength, deltaDepth,   hash, coneCenterLon, coneCenterLat, cosCenterLat, mode);
-        mocLength = buildMocRecursively(moc, mocLength, deltaDepth, ++hash, coneCenterLon, coneCenterLat, cosCenterLat, mode);
-        mocLength = buildMocRecursively(moc, mocLength, deltaDepth, ++hash, coneCenterLon, coneCenterLat, cosCenterLat, mode);
-        mocLength = buildMocRecursively(moc, mocLength, deltaDepth, ++hash, coneCenterLon, coneCenterLat, cosCenterLat, mode);
+        buildMocRecursively(moc, deltaDepth,   hash, coneCenterLon, coneCenterLat, cosCenterLat, mode);
+        buildMocRecursively(moc, deltaDepth, ++hash, coneCenterLon, coneCenterLat, cosCenterLat, mode);
+        buildMocRecursively(moc, deltaDepth, ++hash, coneCenterLon, coneCenterLat, cosCenterLat, mode);
+        buildMocRecursively(moc, deltaDepth, ++hash, coneCenterLon, coneCenterLat, cosCenterLat, mode);
       }
     } // else d > r + c => cell fully out of the cone
-    return mocLength;
+    return moc;
   }
   
   private final int nMocCellInConeUpperBound() {
@@ -262,12 +284,19 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
 	// return 6 * (1 +  (int) (this.hnDeeperDepth.nside * twiceSqrt3 * this.rRad + 0.99));
     
 	// NEW UPPER BOUND: supposedly more robust (and faster to compute)
-    // At lower resolution depth, max 9 cells (partially) overlapped:
+    // At lower resolution, max 9 cells (partially) overlapped by a cone
+	// (except at depth 0, but if more that 9 cells are overlapped, I expect cell(s) to be fully included in the cone) 
     // => grid nside max = 3 * (2^DeltaDepth)
-    // Worst case, for each nside max row (or col) at depth max: 
-    // - 2 (both sides) x (1 cell overllapping externaly + 1 cell overlapping internally + 1 no-fusioned internall cell)
-    // - x2 to be conservative
-    return 12  << deltaDepthMax;
+    // For each row (or col) of the higher resolution grid, at the border of the cone, in the worst case: 
+    // - 6 = x2 (both sides) x (1 cell overlapping externally + 1 cell overlapping internally + 1 not-merged internal cell)
+    // Then at resolution max - 1, #row(or cols) / 2, in the worst case
+	// - few chances (?) to have more than 2 consecutive unmerged cells on each side: 4 = 2 * 2 
+	// By recursivity, we get:
+	// - 6 * 2^DeltaDepth + 4 * 2^(DeltaDepth - 1) + 4 * 2^(DeltaDepth - 2) + ...
+	// - 6 * (2^DeltaDepth + 2 * 2^(DeltaDepth + 2^(DeltaDepth + ... )
+	// 2^DeltaDepth * (6 + 2 + 1 + 1/2 + 1/4 + ...)
+	// We take 12 instead of 10
+    return 12 << deltaDepthMax;
   }
   
   private static final boolean isCellFullyInCone(final double coneRadius,

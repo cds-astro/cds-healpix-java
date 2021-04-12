@@ -1,4 +1,13 @@
 
+v0.28 (2021-04-12)
+==================
+
+### Changes/Bug correction
+
+* Change the MOC size upperd bound by a more robust estimate
+* Change HealpixNestedHashComputer to avoid corner cases
+
+
 v0.27 (2020-06-21)
 ==================
 

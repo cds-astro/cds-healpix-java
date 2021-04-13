@@ -1,4 +1,13 @@
 
+v0.29 (2021-04-13)
+==================
+
+### Changes
+
+* Add a growable array in NestedSmallCellApproxedMethod.java to prevent 
+  errors in case of too low MOC size upper bound estimate
+
+
 v0.28 (2021-04-12)
 ==================
 

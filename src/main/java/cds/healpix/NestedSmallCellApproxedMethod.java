@@ -264,7 +264,7 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     } else if (isCellOverlapingCone(rRad, rCircumCircle, dConeCell)) {
       if (deltaDepth == this.deltaDepthMax) {
         if (mode.isOk(dConeCell, this.rRad, vpc, hash, coneCenterLon, coneCenterLat, cosCenterLat, this.angDistComputer)) { 
-          moc.add(buildValue(this.startingDepth + deltaDepth, hash, true, this.deeperDepth));
+          moc.add(buildValue(this.deeperDepth, hash, false, this.deeperDepth));
         }
       } else {
         hash <<= 2;

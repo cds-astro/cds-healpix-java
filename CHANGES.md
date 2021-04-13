@@ -2,10 +2,16 @@
 v0.29 (2021-04-13)
 ==================
 
+### Build 2:
+
+* Fix the wrong `buildValue` arguments introduded in `NestedSmallCellApproxedMethod.buildMocRecursively`
+  (rogue copy/paste)
+
+
 ### Changes
 
 * Add a growable array in NestedSmallCellApproxedMethod.java to prevent 
-  errors in case of too low MOC size upper bound estimate
+  errors in case of too low MOC size upper bound estimat
 
 
 v0.28 (2021-04-12)

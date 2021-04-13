@@ -31,7 +31,7 @@ import cds.healpix.HealpixNestedFixedRadiusConeComputer.ReturnedCells;
 final class NestedLargeCellApproxedMethod implements HealpixNestedFixedRadiusConeComputer {
 
   private static final EnumSet<Cardinal> ALL_CARDINALS = EnumSet.allOf(Cardinal.class);
-  
+
   private final int startingDepth;
   private final int hashDepth;
   private final HealpixNested hn;
@@ -40,13 +40,13 @@ final class NestedLargeCellApproxedMethod implements HealpixNestedFixedRadiusCon
   private final VerticesAndPathComputer vpc;
   private final int twiceDeltaOrder;
   private final double coneRadiusRad;
-  
+
   private final AngularDistanceComputer angDistComputer;
-  
+
   private final long[] result = new long[9];
   private final double[] cellCenter = new double[2];
   private final NeighbourList neigList;
-  
+
   public NestedLargeCellApproxedMethod(final int startingDepth, final int outputDepth, final double radiusRad) {
     this.startingDepth = startingDepth;
     this.hashDepth = outputDepth;
@@ -62,7 +62,7 @@ final class NestedLargeCellApproxedMethod implements HealpixNestedFixedRadiusCon
     this.angDistComputer = AngularDistanceComputer.getComputer(this.coneRadiusRad);
     this.neigList = new NeighbourList(-1); // We don't care, internal usage only.
   }
-  
+
   @Override
   public double getRadius() {
     return this.coneRadiusRad;
@@ -72,7 +72,7 @@ final class NestedLargeCellApproxedMethod implements HealpixNestedFixedRadiusCon
   public HealpixNestedFixedRadiusConeComputer newComputer() {
     return new NestedLargeCellApproxedMethod(this.startingDepth, this.hashDepth, this.coneRadiusRad);
   }
-  
+
   @Override
   public HealpixNestedBMOC overlappingCells(double coneCenterLonRad, double coneCenterLatRad,
       ReturnedCells returnedCells) {
@@ -87,7 +87,7 @@ final class NestedLargeCellApproxedMethod implements HealpixNestedFixedRadiusCon
       throw new Error("Type " + returnedCells + " not implemented!");
     }
   }
-  
+
   private HealpixNestedBMOC overlappingFullyIn(double coneCenterLonRad, double coneCenterLatRad) {
     final double cosConeCenterLat = cos(coneCenterLatRad);
     // Compute hash of the cell containing the cone center
@@ -105,7 +105,7 @@ final class NestedLargeCellApproxedMethod implements HealpixNestedFixedRadiusCon
     }
     return HealpixNestedBMOC.createPacking(this.hashDepth, result, ir);
   }
-  
+
   private boolean allVerticesOk(final long hash, 
       final double coneCenterLon, final double coneCenterLat, final double cosCenterLat) {
     for (final double[] vertex : this.vpc.vertices(hash, ALL_CARDINALS).values()) {
@@ -119,11 +119,11 @@ final class NestedLargeCellApproxedMethod implements HealpixNestedFixedRadiusCon
     }
     return true;
   }
-  
+
   @Override
   public HealpixNestedBMOC overlappingCells(double coneCenterLon, final double coneCenterLat) {
     final double cosConeCenterLat = cos(coneCenterLat);
-    
+
     final long centerHash = this.hc.hash(coneCenterLon, coneCenterLat);
     this.neiSelect.neighbours(centerHash, this.neigList);
     final long ch = centerHash >>> this.twiceDeltaOrder;
@@ -139,7 +139,7 @@ final class NestedLargeCellApproxedMethod implements HealpixNestedFixedRadiusCon
         final double cellCenterLon = cellCenter[LON_INDEX];
         final double cellCenterLat = cellCenter[LAT_INDEX];
         final double rCircumCircle = Healpix.getLargestCenterToCellVertexDistance(
-          cellCenterLon, cellCenterLat, this.startingDepth);
+            cellCenterLon, cellCenterLat, this.startingDepth);
         final double dConeCell = this.angDistComputer.haversineDistInRad(cellCenterLon - coneCenterLon,
             cellCenterLat - coneCenterLat, cosConeCenterLat, cos(cellCenterLat));
         if (isCellOverlapingCone(this.coneRadiusRad, rCircumCircle, dConeCell)) {
@@ -149,11 +149,11 @@ final class NestedLargeCellApproxedMethod implements HealpixNestedFixedRadiusCon
     }
     return HealpixNestedBMOC.createPacking(this.hashDepth, result, ir);
   }
-  
+
   @Override
   public HealpixNestedBMOC overlappingCenters(double coneCenterLon, double coneCenterLat) {
     final double cosConeCenterLat = cos(coneCenterLat);
-    
+
     final long centerHash = this.hc.hash(coneCenterLon, coneCenterLat);
     this.neiSelect.neighbours(centerHash, this.neigList);
     final long ch = centerHash >>> this.twiceDeltaOrder;
@@ -177,8 +177,8 @@ final class NestedLargeCellApproxedMethod implements HealpixNestedFixedRadiusCon
     }
     return HealpixNestedBMOC.createPacking(this.hashDepth, result, ir);
   }
-  
-  
+
+
   private static final boolean isNotIn(final long h, final long[] ah, final long alength) {
     for (int i = 1; i < alength; i++) {
       if (h == ah[i]) {
@@ -190,7 +190,7 @@ final class NestedLargeCellApproxedMethod implements HealpixNestedFixedRadiusCon
 
   private static final boolean isCellOverlapingCone(final double coneRadius,
       final double cellCircumCircleRadius, final double coneCenterToCellCenterDistance) {
-   return coneCenterToCellCenterDistance < coneRadius + cellCircumCircleRadius; 
+    return coneCenterToCellCenterDistance < coneRadius + cellCircumCircleRadius; 
   }
-  
+
 }

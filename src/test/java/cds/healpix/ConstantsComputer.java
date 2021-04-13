@@ -55,20 +55,20 @@ final class ConstantsComputer {
     final double h3 = d * d + a * a * Math.cos(dec1Rad) * Math.cos(dec2Rad);
     return 2 * Math.asin(Math.sqrt(h3));
   }
-  
+
   private static final double haversineRad(final double[] radec1Rad, final double[] radec2Rad) {
     final double d = Math.sin(0.5 * (radec2Rad[1] - radec1Rad[1]));
     final double a = Math.sin(0.5 * (radec2Rad[0] - radec1Rad[0]));
     final double h3 = d * d + a * a * Math.cos(radec1Rad[1]) * Math.cos(radec2Rad[1]);
     return 2 * Math.asin(Math.sqrt(h3));
   }
-  
-  
+
+
   private static void verticesDistance(final int depth) throws IOException{
     final HealpixNested hn = Healpix.getNested(depth);
     final VerticesAndPathComputer vpc = hn.newVerticesAndPathComputer();
     final EnumSet<Cardinal> directions = EnumSet.allOf(Cardinal.class);
-    
+
     final Set<String> rows = new LinkedHashSet<String>();
     rows.add("icell,lon,lat,dCN,dCS,dCE,dCW,dMaxCV,dMaCVdir,dNS,dEW,dDiagMax,dDiagMaxDir,dNE,dSE,dSW,dNW,dEdgeMin,dEdgeMinDir,computedMaxDCV");
 
@@ -128,12 +128,12 @@ final class ConstantsComputer {
           distNE, distSE, distSW, distNW, distEdgeMin, distEdgeMinDir);
       rows.add(line);
     }
-    
+
     final File f = new File("./target/test-results/distances.depth" + depth + ".csv");
     // Files.write(f.toPath(), rows, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
     //    StandardOpenOption.TRUNCATE_EXISTING);
   }
-  
+
   private static String toCSV(int depth, int icell, double[] cellCenter, 
       double dCN, double dCS, double dCE, double dCW, double dMaxCV, int dMaxCSVdir,
       double dNS, double dEW, double dDiagMax, int dDiagMaxDir,
@@ -148,12 +148,12 @@ final class ConstantsComputer {
   private static final double toArcsec(final double angle) {
     return toDegrees(angle) * 3600;
   }
-  
+
   public static void main(final String[] args) throws IOException {
     final int depth = 8;
     verticesDistance(depth);
-    
-    
+
+
   }
 
 }

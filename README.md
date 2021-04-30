@@ -35,6 +35,7 @@ ToDo
 - [x] Implement exact cone solution
 - [x] Implement exact polygon solution
 - [ ] Add tests from the Rust code into the Java code
+- [ ] Add regression tests on `newConeComputerApprox` 
 - [x] Debug approximate elliptical cone
 - [ ] Debug BMOC logical operation (see Rust code)
 - [x] Debug *external edge* method (see Rust code)

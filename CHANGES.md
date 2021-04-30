@@ -1,11 +1,17 @@
 
-v0.29 (2021-04-13)
+v0.29 (2021-04-30)
 ==================
 
-### Build 2:
+### Build 3 (2021-04-30):
+
+* Change the log level of the message printed when the growable array grows
+* The growable array initial capacity now accounts for the fact that more
+  cells than the final (B)MOC size have to be temporarily stored.
+
+### Build 2 (2021-04-13): 
 
 * Fix the wrong `buildValue` arguments introduded in `NestedSmallCellApproxedMethod.buildMocRecursively`
-  (rogue copy/paste)
+  (rogue copy/paste detected by Mark Taylor: no impact on the list of values but wrong BMOC boolean)
 
 
 ### Changes

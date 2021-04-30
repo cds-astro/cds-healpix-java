@@ -44,6 +44,9 @@ import cds.healpix.CompassPoint.Cardinal;
  */
 final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusConeComputer {
 
+  // Temporary log for debug purpose
+  // public static final Logger LOGGER_TEST = Logger.getLogger( NestedSmallCellApproxedMethod.class.getPackage().getName() );
+
   private static final EnumSet<Cardinal> ALL_CARDINALS = EnumSet.allOf(Cardinal.class);
 
   private final AngularDistanceComputer angDistComputer;
@@ -118,7 +121,7 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
 
 
   public static final class GrowableLongArray {
-    public static final Logger LOGGER = Logger.getLogger( NestedSmallCellApproxedMethod.class.getPackage().getName() );
+	public static final Logger LOGGER = Logger.getLogger( NestedSmallCellApproxedMethod.class.getPackage().getName());
     private long[] array;
     private int cursor;
     public GrowableLongArray(int capacity) {
@@ -140,9 +143,12 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
       // I so far leave as it is: ideally I should have checked performances with both solutions
       // (difference probably negligible, but to be checked!).
       if (this.cursor == this.array.length) {
-        // On purpose spurious message (may be better to use an external logger).
-        LOGGER.warning("Had to grow moc size! Investigate to find a better estimate!");
-        // New size = 1.5 * old size (same code as in Java API ArrayList)
+        // There is no debug() method (no DEBUG Level) in the java.util.logging.Logger.
+        // One can use fine/finer/finest instead.
+        // Java default output is INFO, see https://docs.oracle.com/cd/E17277_02/html/GettingStartedGuide/managelogging.html) 
+        // So this will not show up by default (but can be activated if needed)
+        LOGGER.finer("Had to grow unpacked moc size!");
+        // New size = old size + old size / 2 (same code as in Java API ArrayList)
         this.array = Arrays.copyOf(this.array, this.array.length + (this.array.length >> 1));
       }
       this.array[this.cursor++] = value;
@@ -225,8 +231,20 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     final double cosConeCenterLat = cos(coneCenterLatRad);
     coneCenterLonRad = normalizeLon(coneCenterLonRad);
     assert 0 <= coneCenterLonRad && coneCenterLonRad <= TWO_PI;
-    final GrowableLongArray mocElems = new GrowableLongArray(nMocCellInConeUpperBound());
-    int mocSize = 0;
+    
+     /*// Temporary log for debug purpose
+     LOGGER_TEST.warning("Radiuss deg: " + Math.toDegrees(this.rRad)
+    		+ "; startingDepth: " + startingDepth + "; deeperDepth: " + deeperDepth + "; deltaDepthMax: " + deltaDepthMax
+    		+ "; ra_deg: " + Math.toDegrees(coneCenterLonRad) + "; dec_deg: " + Math.toDegrees(coneCenterLatRad));
+    */
+    
+    // The factor x2 (<< 1) try to account from the fact that when adding cells
+    // the MOC is no yet "packed", i.e. cells are merged to create a regular MOC at the end.
+    // So temporarily the array is larger than the final MOC.
+    // Additionally, we return a BMOC (additional flag telling if a cell is fully included or not in the cone)
+    // which may be larger that a MOC: 4 cells of a larger cell but having different flag values are not merged.
+    final int uppderBoundGuess = nMocCellInConeUpperBound() << 1;
+    final GrowableLongArray mocElems = new GrowableLongArray(uppderBoundGuess);
     if (this.startingDepth == -1) {
       for (int h = 0; h < 12; h++) {
         buildMocRecursively(mocElems, 1, h, coneCenterLonRad, coneCenterLatRad, cosConeCenterLat, mode);
@@ -286,7 +304,7 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     // the cone external annulus
     // Annulus area = 4 pi ((R + r)^2 - R^2) = 4 pi (r^2 + 2rR)
     // N cells = 4 pi (r^2 + 2rR) / 4 pi r^2 = 1 + 2 R/r = 1 + 2 * sqrt(3) * nside * R
-    //final double twiceSqrt3 = 2 * 1.73205080756887729352;
+    // final double twiceSqrt3 = 2 * 1.73205080756887729352;
     // return 6 * (1 +  (int) (this.hnDeeperDepth.nside * twiceSqrt3 * this.rRad + 0.99));
 
     // NEW UPPER BOUND: supposedly more robust (and faster to compute)
@@ -301,8 +319,8 @@ final class NestedSmallCellApproxedMethod implements HealpixNestedFixedRadiusCon
     // - 6 * 2^DeltaDepth + 4 * 2^(DeltaDepth - 1) + 4 * 2^(DeltaDepth - 2) + ...
     // - 6 * (2^DeltaDepth + 2 * 2^(DeltaDepth + 2^(DeltaDepth + ... )
     // 2^DeltaDepth * (6 + 2 + 1 + 1/2 + 1/4 + ...)
-    // We take 12 instead of 10
-    return 12 << this.deltaDepthMax;
+    return 10 << this.deltaDepthMax;
+
   }
 
   private static final boolean isCellFullyInCone(final double coneRadius,

@@ -311,19 +311,24 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
     double lat = hInD0h * this.oneOverNside;                 assert -1 < lat && lat < 1;
     lon += vertexDirection.timeXOffset(this.oneOverNside);   assert -1 <= lon && lon <= 1; // The only diff with center
     lat += vertexDirection.timeYOffset(this.oneOverNside);   assert -1 <= lat && lat <= 1; // The only diff with center
-    if ((d0h < 4 && hInD0h > 0) || (d0h > 7 && hInD0h < 0)) { // Polar cap
+    if ((d0h < 4 && lat > 0) || (d0h > 7 && lat < 0)) { // Polar cap
       long signLat = toBits(lat);                            assert lat == fromBits(signLat);
-      lat = fromBits(signLat & BUT_SIGN_BIT_MASK_L);         assert  0 < lat && lat < 1; 
+      lat = fromBits(signLat & BUT_SIGN_BIT_MASK_L);         assert  0 <= lat && lat <= 1 : lat;
       signLat &= SIGN_BIT_MASK_L;                            assert signLat == 0 || signLat == SIGN_BIT_MASK_L;
-      lat = 1 - lat;                                         assert   0 < lat && lat <  1;
-      lon /= lat;                                            assert  -1 < lon && lon <  1;
+      lat = 1 - lat;                                         assert   0 <= lat && lat <=  1;
+      if (lat > 1e-13) {
+        lon /= lat;                                          assert -1 <= lon && lon <=  1 : lon;
+      } // else, we are located at a pole
       lat = fromBits(signLat | toBits(2 * acos(lat * ONE_OVER_SQRT6) - HALF_PI));
     } else { // Equatorial zone
       lat = asin((lat + hD0h) * TRANSITION_Z);
       lD0h |= ((lInD0h & SIGN_BIT_MASK_I) >>> (24 + d0h)) & 8;  assert 0 <= lD0h && lD0h <= 8;
     }
-    resultLonLat[LON_INDEX] = (lon + lD0h) * PI_OVER_FOUR;
+    lon += lD0h;
+    resultLonLat[LON_INDEX] = (lon == 8 ? 0.0 : (lon < 0.0 ? lon + 8 : lon) * PI_OVER_FOUR);
     resultLonLat[LAT_INDEX] = lat;
+    assert 0 <= resultLonLat[LON_INDEX] && resultLonLat[LON_INDEX] < TWO_PI;
+    assert -HALF_PI <=resultLonLat[LAT_INDEX] && resultLonLat[LAT_INDEX] <= HALF_PI;
   }
 
   @Override

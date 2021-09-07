@@ -1,4 +1,14 @@
 
+v0.30 (2021-09-07)
+==================
+
+### Bug correction
+
+* See [this issue](https://github.com/cds-astro/cds-healpix-java/issues/16):
+    + `HealpixNestedFast.vertex` was bugged at the pole, could return negative longitudes, and had too strict asserts.
+    + Add tests to check consistency between `HealpixNestedFast.vertex` and `HealpixNested.vertex` 
+
+
 v0.29 (2021-04-30)
 ==================
 

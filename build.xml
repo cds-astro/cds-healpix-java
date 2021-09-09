@@ -149,6 +149,7 @@
 
   <target name="test" depends="compile,tcompile">
   <junit haltonfailure="true" fork="true">
+    <jvmarg value="-ea"/>
     <classpath>
       <pathelement location="${classes}" />
       <pathelement location="${tclasses}" />

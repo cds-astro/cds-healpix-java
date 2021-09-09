@@ -476,37 +476,66 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
     final int hInD0h = iInD0h + jInD0h - this.modNsideMask;
     // Compute coordinates of the base pixel in the projection plane
     final int d0hBy4Quotient = d0h >> 2;
-      final int d0hMod4 = d0h & 3;
-      final int hD0h = 1 - d0hBy4Quotient;
-      // +1 if the base cell is not equatorial
-      int lD0h = (d0hMod4 << 1) | (hD0h & 1);
-      // Compute let's go
-      double lonC = lInD0h * this.oneOverNside;
-      double latC = hInD0h * this.oneOverNside;
-      // Unrolled loop over successive sides
-      // - compute vertex sequence
-      Cardinal vertex1 = startingVertex, vertex2, vertex3, vertex4;
-      if (clockwiseDirection) {
-        vertex2 = startingVertex.nextClockwise();
-        vertex3  = vertex2.nextClockwise();
-        vertex4 = vertex3.nextClockwise();
-      } else {
-        vertex2 = startingVertex.nextCounterClockwise();
-        vertex3  = vertex2.nextCounterClockwise();
-        vertex4 = vertex3.nextCounterClockwise();
-      }
-      // - make the five sides
-      if ((d0h < 4 && hInD0h > 0) || (d0h > 7 && hInD0h < 0)) { // Polar cap
+    final int d0hMod4 = d0h & 3;
+    final int hD0h = 1 - d0hBy4Quotient;
+    // +1 if the base cell is not equatorial
+    int lD0h = (d0hMod4 << 1) | (hD0h & 1);
+    // Compute let's go
+    double lonC = lInD0h * this.oneOverNside;
+    double latC = hInD0h * this.oneOverNside;
+    // Unrolled loop over successive sides
+    // - compute vertex sequence
+    Cardinal vertex1 = startingVertex, vertex2, vertex3, vertex4;
+    if (clockwiseDirection) {
+      vertex2 = startingVertex.nextClockwise();
+      vertex3  = vertex2.nextClockwise();
+      vertex4 = vertex3.nextClockwise();
+    } else {
+      vertex2 = startingVertex.nextCounterClockwise();
+      vertex3  = vertex2.nextCounterClockwise();
+      vertex4 = vertex3.nextCounterClockwise();
+    }
+    // - make the five sides
+    if ((d0h < 4 && hInD0h > 0) || (d0h > 7 && hInD0h < 0)) {
+      // Polar cap
+      pathAlongCellSidePolarCap(lonC, latC, lD0h, vertex1, vertex2, false, nSegmentsBySide, pathPoints, 0);
+      pathAlongCellSidePolarCap(lonC, latC, lD0h, vertex2, vertex3, false, nSegmentsBySide, pathPoints, nSegmentsBySide);
+      pathAlongCellSidePolarCap(lonC, latC, lD0h, vertex3, vertex4, false, nSegmentsBySide, pathPoints, nSegmentsBySide << 1);
+      pathAlongCellSidePolarCap(lonC, latC, lD0h, vertex4, vertex1, false, nSegmentsBySide, pathPoints, (nSegmentsBySide << 2) - nSegmentsBySide);
+    } else if ((d0h < 4 && hInD0h == 0) || (d0h > 7 && hInD0h == 0)) {
+      // Half cell in the EQR, half cell in a PC (center of the base cell on the EQR/PC separation)
+      // We may find a solution better than performing 4 if/else,
+      //   this is the first solution that popped into my mind
+      // NorthPC if d0h < 4 and 1 vertex is N
+      // SouthPC if d0h > 7 and 1 vertex is S
+      // => Polar Cap if (d0h > 7) != (1 vertex is N)
+      if (d0h > 7 != (vertex1 == Cardinal.N || vertex2 == Cardinal.N)) {
         pathAlongCellSidePolarCap(lonC, latC, lD0h, vertex1, vertex2, false, nSegmentsBySide, pathPoints, 0);
-        pathAlongCellSidePolarCap(lonC, latC, lD0h, vertex2, vertex3, false, nSegmentsBySide, pathPoints, nSegmentsBySide);
-        pathAlongCellSidePolarCap(lonC, latC, lD0h, vertex3, vertex4, false, nSegmentsBySide, pathPoints, nSegmentsBySide << 1);
-        pathAlongCellSidePolarCap(lonC, latC, lD0h, vertex4, vertex1, false, nSegmentsBySide, pathPoints, (nSegmentsBySide << 2) - nSegmentsBySide);
       } else {
         pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, vertex1, vertex2, false, nSegmentsBySide, pathPoints, 0);
-        pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, vertex2, vertex3, false, nSegmentsBySide, pathPoints, nSegmentsBySide);
-        pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, vertex3, vertex4, false, nSegmentsBySide, pathPoints, nSegmentsBySide << 1);
-        pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, vertex4, vertex1, false, nSegmentsBySide, pathPoints, (nSegmentsBySide << 2) - nSegmentsBySide);
       }
+      if (d0h > 7 != (vertex2 == Cardinal.N || vertex3 == Cardinal.N)) {
+        pathAlongCellSidePolarCap(lonC, latC, lD0h, vertex2, vertex3, false, nSegmentsBySide, pathPoints, nSegmentsBySide);
+      } else {
+        pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, vertex2, vertex3, false, nSegmentsBySide, pathPoints, nSegmentsBySide);
+      }
+      if (d0h > 7 != (vertex3 == Cardinal.N || vertex4 == Cardinal.N)) {
+        pathAlongCellSidePolarCap(lonC, latC, lD0h, vertex3, vertex4, false, nSegmentsBySide, pathPoints, nSegmentsBySide << 1);
+      } else {
+        pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, vertex3, vertex4, false, nSegmentsBySide, pathPoints, nSegmentsBySide << 1);
+      }
+      if (d0h > 7 != (vertex4 == Cardinal.N || vertex1 == Cardinal.N)) {
+        pathAlongCellSidePolarCap(lonC, latC, lD0h, vertex4, vertex1, false, nSegmentsBySide, pathPoints, (nSegmentsBySide << 2) - nSegmentsBySide);
+      } else {
+        pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, vertex4, vertex1, false, nSegmentsBySide, pathPoints, (nSegmentsBySide << 2) - nSegmentsBySide);
+      }  
+    } else { 
+      // Equatorial region
+      pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, vertex1, vertex2, false, nSegmentsBySide, pathPoints, 0);
+      pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, vertex2, vertex3, false, nSegmentsBySide, pathPoints, nSegmentsBySide);
+      pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, vertex3, vertex4, false, nSegmentsBySide, pathPoints, nSegmentsBySide << 1);
+      pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, vertex4, vertex1, false, nSegmentsBySide, pathPoints, (nSegmentsBySide << 2) - nSegmentsBySide);
+    }
   }
 
   private void pathAlongCellSide(long hash,
@@ -532,10 +561,23 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
     double lonC = lInD0h * this.oneOverNside;
     double latC = hInD0h * this.oneOverNside;
     // Let's go
-    if ((d0h < 4 && hInD0h > 0) || (d0h > 7 && hInD0h < 0)) { // Polar cap
+    if ((d0h < 4 && hInD0h > 0) || (d0h > 7 && hInD0h < 0)) {
+      // Polar cap
       pathAlongCellSidePolarCap(lonC, latC, lD0h, fromVertex, toVertex,
         isToVertexIncluded, nSegments, pathPoints, fromPathPointsIndex);
-    } else { // Equatorial zone
+    } else if ((d0h < 4 && hInD0h == 0) || (d0h > 7 && hInD0h == 0)) {
+      // Half cell in the EQR, half cell in a PC (center of the base cell on the EQR/CP separation)
+      if (d0h > 7 != (fromVertex == Cardinal.N || toVertex == Cardinal.N)) {
+        // Polar cap
+        pathAlongCellSidePolarCap(lonC, latC, lD0h, fromVertex, toVertex,
+            isToVertexIncluded, nSegments, pathPoints, fromPathPointsIndex);
+      } else {
+        // Equatorial region
+        pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, fromVertex, toVertex,
+            isToVertexIncluded, nSegments, pathPoints, fromPathPointsIndex);
+      }
+    }  else {
+      // Equatorial zone
       pathAlongCellSideEquatRegion(lonC, latC, lD0h, d0h, hD0h, lInD0h, fromVertex, toVertex,
           isToVertexIncluded, nSegments, pathPoints, fromPathPointsIndex);
     }
@@ -552,14 +594,18 @@ public final class HealpixNestedFast implements HashComputer, VerticesAndPathCom
     // Compute stepX and stepY
     final double stepX = (toVertex.timeXOffset(this.oneOverNside) - fromOffsetX) / nSegments;
     final double stepY = (toVertex.timeYOffset(this.oneOverNside) - fromOffsetY) / nSegments;
-    final long signLat = toBits(latC) & SIGN_BIT_MASK_L; // All points of the path are in the same hemisphere,
+    final long signLat = latC == 0 ?
+        toVertex == Cardinal.S || fromVertex == Cardinal.S ? SIGN_BIT_MASK_L : 0
+        : toBits(latC) & SIGN_BIT_MASK_L; // All points of the path are in the same hemisphere,
     for (int i = 0; i < resultSize; i++) {
       final double[] pathPoint = new double[2];
       double lon = lonC + fromOffsetX + i * stepX;
       double lat = latC + fromOffsetY + i * stepY;
       lat = fromBits(toBits(lat) & BUT_SIGN_BIT_MASK_L);
       lat = 1 - lat;
-      lon /= lat;
+      if (lat > 1e-13) {
+        lon /= lat;
+      } // else, we are located at a pole
       lat = fromBits(signLat | toBits(2 * acos(lat * ONE_OVER_SQRT6) - HALF_PI));
       pathPoint[LON_INDEX] = (lon + lD0h) * PI_OVER_FOUR;
       pathPoint[LAT_INDEX] = lat;

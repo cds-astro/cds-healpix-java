@@ -1,4 +1,15 @@
 
+v0.30.2 (2021-09-09)
+==================
+
+### Bug correction
+
+* See [this issue](https://github.com/cds-astro/cds-healpix-java/issues/17):
+    + `HealpixNestedFast.pathAlongCellEdge` was bugged at the pole (NaN),
+       and at the Equatorial Region / Polar Cap separation.
+    + Add tests to check consistency between `HealpixNestedFast.pathAlongCellEdge` and `HealpixNested.pathAlongCellEdge`
+
+
 v0.30 (2021-09-07)
 ==================
 

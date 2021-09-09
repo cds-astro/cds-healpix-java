@@ -20,6 +20,8 @@ package cds.healpix;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
 
 import cds.healpix.CompassPoint.MainWind;
 
@@ -50,6 +52,7 @@ public final class CompassPointTest {
   public void tesMBT() {
     int order = 4;
     int hash = 87;
+    // Using the jvm arg -ea, the purpose of this test is just to check all asserts in vertex()
     CompassPoint.Cardinal cardinal = CompassPoint.Cardinal.N;
     VerticesAndPathComputer vc = Healpix.getNestedFast(order);
     double[] lonlat = vc.vertex(hash, cardinal);
@@ -66,6 +69,7 @@ public final class CompassPointTest {
     assert Math.toDegrees(lonlat[0]) == 45.0;
     assert Math.toDegrees(lonlat[1]) == 90.0;
   }
+
 
   @Test
   public void testAllVertices() {
@@ -121,5 +125,22 @@ public final class CompassPointTest {
     assert Math.abs(lonlat1[1] - lonlat2[1]) < 1e-13
       : "o: " + o + "; h: " + h + "; dir: " + c + "; lat: " + lonlat1[1] + " != " + lonlat2[1];
   }
-  
+
+
+  @Test
+  public void crossCheckPathAlongCellEdge() {
+    for(int o = 1; o < 5; o++) {
+      VerticesAndPathComputer vcr = Healpix.getNested(o).newVerticesAndPathComputer();
+      VerticesAndPathComputer vcf = Healpix.getNestedFast(o);
+      for(long h = 0; h < 12 * (1L << (o << 1)) ; h++) {
+        double[][] lonlats1 = vcr.pathAlongCellEdge(h, CompassPoint.Cardinal.E, true, 1);
+        double[][] lonlats2 = vcf.pathAlongCellEdge(h, CompassPoint.Cardinal.E, true, 1);
+        checkEq(o, h, 'E', lonlats1[0], lonlats2[0]);
+        checkEq(o, h, 'S', lonlats1[1], lonlats2[1]);
+        checkEq(o, h, 'W', lonlats1[2], lonlats2[2]);
+        checkEq(o, h, 'N', lonlats1[3], lonlats2[3]);
+      }
+    }
+  }
+
 }

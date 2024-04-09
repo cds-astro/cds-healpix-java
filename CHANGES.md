@@ -1,4 +1,14 @@
 
+v0.30.3 (2024-04-09)
+==================
+
+### Bug correction
+
+* See [this issue](https://github.com/cds-astro/cds-healpix-java/issues/18)
+    + Newton method failed in a corner case when trying to find a polygon "special point" 
+    + We assume there is no specil point in such cases.
+
+
 v0.30.2 (2021-09-09)
 ==================
 

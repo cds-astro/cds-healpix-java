@@ -222,6 +222,22 @@ public final class HealpixNestedTest {
     }
     // final File f = new File("./nested2ring.depth" + depth + ".csv");
     // Files.write(f.toPath(), lines, StandardCharsets.US_ASCII);
+    
+    
+    final HealpixNested n2 = Healpix.getNested(2);
+    assertEquals(47L, n2.toNested(2));
+    assertEquals(29L, n2.toNested(7));
+    assertEquals(60L, n2.toNested(22));
+    /// // EQR
+    assertEquals(51L,  n2.toNested(54));
+    assertEquals(88L,  n2.toNested(107));
+    assertEquals(174L, n2.toNested(129));
+    /// // SPC
+    assertEquals(177L, n2.toNested(187));
+    assertEquals(153L, n2.toNested(157));
+    assertEquals(144L, n2.toNested(189));
+    System.out.println("TOP!!");
+    
   }
 
   

@@ -106,7 +106,10 @@ public final class Tile2HPX {
     final double[] xy = new double[2];
     this.center(tileIpix, xy);
 
-    final double centreX = Math.toDegrees(xy[0]);
+    double centreX = Math.toDegrees(xy[0]);
+    if (centreX > Math.PI) {
+      centreX -= 2 * Math.PI;   
+    }
     final double centreY = Math.toDegrees(xy[1]);
 
     final double scale = 45d / nsidePix;

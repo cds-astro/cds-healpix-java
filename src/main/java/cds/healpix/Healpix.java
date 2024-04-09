@@ -967,4 +967,14 @@ public final class Healpix implements Projection {
     genCST_E();
   }*/
   
+  public static void main(final String[] args) {
+    System.out.println(POLAR_LINEAR_COEFF[8] + " " +  DIST_TRANSIT_LAT_TO_PREV_RING[8]);
+    // DIST_CW_EQUATOR[depth] * (1 - EQUAT_PARABOLA_COEFF * (latRad * latRad));
+    
+    System.out.println(DIST_CW_EQUATOR[8] + " " + DIST_CW_EQUATOR[8] * EQUAT_PARABOLA_COEFF + " " + DIST_CW_EQUATOR[8] * (1 - EQUAT_PARABOLA_COEFF));
+    
+    // DIST_CW_EQUATOR[depth] * COS_LAT_OF_SQUARE_CELL + (latRad - LAT_OF_SQUARE_CELL) * EQUAT_LINEAR_COEFF[depth];
+    System.out.println(COS_LAT_OF_SQUARE_CELL + " " + EQUAT_LINEAR_COEFF[8]);
+  }
+  
 }

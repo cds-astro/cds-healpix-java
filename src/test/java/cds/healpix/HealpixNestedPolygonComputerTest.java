@@ -327,6 +327,27 @@ public final class HealpixNestedPolygonComputerTest {
     }
   }
   
+  @Test
+  public void polyonTest10() {
+    final int depth = 12;
+    final double[][] vertices = new double[][]{
+      { -1.5706045044233712, -0.7295105218483977 },
+      { -1.5705168372776197, -0.7295105199399403 },
+      { -1.5704291701320918, -0.7295105142145686 },
+      { -1.5703415029870114, -0.7295105046722821 },
+    };
+    final long[] expected = new long[]{195734186, 195734187};
+    // - generic algo
+    HealpixNested hn = Healpix.getNested(depth);
+    HealpixNestedPolygonComputer pc = hn.newPolygonComputer();
+    HealpixNestedBMOC bmoc = pc.overlappingCells(vertices);
+    assertEquals(expected.length, bmoc.computeDeepSize());
+    FlatHashIterator it = bmoc.flatHashIterator();
+    for (int i = 0; it.hasNext(); i++) {
+      assertEquals(expected[i], it.next());
+    }
+  }
+  
   private void toAladinDraw (final int depth, HealpixNestedBMOC bmoc) {
     // NOT STANDARD (SINCE WE DO NOT USE INTERVALS!!)
     System.out.format("draw moc %d/", depth);

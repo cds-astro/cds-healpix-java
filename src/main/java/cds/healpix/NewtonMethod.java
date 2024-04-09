@@ -230,9 +230,9 @@ final class NewtonMethod {
       z -= zEps;
       nIter += 1;
     }
-    // z must be in the [z1, z2] range
-    assert((z1 <= z2 && z1 <= z && z <= z2) || (z2 < z1 &&  z2 <= z && z <= z1));
-    if (abs(z) < TRANSITION_Z) {
+    // z must be in the [z1, z2] range except if Newton-Raphson method fails (divergence or to slow convergence)
+    // in which case we are not going to find a special point
+    if (abs(z) < TRANSITION_Z && ((z1 <= z2 && z1 <= z && z <= z2) || (z2 < z1 &&  z2 <= z && z <= z1))) {
       final Vect3D v = intersectSmallCircle(p1, p2, z);
       return new CooXYZ(v);
     } else {

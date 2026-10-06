@@ -108,11 +108,10 @@ public class NestedEllipticalConeComputerApprox {
     //this.ellipse.setProjCenter(ellipseCenterLonRad, ellipseCenterLatRad);
     this.ellipse = new EllipticalCone(ellipseCenterLonRad, ellipseCenterLatRad, aRad, bRad, paRad);
     // Store required space in the MOC
-    final long[] mocElems = new long[this.nMocCellInAreaUpperBound()];
-    int mocSize = 0;
+    final GrowableLongArray mocElems = new GrowableLongArray(this.nMocCellInAreaUpperBound());
     if (this.startHpx == null) {
       for (int h = 0; h < 12; h++) {
-        mocSize = buildMocRecursively(mocElems, mocSize, 0, h, mode);
+        buildMocRecursively(mocElems, 0, h, mode);
       }
     } else {
       // Compute hash of the cell containing the cone center
@@ -121,16 +120,15 @@ public class NestedEllipticalConeComputerApprox {
       this.neigList.put(centerHash);
       this.neigList.sortByHashAsc();
       for (int i = 0; i < this.neigList.size(); i++) {
-        mocSize = buildMocRecursively(mocElems, mocSize, 0, this.neigList.get(i), mode);
+         buildMocRecursively(mocElems, 0, this.neigList.get(i), mode);
       }
     }
-    return HealpixNestedBMOC.createPacking(this.deepHpx.depth, mocElems, mocSize);
+    return HealpixNestedBMOC.createPacking(this.deepHpx.depth, mocElems.getArray(), mocElems.getCursor());
   }
 
-  private final int buildMocRecursively(final long[] moc, int mocLength, int deltaDepth, long hash,
+  private final void buildMocRecursively(final GrowableLongArray moc, int deltaDepth, long hash,
       final Mode mode) {
     final int depth = this.startDepth + deltaDepth;
-    // System.out.println("depth: " + depth);
     assert this.hcc[deltaDepth].depth() == depth : this.hcc[deltaDepth].depth() + " != " + depth;
     final VerticesAndPathComputer vpc = this.hcc[deltaDepth];
     final double[] center = vpc.center(hash);
@@ -140,23 +138,22 @@ public class NestedEllipticalConeComputerApprox {
         cellCenterLon, cellCenterLat, depth);
     if (this.ellipse.containsCone(cellCenterLon, cellCenterLat, rCircumCircle)) {
       // we could have called ellipse.contains on the 4 cell vertices (more precise but time consuming)
-      moc[mocLength++] = buildValue(depth, hash, true, this.deepHpx.depth);
+      moc.add(buildValue(depth, hash, true, this.deepHpx.depth));
       // System.out.println("add depth: " + depth + "; hash: " + hash + "; circumDeg: " + Math.toDegrees(rCircumCircle));
     } else if (this.ellipse.overlapCone(cellCenterLon, cellCenterLat, rCircumCircle)) {
       if (depth == this.deepHpx.depth) {
         if (mode.isOk(this.ellipse, vpc, hash, cellCenterLon, cellCenterLat)) { 
-          moc[mocLength++] = buildValue(depth, hash, false, this.deepHpx.depth);
+          moc.add(buildValue(depth, hash, false, this.deepHpx.depth));
         }
       } else {
         hash <<= 2;
         deltaDepth++;
-        mocLength = buildMocRecursively(moc, mocLength, deltaDepth,   hash, mode);
-        mocLength = buildMocRecursively(moc, mocLength, deltaDepth, ++hash, mode);
-        mocLength = buildMocRecursively(moc, mocLength, deltaDepth, ++hash, mode);
-        mocLength = buildMocRecursively(moc, mocLength, deltaDepth, ++hash, mode);
+        buildMocRecursively(moc, deltaDepth,   hash, mode);
+        buildMocRecursively(moc, deltaDepth, ++hash, mode);
+        buildMocRecursively(moc, deltaDepth, ++hash, mode);
+        buildMocRecursively(moc, deltaDepth, ++hash, mode);
       }
     } // else cell fully out of the cone
-    return mocLength;
   }
 
   private int nMocCellInAreaUpperBound() {
@@ -164,11 +161,11 @@ public class NestedEllipticalConeComputerApprox {
     // cell_radius = r = 1 / (sqrt(3) * nside)
     // As a very simple and naive rule, we take 4x the number of cells needed to cover
     // the cone external annulus
-    // Annulus area = pi (sin(a+r)sinn(b+r) - sina*sinb)
-    // N cells = 4 * pi (sin(a+r)sinn(b+r) - sina*sinb) /pi r^2 
+    // Annulus area = pi (sin(a+r)sin(b+r) - sina*sinb)
+    // N cells = 4 * pi (sin(a+r)sin(b+r) - sina*sinb) /pi r^2 
     //         = 4 * 3 * nside^2 * (sin(a+r)*sin(b+r) - sina*sinb)
     final double oneOverR2 = 3 * (this.deepHpx.nside * this.deepHpx.nside);
     final double r = 1 / (SQRT3 * this.deepHpx.nside);
-    return (int) (this.deepHpx.nHash * (1 + ((this.ellipse.getA()  + r) * (this.ellipse.getB()  + r) - this.ellipse.getA() * this.ellipse.getB())));
+    return 10 + (int) (this.deepHpx.nHash * (Math.sin(this.ellipse.getA()  + r) * Math.sin(this.ellipse.getB()  + r) - Math.sin(this.ellipse.getA()) * Math.sin(this.ellipse.getB())));
   }
 }

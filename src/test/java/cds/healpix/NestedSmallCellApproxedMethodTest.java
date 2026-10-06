@@ -27,7 +27,7 @@ import org.junit.Test;
 import cds.healpix.Healpix;
 import cds.healpix.HealpixNestedBMOC;
 import cds.healpix.HealpixNestedFixedRadiusConeComputer;
-import cds.healpix.NestedSmallCellApproxedMethod.GrowableLongArray;
+import cds.healpix.GrowableLongArray;
 
 public class NestedSmallCellApproxedMethodTest {
 
@@ -88,7 +88,7 @@ public class NestedSmallCellApproxedMethodTest {
   // Code from Mark Taylor, see 
   // https://github.com/cds-astro/cds-healpix-java/issues/15
   private boolean subTest(int capacity, int n) {
-    NestedSmallCellApproxedMethod.GrowableLongArray list = new GrowableLongArray(capacity);
+    GrowableLongArray list = new GrowableLongArray(capacity);
     for (int i = 0; i < n; i++) {
       list.add(i);
     }
@@ -111,13 +111,13 @@ public class NestedSmallCellApproxedMethodTest {
   @Test
   public void growableLongArrayTest() {
     // Remove spurious message during these specific tests
-    NestedSmallCellApproxedMethod.GrowableLongArray.LOGGER.setLevel(Level.SEVERE);
+    GrowableLongArray.LOGGER.setLevel(Level.SEVERE);
     for (int ic = 10; ic < 100; ic++) {
       for (int in = 0; in < 100; in++) {
         assertTrue(this.subTest(ic, in));
       }
     }
-    NestedSmallCellApproxedMethod.GrowableLongArray.LOGGER.setLevel(Level.WARNING);
+    GrowableLongArray.LOGGER.setLevel(Level.WARNING);
   }
 
 

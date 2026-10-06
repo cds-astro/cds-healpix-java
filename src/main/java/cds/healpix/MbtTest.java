@@ -1,5 +1,9 @@
 package cds.healpix;
 
+import cds.healpix.Healpix;
+import cds.healpix.HealpixNestedBMOC;
+import cds.healpix.NestedEllipticalConeComputerApprox;
+
 import java.util.Arrays;
 
 public class MbtTest {
@@ -14,6 +18,7 @@ public class MbtTest {
 	}*/
 	
 
+  /*
   public static void main( String[] args ) {
 	double[][] vertices = { 
         {4.695790732486566, 0.8889150097255261},
@@ -36,7 +41,7 @@ public class MbtTest {
 	
 	
      Healpix.getNested( 6 ).newPolygonComputer().overlappingCells( vertices );
-  }
+  }*/
   
   
 /*public class MbtTest {
@@ -89,4 +94,27 @@ public class MbtTest {
        //  }
     }
     */
+  
+  
+  public static void main(String[] args) {
+    int order = 12;
+    if (args.length > 0) {
+        order = Integer.parseInt(args[0]);
+    }
+    double ra = Math.toRadians(0.05);
+    double rb = Math.toRadians(0.02);
+    double pa = Math.PI / 6.;
+    NestedEllipticalConeComputerApprox.Mode mode =
+        NestedEllipticalConeComputerApprox.Mode.OVERLAPPING_CELLS;
+    for (int i = 0; i < 16; i++) {
+        double lon = Math.toRadians(i * 1.0);
+        double lat = Math.toRadians(10);
+        HealpixNestedBMOC bmoc =
+            Healpix.getNested(order)
+                   .newEllipticalConeComputer(ra, rb, pa).overlapping(lon, lat, mode);
+        int nuniq = bmoc.size();
+        System.out.println(i + ":\t" + nuniq);
+    }
+}
+  
 }

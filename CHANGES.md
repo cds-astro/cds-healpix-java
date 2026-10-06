@@ -1,3 +1,15 @@
+v0.30.4 (2026-10-06)
+==================
+
+### Bug correction
+
+* See [this issue](https://github.com/cds-astro/cds-healpix-java/issues/21)
+    + fix performances issues and then OutOfBoundException in elliptical cone
+
+### Added
+
+* Add `pom.xml` file (from PR)
+
 
 v0.30.3 (2024-04-09)
 ==================
